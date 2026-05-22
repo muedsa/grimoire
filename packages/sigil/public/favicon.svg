@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500" fill="none" stroke="url(#globalGrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+  <defs>
+    <linearGradient id="globalGrad" gradientUnits="userSpaceOnUse" x1="0" y1="500" x2="500" y2="0">
+      <stop offset="0%" stop-color="#FF8A3C"/>
+      <stop offset="50%" stop-color="#E06020"/>
+      <stop offset="100%" stop-color="#C84A10"/>
+    </linearGradient>
+  </defs>
+  <circle cx="250" cy="250" r="185" stroke-dashoffset="-1" stroke-dasharray="3 2" pathLength="20"/>
+  <circle cx="250" cy="65" r="25"/>
+  <circle cx="435" cy="250" r="25"/>
+  <circle cx="250" cy="435" r="25"/>
+  <circle cx="65" cy="250" r="25"/>
+  <circle cx="250" cy="250" r="125" stroke-dashoffset="-1" stroke-dasharray="6 2 8 0 6 2" pathLength="32"/>
+  <circle cx="250" cy="250" r="85" stroke-dashoffset="5" stroke-dasharray="7 1" pathLength="8"/>
+  <circle cx="250" cy="250" r="50"/>
+  <line x1="90" y1="250" x2="125" y2="250"/>
+  <line x1="340" y1="250" x2="410" y2="250"/>
+  <line x1="250" y1="90" x2="250" y2="165"/>
+  <line x1="250" y1="300" x2="250" y2="410"/>
+  <line x1="189.896" y1="310.104" x2="119.186" y2="380.814"/>
+  <line x1="310.104" y1="310.104" x2="380.814" y2="380.814"/>
+  <line x1="214.645" y1="214.645" x2="119.186" y2="119.186"/>
+  <line x1="285.355" y1="214.645" x2="380.814" y2="119.186"/>
+  <circle cx="140.399" cy="140.399" r="30" fill="url(#globalGrad)" stroke="none"/>
+  <circle cx="359.601" cy="359.601" r="30" fill="url(#globalGrad)" stroke="none"/>
+</svg>

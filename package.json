@@ -1,0 +1,12 @@
+{
+  "name": "grimoire-workspaces",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "build": "yarn workspaces foreach -A run build"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "packageManager": "yarn@4.15.0"
+}

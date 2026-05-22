@@ -1,0 +1,90 @@
+.palette {
+  width: 240px;
+  background: var(--bg-base);
+  border-right: 1px solid var(--border-default);
+  padding: 16px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+/* 品牌 Logo 区域 */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.logoIcon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.logoText {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--fg-default);
+  letter-spacing: -0.5px;
+}
+
+.title {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg-default);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  cursor: grab;
+  user-select: none;
+  transition: box-shadow 0.15s ease;
+}
+
+.item:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  border-color: var(--border-visible);
+}
+
+.item:active {
+  cursor: grabbing;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--fg-muted);
+}
+
+.name {
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--fg-default);
+  min-width: 52px;
+}
+
+.desc {
+  font-size: 11px;
+  color: var(--fg-muted);
+  margin-left: auto;
+}

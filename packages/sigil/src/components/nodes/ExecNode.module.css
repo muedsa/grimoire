@@ -1,0 +1,76 @@
+/* ExecNode 样式 — 卡片形状，与 SetNode 共享结构，仅颜色区分 */
+
+.node {
+  background: var(--bg-elevated);
+  border: 2px solid var(--border-visible);
+  border-radius: var(--radius-lg);
+  width: 180px;
+  box-shadow: var(--shadow-sm);
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+  position: relative;
+}
+
+.selected {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px 6px 0 0;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.icon {
+  font-size: 16px;
+}
+
+.label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.body {
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--fg-muted);
+  font-family: "SF Mono", "Fira Code", monospace;
+}
+
+.preview {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Execution state highlighting */
+.node.executed {
+  border-color: #22c55e;
+  background-color: rgba(34, 197, 94, 0.08);
+}
+
+.node.current {
+  border-color: var(--warning);
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.4);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.2);
+  }
+}

@@ -1,0 +1,44 @@
+/* ContinueNode 样式 — 药丸形状 */
+
+.returnPill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--bg-elevated);
+  border: 2px solid #F97316;
+  border-radius: 20px;
+  color: #F97316;
+  font-weight: 600;
+  font-size: 13px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  position: relative;
+  cursor: default;
+  transition: box-shadow 0.15s;
+}
+
+.selected {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+.returnPill.executed {
+  border-color: #22C55E;
+  color: #34D399;
+  background-color: rgba(34, 197, 94, 0.08);
+}
+
+.returnPill.current {
+  border-color: var(--warning);
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.4);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.2); }
+}
+
+.pillIcon {
+  flex-shrink: 0;
+}

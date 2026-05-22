@@ -1,0 +1,529 @@
+// src/html/parse.ts
+import { DOMParser } from "@xmldom/xmldom";
+function stripNamespaces(node) {
+  if ("namespaceURI" in node && node.namespaceURI) {
+    node.namespaceURI = null;
+  }
+  if ("attributes" in node && node.attributes?.length) {
+    const attrs = node.attributes;
+    for (let i = 0; i < attrs.length; i++) {
+      if (attrs[i]?.namespaceURI) {
+        attrs[i].namespaceURI = null;
+      }
+    }
+  }
+  if ("childNodes" in node && node.childNodes?.length) {
+    const children = node.childNodes;
+    for (let i = 0; i < children.length; i++) {
+      if (children[i] && typeof children[i] === "object") {
+        stripNamespaces(children[i]);
+      }
+    }
+  }
+}
+function html_parse(...args) {
+  const html = args[0];
+  if (typeof html !== "string") return null;
+  try {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    stripNamespaces(doc);
+    return doc;
+  } catch {
+    return null;
+  }
+}
+
+// src/html/xpath.ts
+import xpath from "xpath";
+function isDocument(val) {
+  return val != null && typeof val === "object" && typeof val.documentElement !== "undefined";
+}
+function xpath_select(...args) {
+  const doc = args[0];
+  const expr = args[1];
+  if (!isDocument(doc)) return null;
+  if (typeof expr !== "string") return null;
+  try {
+    return xpath.select(expr, doc);
+  } catch {
+    return null;
+  }
+}
+function xpath_select1(...args) {
+  const doc = args[0];
+  const expr = args[1];
+  if (!isDocument(doc)) return null;
+  if (typeof expr !== "string") return null;
+  try {
+    return xpath.select1(expr, doc);
+  } catch {
+    return null;
+  }
+}
+
+// src/html/index.ts
+var htmlFunctions = {
+  html_parse,
+  xpath_select,
+  xpath_select1
+};
+
+// src/encoding/index.ts
+var VALID_ENCODINGS = ["utf8", "hex", "base64", "base64url"];
+function utf8ToBytes(str) {
+  return new TextEncoder().encode(str);
+}
+function bytesToUtf8(bytes) {
+  return new TextDecoder().decode(bytes);
+}
+function hexToBytes(hex) {
+  const normalized = hex.trim().toLowerCase();
+  if (normalized.length % 2 !== 0) {
+    throw new Error("decode: \u5341\u516D\u8FDB\u5236\u5B57\u7B26\u4E32\u957F\u5EA6\u5FC5\u987B\u4E3A\u5076\u6570");
+  }
+  if (!/^[0-9a-f]*$/.test(normalized)) {
+    throw new Error("decode: \u5341\u516D\u8FDB\u5236\u5B57\u7B26\u4E32\u5305\u542B\u975E\u6CD5\u5B57\u7B26");
+  }
+  const len = normalized.length / 2;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = parseInt(normalized.substring(i * 2, i * 2 + 2), 16);
+  }
+  return bytes;
+}
+function bytesToHex(bytes) {
+  let hex = "";
+  for (let i = 0; i < bytes.length; i++) {
+    hex += bytes[i].toString(16).padStart(2, "0");
+  }
+  return hex;
+}
+var BASE64_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+function base64ToBytes(b64) {
+  const cleaned = b64.replace(/\s/g, "");
+  const stripped = cleaned.replace(/=+$/, "");
+  const fullGroups = Math.floor(stripped.length / 4) * 3;
+  const remainder = stripped.length % 4;
+  let extraBytes = 0;
+  if (remainder === 1) throw new Error("decode: Base64 \u5B57\u7B26\u4E32\u957F\u5EA6\u65E0\u6548");
+  if (remainder === 2) extraBytes = 1;
+  if (remainder === 3) extraBytes = 2;
+  const outLen = fullGroups + extraBytes;
+  const bytes = new Uint8Array(outLen);
+  let byteIdx = 0;
+  for (let i = 0; i < stripped.length; i += 4) {
+    const c0 = i < stripped.length ? BASE64_ALPHABET.indexOf(stripped[i]) : -1;
+    const c1 = i + 1 < stripped.length ? BASE64_ALPHABET.indexOf(stripped[i + 1]) : 0;
+    const c2 = i + 2 < stripped.length ? BASE64_ALPHABET.indexOf(stripped[i + 2]) : 0;
+    const c3 = i + 3 < stripped.length ? BASE64_ALPHABET.indexOf(stripped[i + 3]) : 0;
+    if (c0 === -1) {
+      throw new Error("decode: Base64 \u5B57\u7B26\u4E32\u5305\u542B\u975E\u6CD5\u5B57\u7B26");
+    }
+    if (byteIdx < bytes.length) bytes[byteIdx++] = c0 << 2 | c1 >> 4;
+    if (byteIdx < bytes.length) bytes[byteIdx++] = c1 << 4 | c2 >> 2;
+    if (byteIdx < bytes.length) bytes[byteIdx++] = c2 << 6 | c3;
+  }
+  return bytes;
+}
+function bytesToBase64(bytes) {
+  let result = "";
+  for (let i = 0; i < bytes.length; i += 3) {
+    const b0 = bytes[i];
+    const b1 = i + 1 < bytes.length ? bytes[i + 1] : 0;
+    const b2 = i + 2 < bytes.length ? bytes[i + 2] : 0;
+    result += BASE64_ALPHABET[b0 >> 2];
+    result += BASE64_ALPHABET[(b0 & 3) << 4 | b1 >> 4];
+    if (i + 1 < bytes.length) {
+      result += BASE64_ALPHABET[(b1 & 15) << 2 | b2 >> 6];
+    } else {
+      result += "=";
+    }
+    if (i + 2 < bytes.length) {
+      result += BASE64_ALPHABET[b2 & 63];
+    } else {
+      result += "=";
+    }
+  }
+  return result;
+}
+function base64urlToBytes(b64url) {
+  const b64 = b64url.replace(/-/g, "+").replace(/_/g, "/");
+  return base64ToBytes(b64);
+}
+function bytesToBase64url(bytes) {
+  return bytesToBase64(bytes).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function decode(...args) {
+  const data = args[0];
+  const from = args[1];
+  if (typeof data !== "string") {
+    throw new TypeError("decode: \u7B2C\u4E00\u4E2A\u53C2\u6570 data \u5FC5\u987B\u662F\u5B57\u7B26\u4E32");
+  }
+  if (typeof from !== "string" || !VALID_ENCODINGS.includes(from)) {
+    throw new TypeError(
+      `decode: \u7B2C\u4E8C\u4E2A\u53C2\u6570 from \u5FC5\u987B\u662F\u4EE5\u4E0B\u7F16\u7801\u4E4B\u4E00: ${VALID_ENCODINGS.join(", ")}`
+    );
+  }
+  switch (from) {
+    case "utf8":
+      return utf8ToBytes(data);
+    case "hex":
+      return hexToBytes(data);
+    case "base64":
+      return base64ToBytes(data);
+    case "base64url":
+      return base64urlToBytes(data);
+    default:
+      throw new Error(`decode: \u4E0D\u652F\u6301\u7684\u7F16\u7801\u683C\u5F0F "${from}"`);
+  }
+}
+function encode(...args) {
+  const data = args[0];
+  const to = args[1];
+  if (!(data instanceof Uint8Array)) {
+    throw new TypeError("encode: \u7B2C\u4E00\u4E2A\u53C2\u6570 data \u5FC5\u987B\u662F Uint8Array");
+  }
+  if (typeof to !== "string" || !VALID_ENCODINGS.includes(to)) {
+    throw new TypeError(
+      `encode: \u7B2C\u4E8C\u4E2A\u53C2\u6570 to \u5FC5\u987B\u662F\u4EE5\u4E0B\u7F16\u7801\u4E4B\u4E00: ${VALID_ENCODINGS.join(", ")}`
+    );
+  }
+  switch (to) {
+    case "utf8":
+      return bytesToUtf8(data);
+    case "hex":
+      return bytesToHex(data);
+    case "base64":
+      return bytesToBase64(data);
+    case "base64url":
+      return bytesToBase64url(data);
+    default:
+      throw new Error(`encode: \u4E0D\u652F\u6301\u7684\u7F16\u7801\u683C\u5F0F "${to}"`);
+  }
+}
+var encodingFunctions = {
+  decode,
+  encode
+};
+
+// src/crypto/hash.ts
+import { md5 } from "@noble/hashes/legacy.js";
+import { sha1 } from "@noble/hashes/legacy.js";
+import { sha256 } from "@noble/hashes/sha2.js";
+import { sha384 } from "@noble/hashes/sha2.js";
+import { sha512 } from "@noble/hashes/sha2.js";
+import { hmac as nobleHmac } from "@noble/hashes/hmac.js";
+var HASH_ALGORITHMS = ["md5", "sha1", "sha256", "sha384", "sha512"];
+var HMAC_ALGORITHMS = ["sha256", "sha384", "sha512"];
+function getHashImpl(algorithm) {
+  switch (algorithm) {
+    case "md5":
+      return md5;
+    case "sha1":
+      return sha1;
+    case "sha256":
+      return sha256;
+    case "sha384":
+      return sha384;
+    case "sha512":
+      return sha512;
+    default:
+      throw new Error(`hash: \u4E0D\u652F\u6301\u7684\u54C8\u5E0C\u7B97\u6CD5 "${algorithm}"`);
+  }
+}
+function hash(...args) {
+  const algorithm = args[0];
+  const data = args[1];
+  if (typeof algorithm !== "string" || !HASH_ALGORITHMS.includes(algorithm)) {
+    throw new TypeError(
+      `hash: \u7B2C\u4E00\u4E2A\u53C2\u6570 algorithm \u5FC5\u987B\u662F\u4EE5\u4E0B\u4E4B\u4E00: ${HASH_ALGORITHMS.join(", ")}`
+    );
+  }
+  if (!(data instanceof Uint8Array)) {
+    throw new TypeError("hash: \u7B2C\u4E8C\u4E2A\u53C2\u6570 data \u5FC5\u987B\u662F Uint8Array");
+  }
+  const impl = getHashImpl(algorithm);
+  return impl(data);
+}
+function hmac(...args) {
+  const algorithm = args[0];
+  const data = args[1];
+  const key = args[2];
+  if (typeof algorithm !== "string" || !HMAC_ALGORITHMS.includes(algorithm)) {
+    throw new TypeError(
+      `hmac: \u7B2C\u4E00\u4E2A\u53C2\u6570 algorithm \u5FC5\u987B\u662F\u4EE5\u4E0B\u4E4B\u4E00: ${HMAC_ALGORITHMS.join(", ")}`
+    );
+  }
+  if (!(data instanceof Uint8Array)) {
+    throw new TypeError("hmac: \u7B2C\u4E8C\u4E2A\u53C2\u6570 data \u5FC5\u987B\u662F Uint8Array");
+  }
+  if (!(key instanceof Uint8Array)) {
+    throw new TypeError("hmac: \u7B2C\u4E09\u4E2A\u53C2\u6570 key \u5FC5\u987B\u662F Uint8Array");
+  }
+  const hashImpl = getHashImpl(algorithm);
+  return nobleHmac(hashImpl, key, data);
+}
+
+// src/crypto/aes.ts
+import { cbc } from "@noble/ciphers/aes.js";
+import { gcm } from "@noble/ciphers/aes.js";
+import { ctr } from "@noble/ciphers/aes.js";
+import { unsafe } from "@noble/ciphers/aes.js";
+var AES_ALGORITHMS = [
+  "aes-128-cbc",
+  "aes-256-cbc",
+  "aes-128-gcm",
+  "aes-256-gcm",
+  "aes-128-ctr",
+  "aes-256-ctr"
+];
+var PADDING_MODES = ["pkcs7", "zero", "none"];
+var AES_BLOCK_SIZE = 16;
+var GCM_IV_SIZE = 12;
+function getKeySize(algorithm) {
+  return algorithm.includes("128") ? 16 : 32;
+}
+function validateSizes(algorithm, key, iv) {
+  const expectedKeySize = getKeySize(algorithm);
+  if (key.length !== expectedKeySize) {
+    throw new Error(
+      `aes: \u5BC6\u94A5\u957F\u5EA6\u5E94\u4E3A ${expectedKeySize} \u5B57\u8282 (${algorithm})\uFF0C\u5B9E\u9645\u4E3A ${key.length} \u5B57\u8282`
+    );
+  }
+  if (algorithm.includes("gcm")) {
+    if (iv.length !== GCM_IV_SIZE) {
+      throw new Error(
+        `aes: GCM \u6A21\u5F0F IV \u957F\u5EA6\u5E94\u4E3A ${GCM_IV_SIZE} \u5B57\u8282\uFF0C\u5B9E\u9645\u4E3A ${iv.length} \u5B57\u8282`
+      );
+    }
+  } else {
+    if (iv.length !== AES_BLOCK_SIZE) {
+      throw new Error(
+        `aes: IV \u957F\u5EA6\u5E94\u4E3A ${AES_BLOCK_SIZE} \u5B57\u8282\uFF0C\u5B9E\u9645\u4E3A ${iv.length} \u5B57\u8282`
+      );
+    }
+  }
+}
+function pkcs7Pad(data) {
+  const padLen = AES_BLOCK_SIZE - data.length % AES_BLOCK_SIZE;
+  const padded = new Uint8Array(data.length + padLen);
+  padded.set(data);
+  padded.fill(padLen, data.length);
+  return padded;
+}
+function pkcs7Unpad(data) {
+  if (data.length === 0) throw new Error("aes: \u89E3\u5BC6\u6570\u636E\u4E3A\u7A7A\uFF0C\u65E0\u6CD5\u53BB\u9664\u586B\u5145");
+  if (data.length % AES_BLOCK_SIZE !== 0) {
+    throw new Error("aes: \u89E3\u5BC6\u6570\u636E\u957F\u5EA6\u4E0D\u662F\u5757\u5927\u5C0F\u7684\u6574\u6570\u500D");
+  }
+  const padLen = data[data.length - 1];
+  if (padLen < 1 || padLen > AES_BLOCK_SIZE) {
+    throw new Error(`aes: PKCS#7 \u586B\u5145\u503C\u5F02\u5E38: ${padLen}`);
+  }
+  for (let i = data.length - padLen; i < data.length; i++) {
+    if (data[i] !== padLen) {
+      throw new Error("aes: PKCS#7 \u586B\u5145\u6821\u9A8C\u5931\u8D25");
+    }
+  }
+  return data.slice(0, data.length - padLen);
+}
+function zeroPad(data) {
+  const padLen = AES_BLOCK_SIZE - data.length % AES_BLOCK_SIZE;
+  if (padLen === AES_BLOCK_SIZE) return data;
+  const padded = new Uint8Array(data.length + padLen);
+  padded.set(data);
+  return padded;
+}
+function zeroUnpad(data) {
+  if (data.length === 0) throw new Error("aes: \u89E3\u5BC6\u6570\u636E\u4E3A\u7A7A\uFF0C\u65E0\u6CD5\u53BB\u9664\u586B\u5145");
+  let end = data.length;
+  while (end > 0 && data[end - 1] === 0) {
+    end--;
+  }
+  if (end === 0) {
+    throw new Error("aes: Zero \u586B\u5145\u53BB\u9664\u540E\u6570\u636E\u4E3A\u7A7A");
+  }
+  return data.slice(0, end);
+}
+function applyPadding(data, mode) {
+  switch (mode) {
+    case "pkcs7":
+      return pkcs7Pad(data);
+    case "zero":
+      return zeroPad(data);
+    case "none":
+      if (data.length % AES_BLOCK_SIZE !== 0) {
+        throw new Error(
+          `aes: \u4F7F\u7528 "none" \u586B\u5145\u6A21\u5F0F\u65F6\uFF0C\u660E\u6587\u957F\u5EA6\u5FC5\u987B\u662F ${AES_BLOCK_SIZE} \u7684\u6574\u6570\u500D\uFF0C\u5F53\u524D ${data.length} \u5B57\u8282`
+        );
+      }
+      return data;
+    default:
+      throw new Error(`aes: \u4E0D\u652F\u6301\u7684\u586B\u5145\u6A21\u5F0F "${mode}"`);
+  }
+}
+function removePadding(data, mode) {
+  switch (mode) {
+    case "pkcs7":
+      return pkcs7Unpad(data);
+    case "zero":
+      return zeroUnpad(data);
+    case "none":
+      return data;
+    default:
+      throw new Error(`aes: \u4E0D\u652F\u6301\u7684\u586B\u5145\u6A21\u5F0F "${mode}"`);
+  }
+}
+function rawCbcEncrypt(key, iv, data) {
+  const expandedKey = unsafe.expandKeyLE(key);
+  const result = new Uint8Array(data.length);
+  let prev = new Uint8Array(iv);
+  for (let i = 0; i < data.length; i += AES_BLOCK_SIZE) {
+    const input = new Uint8Array(AES_BLOCK_SIZE);
+    for (let j = 0; j < AES_BLOCK_SIZE; j++) {
+      input[j] = data[i + j] ^ prev[j];
+    }
+    const cipherBlock = unsafe.encryptBlock(expandedKey, input);
+    prev = new Uint8Array(cipherBlock.buffer.slice(cipherBlock.byteOffset, cipherBlock.byteOffset + AES_BLOCK_SIZE));
+    result.set(prev, i);
+  }
+  return result;
+}
+function rawCbcDecrypt(key, iv, data) {
+  const expandedKey = unsafe.expandKeyDecLE(key);
+  const result = new Uint8Array(data.length);
+  let prev = new Uint8Array(iv);
+  for (let i = 0; i < data.length; i += AES_BLOCK_SIZE) {
+    const cipherForDecrypt = data.slice(i, i + AES_BLOCK_SIZE);
+    const cipherForPrev = new Uint8Array(cipherForDecrypt);
+    const decrypted = unsafe.decryptBlock(expandedKey, cipherForDecrypt);
+    for (let j = 0; j < AES_BLOCK_SIZE; j++) {
+      result[i + j] = decrypted[j] ^ prev[j];
+    }
+    prev = cipherForPrev;
+  }
+  return result;
+}
+function aes_encrypt(...args) {
+  const algorithm = args[0];
+  const data = args[1];
+  const key = args[2];
+  const iv = args[3];
+  const rawPadding = args[4];
+  if (typeof algorithm !== "string" || !AES_ALGORITHMS.includes(algorithm)) {
+    throw new TypeError(
+      `aes_encrypt: \u7B2C\u4E00\u4E2A\u53C2\u6570 algorithm \u5FC5\u987B\u662F\u4EE5\u4E0B\u4E4B\u4E00: ${AES_ALGORITHMS.join(", ")}`
+    );
+  }
+  if (!(data instanceof Uint8Array)) {
+    throw new TypeError("aes_encrypt: \u7B2C\u4E8C\u4E2A\u53C2\u6570 data \u5FC5\u987B\u662F Uint8Array");
+  }
+  if (!(key instanceof Uint8Array)) {
+    throw new TypeError("aes_encrypt: \u7B2C\u4E09\u4E2A\u53C2\u6570 key \u5FC5\u987B\u662F Uint8Array");
+  }
+  if (!(iv instanceof Uint8Array)) {
+    throw new TypeError("aes_encrypt: \u7B2C\u56DB\u4E2A\u53C2\u6570 iv \u5FC5\u987B\u662F Uint8Array");
+  }
+  const algo = algorithm;
+  const isCbc = algo.includes("cbc");
+  const isGcm = algo.includes("gcm");
+  const isCtr = algo.includes("ctr");
+  let padding = "pkcs7";
+  if (isCbc && rawPadding !== void 0) {
+    if (typeof rawPadding !== "string" || !PADDING_MODES.includes(rawPadding)) {
+      throw new TypeError(
+        `aes_encrypt: padding \u5FC5\u987B\u662F\u4EE5\u4E0B\u4E4B\u4E00: ${PADDING_MODES.join(", ")}`
+      );
+    }
+    padding = rawPadding;
+  }
+  validateSizes(algo, key, iv);
+  try {
+    if (isCbc && padding !== "pkcs7") {
+      const padded = applyPadding(data, padding);
+      return rawCbcEncrypt(key, iv, padded);
+    }
+    if (isCbc) {
+      return cbc(key, iv).encrypt(data);
+    }
+    if (isGcm) {
+      return gcm(key, iv).encrypt(data);
+    }
+    return ctr(key, iv).encrypt(data);
+  } catch (e) {
+    throw new Error(`aes_encrypt: \u52A0\u5BC6\u5931\u8D25 \u2014 ${e.message}`);
+  }
+}
+function aes_decrypt(...args) {
+  const algorithm = args[0];
+  const data = args[1];
+  const key = args[2];
+  const iv = args[3];
+  const rawPadding = args[4];
+  if (typeof algorithm !== "string" || !AES_ALGORITHMS.includes(algorithm)) {
+    throw new TypeError(
+      `aes_decrypt: \u7B2C\u4E00\u4E2A\u53C2\u6570 algorithm \u5FC5\u987B\u662F\u4EE5\u4E0B\u4E4B\u4E00: ${AES_ALGORITHMS.join(", ")}`
+    );
+  }
+  if (!(data instanceof Uint8Array)) {
+    throw new TypeError("aes_decrypt: \u7B2C\u4E8C\u4E2A\u53C2\u6570 data \u5FC5\u987B\u662F Uint8Array");
+  }
+  if (!(key instanceof Uint8Array)) {
+    throw new TypeError("aes_decrypt: \u7B2C\u4E09\u4E2A\u53C2\u6570 key \u5FC5\u987B\u662F Uint8Array");
+  }
+  if (!(iv instanceof Uint8Array)) {
+    throw new TypeError("aes_decrypt: \u7B2C\u56DB\u4E2A\u53C2\u6570 iv \u5FC5\u987B\u662F Uint8Array");
+  }
+  const algo = algorithm;
+  const isCbc = algo.includes("cbc");
+  const isGcm = algo.includes("gcm");
+  const isCtr = algo.includes("ctr");
+  let padding = "pkcs7";
+  if (isCbc && rawPadding !== void 0) {
+    if (typeof rawPadding !== "string" || !PADDING_MODES.includes(rawPadding)) {
+      throw new TypeError(
+        `aes_decrypt: padding \u5FC5\u987B\u662F\u4EE5\u4E0B\u4E4B\u4E00: ${PADDING_MODES.join(", ")}`
+      );
+    }
+    padding = rawPadding;
+  }
+  validateSizes(algo, key, iv);
+  try {
+    if (isCbc && padding !== "pkcs7") {
+      const raw = rawCbcDecrypt(key, iv, data);
+      return removePadding(raw, padding);
+    }
+    if (isCbc) {
+      return cbc(key, iv).decrypt(data);
+    }
+    if (isGcm) {
+      return gcm(key, iv).decrypt(data);
+    }
+    return ctr(key, iv).decrypt(data);
+  } catch (e) {
+    throw new Error(`aes_decrypt: \u89E3\u5BC6\u5931\u8D25 \u2014 ${e.message}`);
+  }
+}
+
+// src/crypto/index.ts
+var cryptoFunctions = {
+  hash,
+  hmac,
+  aes_encrypt,
+  aes_decrypt
+};
+export {
+  aes_decrypt,
+  aes_encrypt,
+  cryptoFunctions,
+  decode,
+  encode,
+  encodingFunctions,
+  hash,
+  hmac,
+  htmlFunctions,
+  html_parse,
+  xpath_select,
+  xpath_select1
+};
+//# sourceMappingURL=index.js.map

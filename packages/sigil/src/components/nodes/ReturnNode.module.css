@@ -1,0 +1,60 @@
+/* ReturnNode 样式 — 药丸形状 */
+
+.returnPill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--bg-elevated);
+  border: 2px solid #10b981;
+  border-radius: 20px;
+  color: #10b981;
+  font-weight: 600;
+  font-size: 13px;
+  font-family: "SF Mono", "Fira Code", monospace;
+  position: relative;
+  cursor: default;
+  transition: box-shadow 0.15s;
+  max-width: 160px;
+}
+
+.selected {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+.returnPill.executed {
+  border-color: #22c55e;
+  color: #34d399;
+  background-color: rgba(34, 197, 94, 0.08);
+}
+
+.returnPill.current {
+  border-color: var(--warning);
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.4);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.2);
+  }
+}
+
+.pillIcon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.pillValue {
+  color: var(--fg-muted);
+  font-weight: 400;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

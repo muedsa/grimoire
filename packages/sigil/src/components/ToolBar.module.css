@@ -1,0 +1,92 @@
+.exportBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid var(--border-visible);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  background: var(--bg-elevated);
+  color: var(--fg-default);
+  transition: all 0.15s;
+}
+
+.btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-visible);
+}
+
+/* JSON 预览 — 蓝色 */
+.btnPreview {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+}
+.btnPreview:hover {
+  background: #2563eb;
+}
+
+/* 导出 JSON — 绿色 */
+.btnExport {
+  background: #16a34a;
+  color: #fff;
+  border-color: #16a34a;
+}
+.btnExport:hover {
+  background: #15803d;
+}
+
+/* 导入 JSON — 琥珀色 */
+.btnImport {
+  background: #d97706;
+  color: #fff;
+  border-color: #d97706;
+}
+.btnImport:hover {
+  background: #b45309;
+}
+
+/* 自动布局 — 紫色 */
+.btnLayout {
+  background: #7c3aed;
+  color: #fff;
+  border-color: #7c3aed;
+}
+.btnLayout:hover {
+  background: #6d28d9;
+}
+
+.previewContent {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-overlay);
+  max-width: min(90vw, 900px);
+  max-height: min(75vh, 700px);
+  width: 90vw;
+  overflow: auto;
+  padding: 20px;
+  font-size: 13px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  background: #1e293b;
+  color: #e2e8f0;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
