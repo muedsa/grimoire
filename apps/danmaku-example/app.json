@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Danmaku Example",
+    "slug": "danmaku-example",
+    "scheme": "danmaku-example",
+    "version": "0.0.1",
+    "orientation": "landscape",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "platforms": ["android", "ios", "web"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.muedsa.grimoire.danmaku.example"
+    },
+    "android": {
+      "package": "com.muedsa.grimoire.danmaku.example"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "@react-native-tvos/config-tv",
+        {
+          "isTV": "$EXPO_TV"
+        }
+      ]
+    ]
+  }
+}

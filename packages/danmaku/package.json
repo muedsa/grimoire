@@ -1,0 +1,67 @@
+{
+  "name": "@grimoire/danmaku",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./dist/core/index.cjs",
+  "module": "./dist/core/index.js",
+  "types": "./dist/core/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/core/index.d.mts",
+        "default": "./dist/core/index.js"
+      },
+      "require": {
+        "types": "./dist/core/index.d.ts",
+        "default": "./dist/core/index.cjs"
+      }
+    },
+    "./react-native": {
+      "import": {
+        "types": "./dist/react-native/index.d.mts",
+        "default": "./dist/react-native/index.js"
+      },
+      "require": {
+        "types": "./dist/react-native/index.d.ts",
+        "default": "./dist/react-native/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "peerDependencies": {
+    "@shopify/react-native-skia": ">=1.4.0",
+    "react": ">=18.0.0",
+    "react-native": ">=0.73.0",
+    "react-native-reanimated": ">=3.6.0"
+  },
+  "peerDependenciesMeta": {
+    "@shopify/react-native-skia": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "react-native-reanimated": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "@vitest/coverage-v8": "^4.1.7",
+    "tsup": "^8.5.1",
+    "typescript": "^5.0.0",
+    "vitest": "^4.1.7"
+  }
+}
