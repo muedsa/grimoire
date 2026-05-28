@@ -1892,8 +1892,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@grimoire/danmaku@workspace:packages/danmaku"
   dependencies:
+    "@shopify/react-native-skia": "npm:*"
     "@types/node": "npm:^25.9.1"
+    "@types/react": "npm:*"
     "@vitest/coverage-v8": "npm:^4.1.7"
+    react: "npm:*"
+    react-native: "npm:*"
+    react-native-reanimated: "npm:*"
     tsup: "npm:^8.5.1"
     typescript: "npm:^5.0.0"
     vitest: "npm:^4.1.7"
@@ -1933,10 +1938,14 @@ __metadata:
   dependencies:
     "@eslint/js": "npm:^10.0.1"
     "@grimoire/rune": "workspace:*"
+    "@grimoire/talisman": "workspace:*"
+    "@noble/ciphers": "npm:*"
+    "@noble/hashes": "npm:*"
     "@types/node": "npm:^25.9.1"
     "@types/react": "npm:^19.2.14"
     "@types/react-dom": "npm:^19.2.3"
     "@vitejs/plugin-react": "npm:^6.0.1"
+    "@xmldom/xmldom": "npm:*"
     "@xyflow/react": "npm:^12.10.2"
     eslint: "npm:^10.2.1"
     eslint-plugin-react-hooks: "npm:^7.1.1"
@@ -1947,25 +1956,40 @@ __metadata:
     react-dom: "npm:^19.2.5"
     vite: "npm:^8.0.10"
     vitest: "npm:^4.1.7"
+    xpath: "npm:*"
     zustand: "npm:^5.0.13"
   languageName: unknown
   linkType: soft
 
-"@grimoire/talisman@workspace:packages/talisman":
+"@grimoire/talisman@workspace:*, @grimoire/talisman@workspace:packages/talisman":
   version: 0.0.0-use.local
   resolution: "@grimoire/talisman@workspace:packages/talisman"
   dependencies:
     "@grimoire/rune": "workspace:*"
-    "@noble/ciphers": "npm:^2.2.0"
-    "@noble/hashes": "npm:^2.2.0"
+    "@noble/ciphers": "npm:*"
+    "@noble/hashes": "npm:*"
     "@types/node": "npm:^25.9.1"
     "@vitest/coverage-v8": "npm:^4.1.7"
-    "@xmldom/xmldom": "npm:^0.9.10"
+    "@xmldom/xmldom": "npm:*"
     tsup: "npm:^8.5.1"
     tsx: "npm:^4.22.3"
     typescript: "npm:^5.0.0"
     vitest: "npm:^4.1.7"
-    xpath: "npm:^0.0.34"
+    xpath: "npm:*"
+  peerDependencies:
+    "@noble/ciphers": ^2.2.0
+    "@noble/hashes": ^2.2.0
+    "@xmldom/xmldom": ^0.9.10
+    xpath: ^0.0.34
+  peerDependenciesMeta:
+    "@noble/ciphers":
+      optional: true
+    "@noble/hashes":
+      optional: true
+    "@xmldom/xmldom":
+      optional: true
+    xpath:
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -2164,14 +2188,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/ciphers@npm:^2.2.0":
+"@noble/ciphers@npm:*":
   version: 2.2.0
   resolution: "@noble/ciphers@npm:2.2.0"
   checksum: 10c0/56396fa9b2cd7863999d9d70c6cbfcc03db9644cbbac9bb9d383d18f701bee3eb09f36878d8252a763c8d1fb6f0807339e06e2d28f18b14c525133c57c14508d
   languageName: node
   linkType: hard
 
-"@noble/hashes@npm:^2.2.0":
+"@noble/hashes@npm:*":
   version: 2.2.0
   resolution: "@noble/hashes@npm:2.2.0"
   checksum: 10c0/cad8630c504d6b9271984f685cd0af9101b40988fc2dfbe17ccdf068a9941f95cc5c9957d89e9ca4b7ca94c15cb35f93510c5d53a09fbcc83ee503b93d0a1034
@@ -3100,6 +3124,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@shopify/react-native-skia@npm:*":
+  version: 2.6.4
+  resolution: "@shopify/react-native-skia@npm:2.6.4"
+  dependencies:
+    canvaskit-wasm: "npm:0.41.0"
+    react-native-skia-android: "npm:147.1.0"
+    react-native-skia-apple-ios: "npm:147.1.0"
+    react-native-skia-apple-macos: "npm:147.1.0"
+    react-native-skia-apple-tvos: "npm:147.1.0"
+    react-reconciler: "npm:0.31.0"
+  peerDependencies:
+    react: ">=19.0"
+    react-native: ">=0.78"
+    react-native-reanimated: ">=3.19.1"
+  peerDependenciesMeta:
+    react-native:
+      optional: true
+    react-native-reanimated:
+      optional: true
+  bin:
+    install-skia: scripts/install-libs.js
+    setup-skia-web: scripts/setup-canvaskit.js
+  checksum: 10c0/0503b6511409a3d672afbd2f4a9c56ee4523771de06907a3751d9de8588d523b035dec3d6a0cd3316c95cfdf974fb2b58fc86db05d73dbf16698567edc8dc424
+  languageName: node
+  linkType: hard
+
 "@shopify/react-native-skia@npm:2.6.2":
   version: 2.6.2
   resolution: "@shopify/react-native-skia@npm:2.6.2"
@@ -3499,17 +3549,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@xmldom/xmldom@npm:*, @xmldom/xmldom@npm:^0.9.10":
+  version: 0.9.10
+  resolution: "@xmldom/xmldom@npm:0.9.10"
+  checksum: 10c0/38a9c9b95450d7fccebc61371c8e0b90ceaae992886484108333d29ccbd2640e3555b6af012f15ce1beb5067aeb40486659b6183fad38af179e82d28028bfc5d
+  languageName: node
+  linkType: hard
+
 "@xmldom/xmldom@npm:^0.8.8":
   version: 0.8.13
   resolution: "@xmldom/xmldom@npm:0.8.13"
   checksum: 10c0/06405ee6fffba631abf715a305ace338420ebcea8baf1317f19f2752f5c505952b7df45159908e7be8451a42faa54326b780616ab4d08242b20477b2973da24b
-  languageName: node
-  linkType: hard
-
-"@xmldom/xmldom@npm:^0.9.10":
-  version: 0.9.10
-  resolution: "@xmldom/xmldom@npm:0.9.10"
-  checksum: 10c0/38a9c9b95450d7fccebc61371c8e0b90ceaae992886484108333d29ccbd2640e3555b6af012f15ce1beb5067aeb40486659b6183fad38af179e82d28028bfc5d
   languageName: node
   linkType: hard
 
@@ -7407,6 +7457,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-reanimated@npm:*":
+  version: 4.4.0
+  resolution: "react-native-reanimated@npm:4.4.0"
+  dependencies:
+    react-native-is-edge-to-edge: "npm:^1.3.1"
+    semver: "npm:^7.7.3"
+  peerDependencies:
+    react: "*"
+    react-native: 0.83 - 0.86
+    react-native-worklets: 0.9.x
+  checksum: 10c0/6a7ac5b9349d1313f16c2ac514993cf5b113c8e76a2463636112673daf648aaa902d601fff7358bf87fff0dcc707e956b600e5ff9d5fc64e7d703726933df608
+  languageName: node
+  linkType: hard
+
 "react-native-reanimated@npm:^4.2.0":
   version: 4.3.1
   resolution: "react-native-reanimated@npm:4.3.1"
@@ -7515,7 +7579,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native@npm:^0.85.3":
+"react-native@npm:*, react-native@npm:^0.85.3":
   version: 0.85.3
   resolution: "react-native@npm:0.85.3"
   dependencies:
@@ -7635,17 +7699,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react@npm:*, react@npm:^19.2.5":
+  version: 19.2.6
+  resolution: "react@npm:19.2.6"
+  checksum: 10c0/66afde33b9a9ee87b1e1cae39d8e7e040d1262e719524fd70660c4d4ce79929c532ac19fc3df5a911edaf02768fdf2c49de4ede1ba99bc6aad72796e0e26e798
+  languageName: node
+  linkType: hard
+
 "react@npm:19.2.3":
   version: 19.2.3
   resolution: "react@npm:19.2.3"
   checksum: 10c0/094220b3ba3a76c1b668f972ace1dd15509b157aead1b40391d1c8e657e720c201d9719537375eff08f5e0514748c0319063392a6f000e31303aafc4471f1436
-  languageName: node
-  linkType: hard
-
-"react@npm:^19.2.5":
-  version: 19.2.6
-  resolution: "react@npm:19.2.6"
-  checksum: 10c0/66afde33b9a9ee87b1e1cae39d8e7e040d1262e719524fd70660c4d4ce79929c532ac19fc3df5a911edaf02768fdf2c49de4ede1ba99bc6aad72796e0e26e798
   languageName: node
   linkType: hard
 
@@ -9119,7 +9183,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xpath@npm:^0.0.34":
+"xpath@npm:*":
   version: 0.0.34
   resolution: "xpath@npm:0.0.34"
   checksum: 10c0/88335108884ca164421f7fed048ef1a18ab3f7b1ae446b627fd3f51fc2396dcce798601c5e426de3bbd55d5940b84cf2326c75cd76620c1b49491283b85de17a
