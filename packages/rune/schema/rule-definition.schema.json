@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/muedsa/grimoire/tree/main/packages/rune/schema/rule-definition.schema.json",
+  "$id": "https://raw.githubusercontent.com/muedsa/grimoire/refs/heads/main/packages/rune/schema/rule-definition.schema.json",
   "title": "RuleDefinition",
   "description": "@grimoire/rune 规则引擎的 JSON Schema，用于校验规则定义文件的结构正确性",
   "definitions": {
