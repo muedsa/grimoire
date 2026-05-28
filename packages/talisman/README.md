@@ -297,13 +297,18 @@ yarn workspace @grimoire/talisman test:coverage
 
 ## 依赖
 
-| 包 | 用途 |
-|----|------|
-| `@grimoire/rune` | `CustomFunction`、`AllowedValue` 类型 |
-| `@noble/hashes` | 哈希、HMAC |
-| `@noble/ciphers` | AES 加解密 |
-| `@xmldom/xmldom` | HTML 解析 |
-| `xpath` | XPath 查询 |
+| 包 | 用途 | 必选 |
+|----|------|------|
+| `@grimoire/rune` | `CustomFunction`、`AllowedValue` 类型 | 是 |
+| `@noble/hashes` | 哈希、HMAC（crypto 模块） | 否（可选 peer） |
+| `@noble/ciphers` | AES 加解密（crypto 模块） | 否（可选 peer） |
+| `@xmldom/xmldom` | HTML 解析（html 模块） | 否（可选 peer） |
+| `xpath` | XPath 查询（html 模块） | 否（可选 peer） |
+
+> 第三方依赖均为可选的 peerDependencies，按需安装：
+> - 仅用 `encoding` 模块 → 无需安装额外依赖
+> - 使用 `crypto` 模块 → `yarn add @noble/hashes @noble/ciphers`
+> - 使用 `html` 模块 → `yarn add @xmldom/xmldom xpath`
 
 ## License
 

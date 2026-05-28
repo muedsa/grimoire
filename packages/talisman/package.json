@@ -24,11 +24,27 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@grimoire/rune": "workspace:*",
+    "@grimoire/rune": "workspace:*"
+  },
+  "peerDependencies": {
     "@noble/ciphers": "^2.2.0",
     "@noble/hashes": "^2.2.0",
     "@xmldom/xmldom": "^0.9.10",
     "xpath": "^0.0.34"
+  },
+  "peerDependenciesMeta": {
+    "@noble/ciphers": {
+      "optional": true
+    },
+    "@noble/hashes": {
+      "optional": true
+    },
+    "@xmldom/xmldom": {
+      "optional": true
+    },
+    "xpath": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/node": "^25.9.1",
