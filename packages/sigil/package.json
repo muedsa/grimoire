@@ -12,10 +12,15 @@
   },
   "dependencies": {
     "@grimoire/rune": "workspace:*",
+    "@grimoire/talisman": "workspace:*",
+    "@noble/ciphers": "*",
+    "@noble/hashes": "*",
+    "@xmldom/xmldom": "*",
     "@xyflow/react": "^12.10.2",
     "lucide-react": "^1.14.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
+    "xpath": "*",
     "zustand": "^5.0.13"
   },
   "devDependencies": {

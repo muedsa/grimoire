@@ -7,6 +7,11 @@ import {
 } from "@grimoire/rune";
 import type { LoopFrame } from "@grimoire/rune";
 import {
+  encodingFunctions,
+  cryptoFunctions,
+  htmlFunctions,
+} from "@grimoire/talisman";
+import {
   FlowDebugger,
   ExecutionLogEntry,
   DebuggerState,
@@ -72,7 +77,14 @@ export const useDebugStore = create<DebugStore>((set, get) => ({
       isOpenLogPanel: false,
     });
 
-    const engine = new RuleEngine({ logger: new ConsoleLogger() });
+    const engine = new RuleEngine({
+      logger: new ConsoleLogger(),
+      functions: {
+        ...encodingFunctions,
+        ...cryptoFunctions,
+        ...htmlFunctions,
+      },
+    });
     const dbg = new FlowDebugger(engine);
     set({ debugger: dbg });
 
