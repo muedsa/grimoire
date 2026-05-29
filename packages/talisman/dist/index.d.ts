@@ -1,11 +1,22 @@
 import { AllowedValue, CustomFunction } from '@grimoire/rune';
 
 /**
- * 将 HTML 字符串解析为 Document 对象
- * 作为 rune 表达式自定义函数，签名符合 CustomFunction 类型
+ * 将 XML/XHTML 字符串解析为 W3C Document 对象（使用 @xmldom/xmldom）
+ * 配合 xpath_select / xpath_select1 使用
+ *
+ * @param args - 可变参数，第一个参数应为 XML 字符串
+ * @returns 解析后的 W3C Document 对象，解析失败或输入非法时返回 null
+ */
+declare function xml_parse(...args: AllowedValue[]): AllowedValue;
+/**
+ * 将 HTML 字符串解析为 domhandler Document 对象（使用 htmlparser2）
+ * 配合 css_select / css_select1 使用
+ *
+ * htmlparser2 的 HTML 解析器容错性远优于 @xmldom/xmldom，能正确解析
+ * 不规则的真实世界 HTML（如未闭合标签、可选标签省略等）
  *
  * @param args - 可变参数，第一个参数应为 HTML 字符串
- * @returns 解析后的 Document 对象，解析失败或输入非法时返回 null
+ * @returns 解析后的 domhandler Document 对象，解析失败或输入非法时返回 null
  */
 declare function html_parse(...args: AllowedValue[]): AllowedValue;
 
@@ -35,11 +46,30 @@ declare function xpath_select(...args: AllowedValue[]): AllowedValue;
 declare function xpath_select1(...args: AllowedValue[]): AllowedValue;
 
 /**
- * HTML/XPath 模块自定义函数集合
- * 注入 rune 引擎使用：
- *   new RuleEngine(rule, { functions: htmlFunctions })
+ * 使用 CSS 选择器查询 domhandler Document，返回所有匹配的元素数组
+ *
+ * 对应 xpath_select，但接受 htmlparser2 解析产物而非 xmldom Document
+ *
+ * @param args - 可变参数，args[0] 为 htmlparser2 解析的 Document，args[1] 为 CSS 选择器字符串
+ * @returns 匹配的 Element 数组，输入非法或选择器有误时返回 null
  */
-declare const htmlFunctions: Record<string, CustomFunction>;
+declare function css_select(...args: AllowedValue[]): AllowedValue;
+/**
+ * 使用 CSS 选择器查询 domhandler Document，只返回第一个匹配元素
+ *
+ * 对应 xpath_select1，但接受 htmlparser2 解析产物而非 xmldom Document
+ *
+ * @param args - 可变参数，args[0] 为 htmlparser2 解析的 Document，args[1] 为 CSS 选择器字符串
+ * @returns 第一个匹配的 Element，无匹配时返回 null，输入非法返回 null
+ */
+declare function css_select1(...args: AllowedValue[]): AllowedValue;
+
+/**
+ * DOM 解析/查询模块自定义函数集合
+ * 注入 rune 引擎使用：
+ *   new RuleEngine(rule, { functions: domFunctions })
+ */
+declare const domFunctions: Record<string, CustomFunction>;
 
 /**
  * encoding 模块 — 字符串与 bytes 之间的编码转换 + URI 编解码 + HTML 实体编解码
@@ -180,4 +210,4 @@ declare function aes_decrypt(...args: AllowedValue[]): AllowedValue;
 /** crypto 模块自定义函数集合 */
 declare const cryptoFunctions: Record<string, CustomFunction>;
 
-export { aes_decrypt, aes_encrypt, cryptoFunctions, decode, decodeUri as decode_uri, decodeUriComponent as decode_uri_component, encode, encodeUri as encode_uri, encodeUriComponent as encode_uri_component, encodingFunctions, hash, hmac, htmlFunctions, htmlEntityDecode as html_entity_decode, htmlEntityEncode as html_entity_encode, html_parse, xpath_select, xpath_select1 };
+export { aes_decrypt, aes_encrypt, cryptoFunctions, css_select, css_select1, decode, decodeUri as decode_uri, decodeUriComponent as decode_uri_component, domFunctions, encode, encodeUri as encode_uri, encodeUriComponent as encode_uri_component, encodingFunctions, hash, hmac, htmlEntityDecode as html_entity_decode, htmlEntityEncode as html_entity_encode, html_parse, xml_parse, xpath_select, xpath_select1 };

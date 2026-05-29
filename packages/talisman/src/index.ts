@@ -3,8 +3,16 @@
  * rune 辅助工具库 — 提供自定义函数和自定义节点，供 sigil 和 grimoire 使用
  */
 
-// HTML/XPath 模块
-export { htmlFunctions, html_parse, xpath_select, xpath_select1 } from "./html";
+// DOM 解析/查询模块
+export {
+  domFunctions,
+  xml_parse,
+  html_parse,
+  xpath_select,
+  xpath_select1,
+  css_select,
+  css_select1,
+} from "./dom";
 
 // encoding 模块
 export {

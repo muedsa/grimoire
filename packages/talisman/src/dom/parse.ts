@@ -1,4 +1,5 @@
 import { DOMParser } from "@xmldom/xmldom";
+import { parseDocument } from "htmlparser2";
 import type { AllowedValue } from "@grimoire/rune";
 
 /**
@@ -36,21 +37,41 @@ function stripNamespaces(node: object): void {
 }
 
 /**
- * 将 HTML 字符串解析为 Document 对象
- * 作为 rune 表达式自定义函数，签名符合 CustomFunction 类型
+ * 将 XML/XHTML 字符串解析为 W3C Document 对象（使用 @xmldom/xmldom）
+ * 配合 xpath_select / xpath_select1 使用
+ *
+ * @param args - 可变参数，第一个参数应为 XML 字符串
+ * @returns 解析后的 W3C Document 对象，解析失败或输入非法时返回 null
+ */
+export function xml_parse(...args: AllowedValue[]): AllowedValue {
+  const xml = args[0];
+  if (typeof xml !== "string") return null;
+  try {
+    // DOMParser 的 HTML 解析器是容错的，不会因格式问题抛异常；try-catch 仅防护构造函数级别的严重异常
+    const doc = new DOMParser().parseFromString(xml, "text/html");
+    // 解析后立即移除 XHTML 命名空间，使 Document 在后续 xpath 查询中可直接使用
+    stripNamespaces(doc);
+    return doc as unknown as AllowedValue;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 将 HTML 字符串解析为 domhandler Document 对象（使用 htmlparser2）
+ * 配合 css_select / css_select1 使用
+ *
+ * htmlparser2 的 HTML 解析器容错性远优于 @xmldom/xmldom，能正确解析
+ * 不规则的真实世界 HTML（如未闭合标签、可选标签省略等）
  *
  * @param args - 可变参数，第一个参数应为 HTML 字符串
- * @returns 解析后的 Document 对象，解析失败或输入非法时返回 null
+ * @returns 解析后的 domhandler Document 对象，解析失败或输入非法时返回 null
  */
 export function html_parse(...args: AllowedValue[]): AllowedValue {
   const html = args[0];
   if (typeof html !== "string") return null;
   try {
-    // DOMParser 的 HTML 解析器是容错的，不会因格式问题抛异常；try-catch 仅防护构造函数级别的严重异常
-    // Document 类型不在 AllowedValue 编译期联合类型中，但运行时 rune 引擎可接受
-    const doc = new DOMParser().parseFromString(html, "text/html");
-    // 解析后立即移除 XHTML 命名空间，使 Document 在后续 xpath 查询中可直接使用
-    stripNamespaces(doc);
+    const doc = parseDocument(html);
     return doc as unknown as AllowedValue;
   } catch {
     return null;

@@ -1,13 +1,13 @@
 # @grimoire/talisman
 
-[@grimoire/rune](./../rune) 辅助工具库 — 为规则引擎提供编码转换、加解密、HTML/XPath 解析等自定义表达式函数，供 **sigil** 与 **grimoire** 等媒体提供者规则使用。
+[@grimoire/rune](./../rune) 辅助工具库 — 为规则引擎提供编码转换、加解密、DOM 解析/查询等自定义表达式函数，供 **sigil** 与 **grimoire** 等媒体提供者规则使用。
 
 ## 特性
 
 - **与 rune 无缝集成**：所有函数均实现 `CustomFunction` 接口，可按模块批量注入 `RuleEngine`
 - **环境无关**：纯 TypeScript 实现，基于 `@noble/hashes` / `@noble/ciphers`，支持 Node.js、浏览器、React Native
 - **fail-fast**：参数类型或格式错误时抛出明确异常，便于在规则加载/调试阶段发现问题
-- **三模块划分**：`encoding`、`crypto`、`html`，可按需单独或组合引入
+- **三模块划分**：`encoding`、`crypto`、`dom`，可按需单独或组合引入
 
 ## 快速开始
 
@@ -18,14 +18,14 @@ import { RuleEngine } from "@grimoire/rune";
 import {
   encodingFunctions,
   cryptoFunctions,
-  htmlFunctions,
+  domFunctions,
 } from "@grimoire/talisman";
 
 const engine = new RuleEngine({
   functions: {
     ...encodingFunctions,
     ...cryptoFunctions,
-    ...htmlFunctions,
+    ...domFunctions,
   },
 });
 
@@ -59,14 +59,19 @@ const result = await engine.execute(rule);
 | -------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | encoding | `encodingFunctions` | `decode`, `encode`, `encode_uri_component`, `decode_uri_component`, `encode_uri`, `decode_uri`, `html_entity_decode`, `html_entity_encode` |
 | crypto   | `cryptoFunctions`   | `hash`, `hmac`, `aes_encrypt`, `aes_decrypt`                                                                                               |
-| html     | `htmlFunctions`     | `html_parse`, `xpath_select`, `xpath_select1`                                                                                              |
+| dom      | `domFunctions`      | `xml_parse`, `html_parse`, `xpath_select`, `xpath_select1`, `css_select`, `css_select1`                                                    |
 
 也可按需单独导入函数或集合：
 
 ```typescript
 import { decode, encode } from "@grimoire/talisman";
 import { hash, aes_encrypt } from "@grimoire/talisman";
-import { html_parse, xpath_select } from "@grimoire/talisman";
+import {
+  xml_parse,
+  html_parse,
+  xpath_select,
+  css_select,
+} from "@grimoire/talisman";
 ```
 
 ---
@@ -286,30 +291,39 @@ AES 对称解密，参数与 `aes_encrypt` 一致。
 
 ---
 
-## html 模块
+## dom 模块
 
-解析 HTML 并通过 XPath 提取内容，适用于从网页/HTML 片段中抓取结构化数据。
+提供 **两条独立轨道** 用于 HTML/XML 解析与查询：
 
-### html_parse(html)
+| 轨道 | 解析函数     | 解析库           | 产出类型              | 查询方法                         | 查询库       | 适用场景               |
+| ---- | ------------ | ---------------- | --------------------- | -------------------------------- | ------------ | ---------------------- |
+| XML  | `xml_parse`  | `@xmldom/xmldom` | W3C `Document`        | `xpath_select` / `xpath_select1` | `xpath`      | 严格 XML/XHTML + XPath |
+| HTML | `html_parse` | `htmlparser2`    | domhandler `Document` | `css_select` / `css_select1`     | `css-select` | 容错 HTML + CSS 选择器 |
 
-将 HTML 字符串解析为 DOM `Document` 对象。
+两条轨道的解析产物互不交叉 — 请使用 `xml_parse` 配合 xpath 方法，`html_parse` 配合 css 方法。
 
-| 参数   | 类型     | 说明      |
-| ------ | -------- | --------- |
-| `html` | `string` | HTML 源码 |
+### XML 轨道（xml_parse + xpath）
 
-**返回值**：`Document`；参数非字符串或解析失败时返回 `null`
+#### xml_parse(xml)
+
+将 XML/XHTML 字符串解析为 W3C `Document` 对象。
+
+| 参数  | 类型     | 说明          |
+| ----- | -------- | ------------- |
+| `xml` | `string` | XML/HTML 源码 |
+
+**返回值**：W3C `Document`；参数非字符串或解析失败时返回 `null`
 
 > 内部使用 `@xmldom/xmldom` 解析，并自动剥离 XHTML 命名空间，以便后续 XPath 能匹配无命名空间前缀的标签名。
 
-### xpath_select(doc, expr)
+#### xpath_select(doc, expr)
 
 执行 XPath 查询，返回全部匹配结果。
 
-| 参数   | 类型       | 说明                  |
-| ------ | ---------- | --------------------- |
-| `doc`  | `Document` | `html_parse` 的返回值 |
-| `expr` | `string`   | XPath 表达式          |
+| 参数   | 类型       | 说明                 |
+| ------ | ---------- | -------------------- |
+| `doc`  | `Document` | `xml_parse` 的返回值 |
+| `expr` | `string`   | XPath 表达式         |
 
 **返回值**（由表达式类型决定）：
 
@@ -322,11 +336,47 @@ AES 对称解密，参数与 `aes_encrypt` 一致。
 
 输入非法或表达式错误时返回 `null`。
 
-### xpath_select1(doc, expr)
+#### xpath_select1(doc, expr)
 
 与 `xpath_select` 类似，但只返回第一个匹配项；无匹配时返回 `undefined`（区别于 `xpath_select` 的空数组）。
 
-**规则示例**：
+### HTML 轨道（html_parse + css-select）
+
+#### html_parse(html)
+
+将 HTML 字符串解析为 domhandler `Document` 对象（基于 `htmlparser2`）。
+
+| 参数   | 类型     | 说明      |
+| ------ | -------- | --------- |
+| `html` | `string` | HTML 源码 |
+
+**返回值**：domhandler `Document`；参数非字符串或解析失败时返回 `null`
+
+> `htmlparser2` 对不规则 HTML 具有极强容错性，能正确处理未闭合标签、可选标签省略等真实世界 HTML，远优于 `@xmldom/xmldom`。
+
+#### css_select(doc, selector)
+
+使用 CSS 选择器查询，返回所有匹配的元素数组。
+
+| 参数       | 类型       | 说明                  |
+| ---------- | ---------- | --------------------- |
+| `doc`      | `Document` | `html_parse` 的返回值 |
+| `selector` | `string`   | CSS 选择器字符串      |
+
+**返回值**：匹配的 `Element[]`；无匹配返回 `[]`；输入非法或选择器错误返回 `null`
+
+#### css_select1(doc, selector)
+
+与 `css_select` 类似，但只返回第一个匹配元素；无匹配时返回 `null`。
+
+| 参数       | 类型       | 说明                  |
+| ---------- | ---------- | --------------------- |
+| `doc`      | `Document` | `html_parse` 的返回值 |
+| `selector` | `string`   | CSS 选择器字符串      |
+
+**返回值**：匹配的 `Element`；无匹配返回 `null`；输入非法或选择器错误返回 `null`
+
+**规则示例（XML 轨道）**：
 
 ```json
 {
@@ -340,12 +390,43 @@ AES 对称解密，参数与 `aes_encrypt` 一致。
       {
         "type": "set",
         "variable": "doc",
-        "value": "${html_parse(data.html)}"
+        "value": "${xml_parse(data.html)}"
       },
       {
         "type": "set",
         "variable": "result.title",
         "value": "${xpath_select1(doc, \"string(//h1)\")}"
+      }
+    ]
+  }
+}
+```
+
+**规则示例（HTML 轨道）**：
+
+```json
+{
+  "variables": {
+    "data": {
+      "html": "<div class=\"main\"><h1>标题</h1><a href=\"/p1\">链接</a></div>"
+    }
+  },
+  "nodes": {
+    "main": [
+      {
+        "type": "set",
+        "variable": "doc",
+        "value": "${html_parse(data.html)}"
+      },
+      {
+        "type": "set",
+        "variable": "result.title",
+        "value": "${css_select1(doc, \"h1\")}"
+      },
+      {
+        "type": "set",
+        "variable": "result.links",
+        "value": "${css_select(doc, \"a[href]\")}"
       }
     ]
   }
@@ -363,14 +444,14 @@ import { RuleEngine } from "@grimoire/rune";
 import {
   encodingFunctions,
   cryptoFunctions,
-  htmlFunctions,
+  domFunctions,
 } from "@grimoire/talisman";
 
 // 仅注册部分模块
 const engine = new RuleEngine({
   functions: {
     ...encodingFunctions,
-    ...htmlFunctions,
+    ...domFunctions,
   },
 });
 ```
@@ -383,7 +464,7 @@ const engine = new RuleEngine({
 
 encoding 与 crypto 模块采用 **fail-fast** 策略：参数类型错误抛出 `TypeError`，格式/算法/长度不合法抛出 `Error`。
 
-html 模块采用 **容错** 策略：`html_parse` / `xpath_*` 在输入非法或 XPath 错误时返回 `null`（`xpath_select1` 无匹配返回 `undefined`），避免单条抓取规则导致整段流程失败。
+dom 模块采用 **容错** 策略：`xml_parse` / `html_parse` / `xpath_*` / `css_*` 在输入非法或解析/查询错误时返回 `null`（`xpath_select1` 无匹配返回 `undefined`，`css_select` 无匹配返回 `[]`，`css_select1` 无匹配返回 `null`），避免单条抓取规则导致整段流程失败。
 
 ---
 
@@ -408,19 +489,22 @@ yarn workspace @grimoire/talisman test:coverage
 
 ## 依赖
 
-| 包               | 用途                                  | 必选            |
-| ---------------- | ------------------------------------- | --------------- |
-| `@grimoire/rune` | `CustomFunction`、`AllowedValue` 类型 | 是              |
-| `@noble/hashes`  | 哈希、HMAC（crypto 模块）             | 否（可选 peer） |
-| `@noble/ciphers` | AES 加解密（crypto 模块）             | 否（可选 peer） |
-| `@xmldom/xmldom` | HTML 解析（html 模块）                | 否（可选 peer） |
-| `xpath`          | XPath 查询（html 模块）               | 否（可选 peer） |
+| 包               | 用途                                   | 必选            |
+| ---------------- | -------------------------------------- | --------------- |
+| `@grimoire/rune` | `CustomFunction`、`AllowedValue` 类型  | 是              |
+| `@noble/hashes`  | 哈希、HMAC（crypto 模块）              | 否（可选 peer） |
+| `@noble/ciphers` | AES 加解密（crypto 模块）              | 否（可选 peer） |
+| `@xmldom/xmldom` | XML 解析（dom 模块 — XML 轨道）        | 否（可选 peer） |
+| `xpath`          | XPath 查询（dom 模块 — XML 轨道）      | 否（可选 peer） |
+| `htmlparser2`    | HTML 解析（dom 模块 — HTML 轨道）      | 否（可选 peer） |
+| `css-select`     | CSS 选择器查询（dom 模块 — HTML 轨道） | 否（可选 peer） |
 
 > 第三方依赖均为可选的 peerDependencies，按需安装：
 >
 > - 仅用 `encoding` 模块 → 无需安装额外依赖
 > - 使用 `crypto` 模块 → `yarn add @noble/hashes @noble/ciphers`
-> - 使用 `html` 模块 → `yarn add @xmldom/xmldom xpath`
+> - 使用 `dom` 模块（XML 轨道）→ `yarn add @xmldom/xmldom xpath`
+> - 使用 `dom` 模块（HTML 轨道）→ `yarn add htmlparser2 css-select`
 
 ## License
 

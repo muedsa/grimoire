@@ -33,26 +33,30 @@ __export(index_exports, {
   aes_decrypt: () => aes_decrypt,
   aes_encrypt: () => aes_encrypt,
   cryptoFunctions: () => cryptoFunctions,
+  css_select: () => css_select,
+  css_select1: () => css_select1,
   decode: () => decode2,
   decode_uri: () => decodeUri,
   decode_uri_component: () => decodeUriComponent,
+  domFunctions: () => domFunctions,
   encode: () => encode2,
   encode_uri: () => encodeUri,
   encode_uri_component: () => encodeUriComponent,
   encodingFunctions: () => encodingFunctions,
   hash: () => hash,
   hmac: () => hmac,
-  htmlFunctions: () => htmlFunctions,
   html_entity_decode: () => htmlEntityDecode,
   html_entity_encode: () => htmlEntityEncode,
   html_parse: () => html_parse,
+  xml_parse: () => xml_parse,
   xpath_select: () => xpath_select,
   xpath_select1: () => xpath_select1
 });
 module.exports = __toCommonJS(index_exports);
 
-// src/html/parse.ts
+// src/dom/parse.ts
 var import_xmldom = require("@xmldom/xmldom");
+var import_htmlparser2 = require("htmlparser2");
 function stripNamespaces(node) {
   if ("namespaceURI" in node && node.namespaceURI) {
     node.namespaceURI = null;
@@ -74,19 +78,29 @@ function stripNamespaces(node) {
     }
   }
 }
-function html_parse(...args) {
-  const html = args[0];
-  if (typeof html !== "string") return null;
+function xml_parse(...args) {
+  const xml = args[0];
+  if (typeof xml !== "string") return null;
   try {
-    const doc = new import_xmldom.DOMParser().parseFromString(html, "text/html");
+    const doc = new import_xmldom.DOMParser().parseFromString(xml, "text/html");
     stripNamespaces(doc);
     return doc;
   } catch {
     return null;
   }
 }
+function html_parse(...args) {
+  const html = args[0];
+  if (typeof html !== "string") return null;
+  try {
+    const doc = (0, import_htmlparser2.parseDocument)(html);
+    return doc;
+  } catch {
+    return null;
+  }
+}
 
-// src/html/xpath.ts
+// src/dom/xpath.ts
 var import_xpath = __toESM(require("xpath"));
 function isDocument(val) {
   return val != null && typeof val === "object" && typeof val.documentElement !== "undefined";
@@ -114,11 +128,46 @@ function xpath_select1(...args) {
   }
 }
 
-// src/html/index.ts
-var htmlFunctions = {
+// src/dom/css.ts
+var import_css_select = require("css-select");
+function isDomHandlerNode(val) {
+  return val != null && typeof val === "object" && "type" in val && "children" in val && Array.isArray(val.children);
+}
+function css_select(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  try {
+    return (0, import_css_select.selectAll)(
+      selector,
+      doc
+    );
+  } catch {
+    return null;
+  }
+}
+function css_select1(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  try {
+    const result = (0, import_css_select.selectOne)(selector, doc);
+    return result ?? null;
+  } catch {
+    return null;
+  }
+}
+
+// src/dom/index.ts
+var domFunctions = {
+  xml_parse,
   html_parse,
   xpath_select,
-  xpath_select1
+  xpath_select1,
+  css_select,
+  css_select1
 };
 
 // src/encoding/index.ts
@@ -635,19 +684,22 @@ var cryptoFunctions = {
   aes_decrypt,
   aes_encrypt,
   cryptoFunctions,
+  css_select,
+  css_select1,
   decode,
   decode_uri,
   decode_uri_component,
+  domFunctions,
   encode,
   encode_uri,
   encode_uri_component,
   encodingFunctions,
   hash,
   hmac,
-  htmlFunctions,
   html_entity_decode,
   html_entity_encode,
   html_parse,
+  xml_parse,
   xpath_select,
   xpath_select1
 });

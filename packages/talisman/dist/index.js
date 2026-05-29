@@ -1,5 +1,6 @@
-// src/html/parse.ts
+// src/dom/parse.ts
 import { DOMParser } from "@xmldom/xmldom";
+import { parseDocument } from "htmlparser2";
 function stripNamespaces(node) {
   if ("namespaceURI" in node && node.namespaceURI) {
     node.namespaceURI = null;
@@ -21,19 +22,29 @@ function stripNamespaces(node) {
     }
   }
 }
-function html_parse(...args) {
-  const html = args[0];
-  if (typeof html !== "string") return null;
+function xml_parse(...args) {
+  const xml = args[0];
+  if (typeof xml !== "string") return null;
   try {
-    const doc = new DOMParser().parseFromString(html, "text/html");
+    const doc = new DOMParser().parseFromString(xml, "text/html");
     stripNamespaces(doc);
     return doc;
   } catch {
     return null;
   }
 }
+function html_parse(...args) {
+  const html = args[0];
+  if (typeof html !== "string") return null;
+  try {
+    const doc = parseDocument(html);
+    return doc;
+  } catch {
+    return null;
+  }
+}
 
-// src/html/xpath.ts
+// src/dom/xpath.ts
 import xpath from "xpath";
 function isDocument(val) {
   return val != null && typeof val === "object" && typeof val.documentElement !== "undefined";
@@ -61,11 +72,46 @@ function xpath_select1(...args) {
   }
 }
 
-// src/html/index.ts
-var htmlFunctions = {
+// src/dom/css.ts
+import { selectAll, selectOne } from "css-select";
+function isDomHandlerNode(val) {
+  return val != null && typeof val === "object" && "type" in val && "children" in val && Array.isArray(val.children);
+}
+function css_select(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  try {
+    return selectAll(
+      selector,
+      doc
+    );
+  } catch {
+    return null;
+  }
+}
+function css_select1(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  try {
+    const result = selectOne(selector, doc);
+    return result ?? null;
+  } catch {
+    return null;
+  }
+}
+
+// src/dom/index.ts
+var domFunctions = {
+  xml_parse,
   html_parse,
   xpath_select,
-  xpath_select1
+  xpath_select1,
+  css_select,
+  css_select1
 };
 
 // src/encoding/index.ts
@@ -581,19 +627,22 @@ export {
   aes_decrypt,
   aes_encrypt,
   cryptoFunctions,
+  css_select,
+  css_select1,
   decode2 as decode,
   decodeUri as decode_uri,
   decodeUriComponent as decode_uri_component,
+  domFunctions,
   encode2 as encode,
   encodeUri as encode_uri,
   encodeUriComponent as encode_uri_component,
   encodingFunctions,
   hash,
   hmac,
-  htmlFunctions,
   htmlEntityDecode as html_entity_decode,
   htmlEntityEncode as html_entity_encode,
   html_parse,
+  xml_parse,
   xpath_select,
   xpath_select1
 };

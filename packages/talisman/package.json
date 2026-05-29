@@ -30,7 +30,9 @@
     "@noble/ciphers": "^2.2.0",
     "@noble/hashes": "^2.2.0",
     "@xmldom/xmldom": "^0.9.10",
+    "css-select": "^5.1.0",
     "he": "^1.2.0",
+    "htmlparser2": "^10.0.0",
     "xpath": "^0.0.34"
   },
   "peerDependenciesMeta": {
@@ -43,7 +45,13 @@
     "@xmldom/xmldom": {
       "optional": true
     },
+    "css-select": {
+      "optional": true
+    },
     "he": {
+      "optional": true
+    },
+    "htmlparser2": {
       "optional": true
     },
     "xpath": {
@@ -57,7 +65,9 @@
     "@types/node": "^25.9.1",
     "@vitest/coverage-v8": "^4.1.7",
     "@xmldom/xmldom": "*",
+    "css-select": "*",
     "he": "*",
+    "htmlparser2": "*",
     "tsup": "^8.5.1",
     "tsx": "^4.22.3",
     "typescript": "^5.0.0",

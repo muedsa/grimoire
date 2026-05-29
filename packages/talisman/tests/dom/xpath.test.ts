@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { html_parse } from "../../src/html/parse";
-import { xpath_select, xpath_select1 } from "../../src/html/xpath";
+import { xml_parse } from "../../src/dom/parse";
+import { xpath_select, xpath_select1 } from "../../src/dom/xpath";
 
 const sampleHtml = `
 <html>
@@ -18,7 +18,7 @@ const sampleHtml = `
 </html>`;
 
 // 所有测试复用同一个 Document
-const doc = html_parse(sampleHtml);
+const doc = xml_parse(sampleHtml);
 
 describe("xpath_select", () => {
   it("按标签名选择元素 — 返回节点数组", () => {
