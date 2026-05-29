@@ -1,19 +1,22 @@
 /**
- * encoding 模块 — 字符串与 bytes 之间的编码转换 + URI 编解码
+ * encoding 模块 — 字符串与 bytes 之间的编码转换 + URI 编解码 + HTML 实体编解码
  *
  * 为 rune 规则引擎提供以下自定义函数:
- *   decode(data, from)        — 将字符串从指定编码转换为 Uint8Array
- *   encode(data, to)          — 将 Uint8Array 转换为指定编码的字符串
- *   encode_uri_component(str) — URI 组件编码（等价于 encodeURIComponent）
- *   decode_uri_component(str) — URI 组件解码（等价于 decodeURIComponent）
- *   encode_uri(str)           — URI 编码（等价于 encodeURI）
- *   decode_uri(str)           — URI 解码（等价于 decodeURI）
+ *   decode(data, from)          — 将字符串从指定编码转换为 Uint8Array
+ *   encode(data, to)            — 将 Uint8Array 转换为指定编码的字符串
+ *   encode_uri_component(str)   — URI 组件编码（等价于 encodeURIComponent）
+ *   decode_uri_component(str)   — URI 组件解码（等价于 decodeURIComponent）
+ *   encode_uri(str)             — URI 编码（等价于 encodeURI）
+ *   decode_uri(str)             — URI 解码（等价于 decodeURI）
+ *   html_entity_decode(str)     — HTML 实体解码（&#x6DE1; → 淡 等）
+ *   html_entity_encode(str)     — HTML 实体编码（淡 → &#x6DE1; 等）
  *
  * 支持的编码格式: utf8, hex, base64, base64url
  * 错误策略: fail-fast，参数类型/格式错误时抛出 TypeError/Error
  */
 
 import type { AllowedValue, CustomFunction } from "@grimoire/rune";
+import * as he from "he";
 
 // ---- 内部工具函数 ----
 
@@ -263,6 +266,32 @@ export function decodeUri(...args: AllowedValue[]): AllowedValue {
   return decodeURI(str);
 }
 
+// ---- HTML 实体编解码 ----
+
+/**
+ * HTML 实体解码 — 将 HTML 实体（&#x6DE1; / &#28129; / &amp; 等）还原为原始字符
+ * 基于 he 库，支持所有 HTML5 命名实体、十进制/十六进制数字引用
+ */
+export function htmlEntityDecode(...args: AllowedValue[]): AllowedValue {
+  const str = args[0];
+  if (typeof str !== "string") {
+    throw new TypeError("html_entity_decode: 参数必须是字符串");
+  }
+  return he.decode(str);
+}
+
+/**
+ * HTML 实体编码 — 将字符串中需要转义的字符编码为 HTML 实体
+ * 基于 he 库，默认使用十进制数字引用（&#28129; 格式）
+ */
+export function htmlEntityEncode(...args: AllowedValue[]): AllowedValue {
+  const str = args[0];
+  if (typeof str !== "string") {
+    throw new TypeError("html_entity_encode: 参数必须是字符串");
+  }
+  return he.encode(str, { useNamedReferences: true });
+}
+
 /**
  * encoding 模块自定义函数集合
  * 注入 rune 引擎: new RuleEngine(rule, { functions: { ...encodingFunctions } })
@@ -274,4 +303,6 @@ export const encodingFunctions: Record<string, CustomFunction> = {
   decode_uri_component: decodeUriComponent,
   encode_uri: encodeUri,
   decode_uri: decodeUri,
+  html_entity_decode: htmlEntityDecode,
+  html_entity_encode: htmlEntityEncode,
 };

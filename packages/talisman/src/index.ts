@@ -15,6 +15,8 @@ export {
   decodeUriComponent as decode_uri_component,
   encodeUri as encode_uri,
   decodeUri as decode_uri,
+  htmlEntityDecode as html_entity_decode,
+  htmlEntityEncode as html_entity_encode,
 } from "./encoding";
 
 // crypto 模块

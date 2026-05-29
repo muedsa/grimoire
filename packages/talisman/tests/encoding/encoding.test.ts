@@ -10,6 +10,8 @@ import {
   decodeUriComponent,
   encodeUri,
   decodeUri,
+  htmlEntityDecode,
+  htmlEntityEncode,
 } from "../../src/encoding";
 
 // ---- decode 测试 ----
@@ -315,6 +317,79 @@ describe("URI 编解码", () => {
         expect(() => fn(null as any)).toThrow(TypeError);
         expect(() => fn(undefined as any)).toThrow(TypeError);
       });
+    });
+  });
+});
+
+// ---- HTML 实体编解码测试 ----
+
+describe("HTML 实体编解码", () => {
+  describe("htmlEntityDecode", () => {
+    it("解码十六进制数字引用 &#xHHHH;", () => {
+      expect(htmlEntityDecode("&#x4F60;")).toBe("你");
+    });
+
+    it("解码十进制数字引用 &#DDDD;", () => {
+      expect(htmlEntityDecode("&#20320;")).toBe("你");
+    });
+
+    it("解码命名实体 &amp; &lt; &gt; &quot; &#39;", () => {
+      expect(htmlEntityDecode("&amp;")).toBe("&");
+      expect(htmlEntityDecode("&lt;")).toBe("<");
+      expect(htmlEntityDecode("&gt;")).toBe(">");
+      expect(htmlEntityDecode("&quot;")).toBe('"');
+      expect(htmlEntityDecode("&#39;")).toBe("'");
+    });
+
+    it("解码混合实体的字符串", () => {
+      const result = htmlEntityDecode(
+        "搜索&#x201C;&amp;&#x4F60;&#x597D;&#x201D;",
+      );
+      // &#x201C; = “（左弯引号）, &#x201D; = “（右弯引号）
+      expect(result).toBe("搜索“&你好”");
+    });
+
+    it("不含实体的字符串原样返回", () => {
+      expect(htmlEntityDecode("hello world")).toBe("hello world");
+    });
+
+    it("空字符串", () => {
+      expect(htmlEntityDecode("")).toBe("");
+    });
+  });
+
+  describe("htmlEntityEncode", () => {
+    it("编码特殊字符为命名实体", () => {
+      expect(htmlEntityEncode("<div>&</div>")).toBe(
+        "&lt;div&gt;&amp;&lt;/div&gt;",
+      );
+    });
+
+    it("编码引号", () => {
+      expect(htmlEntityEncode('"hello"')).toBe("&quot;hello&quot;");
+    });
+
+    it("往返测试", () => {
+      const original = '搜索<"你好">&copy;';
+      const encoded = htmlEntityEncode(original) as string;
+      const decoded = htmlEntityDecode(encoded);
+      expect(decoded).toBe(original);
+    });
+
+    it("空字符串", () => {
+      expect(htmlEntityEncode("")).toBe("");
+    });
+  });
+
+  describe("HTML 实体非法输入", () => {
+    it("decode 非字符串抛出 TypeError", () => {
+      expect(() => htmlEntityDecode(123 as any)).toThrow(TypeError);
+      expect(() => htmlEntityDecode(null as any)).toThrow(TypeError);
+    });
+
+    it("encode 非字符串抛出 TypeError", () => {
+      expect(() => htmlEntityEncode(123 as any)).toThrow(TypeError);
+      expect(() => htmlEntityEncode(null as any)).toThrow(TypeError);
     });
   });
 });
