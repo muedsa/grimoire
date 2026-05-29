@@ -35,10 +35,23 @@ __export(index_exports, {
   cryptoFunctions: () => cryptoFunctions,
   css_select: () => css_select,
   css_select1: () => css_select1,
+  css_select1_attr: () => css_select1_attr,
+  css_select1_html: () => css_select1_html,
+  css_select1_outer_html: () => css_select1_outer_html,
+  css_select1_text: () => css_select1_text,
+  css_select_attr: () => css_select_attr,
+  css_select_html: () => css_select_html,
+  css_select_outer_html: () => css_select_outer_html,
+  css_select_text: () => css_select_text,
   decode: () => decode2,
   decode_uri: () => decodeUri,
   decode_uri_component: () => decodeUriComponent,
   domFunctions: () => domFunctions,
+  el_attr: () => el_attr,
+  el_has_attr: () => el_has_attr,
+  el_inner_html: () => el_inner_html,
+  el_inner_text: () => el_inner_text,
+  el_outer_html: () => el_outer_html,
   encode: () => encode2,
   encode_uri: () => encodeUri,
   encode_uri_component: () => encodeUriComponent,
@@ -160,6 +173,177 @@ function css_select1(...args) {
   }
 }
 
+// src/dom/element.ts
+var import_domutils = require("domutils");
+function isDomHandlerElement(val) {
+  return val != null && typeof val === "object" && "type" in val && "name" in val && "attribs" in val;
+}
+function el_inner_text(...args) {
+  const el = args[0];
+  if (!isDomHandlerElement(el)) return null;
+  try {
+    return (0, import_domutils.getText)(el);
+  } catch {
+    return null;
+  }
+}
+function el_inner_html(...args) {
+  const el = args[0];
+  if (!isDomHandlerElement(el)) return null;
+  try {
+    return (0, import_domutils.getInnerHTML)(el);
+  } catch {
+    return null;
+  }
+}
+function el_outer_html(...args) {
+  const el = args[0];
+  if (!isDomHandlerElement(el)) return null;
+  try {
+    return (0, import_domutils.getOuterHTML)(el);
+  } catch {
+    return null;
+  }
+}
+function el_attr(...args) {
+  const el = args[0];
+  const name = args[1];
+  if (!isDomHandlerElement(el)) return null;
+  if (typeof name !== "string") return null;
+  try {
+    const val = (0, import_domutils.getAttributeValue)(el, name);
+    return val ?? null;
+  } catch {
+    return null;
+  }
+}
+function el_has_attr(...args) {
+  const el = args[0];
+  const name = args[1];
+  if (!isDomHandlerElement(el)) return null;
+  if (typeof name !== "string") return null;
+  try {
+    return (0, import_domutils.hasAttrib)(el, name);
+  } catch {
+    return null;
+  }
+}
+
+// src/dom/shortcut.ts
+var import_css_select2 = require("css-select");
+function css_select_text(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  try {
+    const els = (0, import_css_select2.selectAll)(selector, doc);
+    return els.map(
+      (el) => el_inner_text(el)
+    );
+  } catch {
+    return null;
+  }
+}
+function css_select_html(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  try {
+    const els = (0, import_css_select2.selectAll)(selector, doc);
+    return els.map(
+      (el) => el_inner_html(el)
+    );
+  } catch {
+    return null;
+  }
+}
+function css_select_outer_html(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  try {
+    const els = (0, import_css_select2.selectAll)(selector, doc);
+    return els.map(
+      (el) => el_outer_html(el)
+    );
+  } catch {
+    return null;
+  }
+}
+function css_select_attr(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  const attrName = args[2];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  if (typeof attrName !== "string") return null;
+  try {
+    const els = (0, import_css_select2.selectAll)(selector, doc);
+    return els.map(
+      (el) => el_attr(el, attrName)
+    );
+  } catch {
+    return null;
+  }
+}
+function css_select1_text(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  try {
+    const el = (0, import_css_select2.selectOne)(selector, doc);
+    if (!el) return null;
+    return el_inner_text(el);
+  } catch {
+    return null;
+  }
+}
+function css_select1_html(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  try {
+    const el = (0, import_css_select2.selectOne)(selector, doc);
+    if (!el) return null;
+    return el_inner_html(el);
+  } catch {
+    return null;
+  }
+}
+function css_select1_outer_html(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  try {
+    const el = (0, import_css_select2.selectOne)(selector, doc);
+    if (!el) return null;
+    return el_outer_html(el);
+  } catch {
+    return null;
+  }
+}
+function css_select1_attr(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  const attrName = args[2];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  if (typeof attrName !== "string") return null;
+  try {
+    const el = (0, import_css_select2.selectOne)(selector, doc);
+    if (!el) return null;
+    return el_attr(el, attrName);
+  } catch {
+    return null;
+  }
+}
+
 // src/dom/index.ts
 var domFunctions = {
   xml_parse,
@@ -167,7 +351,20 @@ var domFunctions = {
   xpath_select,
   xpath_select1,
   css_select,
-  css_select1
+  css_select1,
+  el_inner_text,
+  el_inner_html,
+  el_outer_html,
+  el_attr,
+  el_has_attr,
+  css_select_text,
+  css_select_html,
+  css_select_outer_html,
+  css_select_attr,
+  css_select1_text,
+  css_select1_html,
+  css_select1_outer_html,
+  css_select1_attr
 };
 
 // src/encoding/index.ts
@@ -686,10 +883,23 @@ var cryptoFunctions = {
   cryptoFunctions,
   css_select,
   css_select1,
+  css_select1_attr,
+  css_select1_html,
+  css_select1_outer_html,
+  css_select1_text,
+  css_select_attr,
+  css_select_html,
+  css_select_outer_html,
+  css_select_text,
   decode,
   decode_uri,
   decode_uri_component,
   domFunctions,
+  el_attr,
+  el_has_attr,
+  el_inner_html,
+  el_inner_text,
+  el_outer_html,
   encode,
   encode_uri,
   encode_uri_component,

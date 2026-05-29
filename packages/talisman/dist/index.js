@@ -104,6 +104,183 @@ function css_select1(...args) {
   }
 }
 
+// src/dom/element.ts
+import {
+  getText,
+  getInnerHTML,
+  getOuterHTML,
+  getAttributeValue,
+  hasAttrib
+} from "domutils";
+function isDomHandlerElement(val) {
+  return val != null && typeof val === "object" && "type" in val && "name" in val && "attribs" in val;
+}
+function el_inner_text(...args) {
+  const el = args[0];
+  if (!isDomHandlerElement(el)) return null;
+  try {
+    return getText(el);
+  } catch {
+    return null;
+  }
+}
+function el_inner_html(...args) {
+  const el = args[0];
+  if (!isDomHandlerElement(el)) return null;
+  try {
+    return getInnerHTML(el);
+  } catch {
+    return null;
+  }
+}
+function el_outer_html(...args) {
+  const el = args[0];
+  if (!isDomHandlerElement(el)) return null;
+  try {
+    return getOuterHTML(el);
+  } catch {
+    return null;
+  }
+}
+function el_attr(...args) {
+  const el = args[0];
+  const name = args[1];
+  if (!isDomHandlerElement(el)) return null;
+  if (typeof name !== "string") return null;
+  try {
+    const val = getAttributeValue(el, name);
+    return val ?? null;
+  } catch {
+    return null;
+  }
+}
+function el_has_attr(...args) {
+  const el = args[0];
+  const name = args[1];
+  if (!isDomHandlerElement(el)) return null;
+  if (typeof name !== "string") return null;
+  try {
+    return hasAttrib(el, name);
+  } catch {
+    return null;
+  }
+}
+
+// src/dom/shortcut.ts
+import { selectAll as selectAll2, selectOne as selectOne2 } from "css-select";
+function css_select_text(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  try {
+    const els = selectAll2(selector, doc);
+    return els.map(
+      (el) => el_inner_text(el)
+    );
+  } catch {
+    return null;
+  }
+}
+function css_select_html(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  try {
+    const els = selectAll2(selector, doc);
+    return els.map(
+      (el) => el_inner_html(el)
+    );
+  } catch {
+    return null;
+  }
+}
+function css_select_outer_html(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  try {
+    const els = selectAll2(selector, doc);
+    return els.map(
+      (el) => el_outer_html(el)
+    );
+  } catch {
+    return null;
+  }
+}
+function css_select_attr(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  const attrName = args[2];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  if (typeof attrName !== "string") return null;
+  try {
+    const els = selectAll2(selector, doc);
+    return els.map(
+      (el) => el_attr(el, attrName)
+    );
+  } catch {
+    return null;
+  }
+}
+function css_select1_text(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  try {
+    const el = selectOne2(selector, doc);
+    if (!el) return null;
+    return el_inner_text(el);
+  } catch {
+    return null;
+  }
+}
+function css_select1_html(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  try {
+    const el = selectOne2(selector, doc);
+    if (!el) return null;
+    return el_inner_html(el);
+  } catch {
+    return null;
+  }
+}
+function css_select1_outer_html(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  try {
+    const el = selectOne2(selector, doc);
+    if (!el) return null;
+    return el_outer_html(el);
+  } catch {
+    return null;
+  }
+}
+function css_select1_attr(...args) {
+  const doc = args[0];
+  const selector = args[1];
+  const attrName = args[2];
+  if (!isDomHandlerNode(doc)) return null;
+  if (typeof selector !== "string") return null;
+  if (typeof attrName !== "string") return null;
+  try {
+    const el = selectOne2(selector, doc);
+    if (!el) return null;
+    return el_attr(el, attrName);
+  } catch {
+    return null;
+  }
+}
+
 // src/dom/index.ts
 var domFunctions = {
   xml_parse,
@@ -111,7 +288,20 @@ var domFunctions = {
   xpath_select,
   xpath_select1,
   css_select,
-  css_select1
+  css_select1,
+  el_inner_text,
+  el_inner_html,
+  el_outer_html,
+  el_attr,
+  el_has_attr,
+  css_select_text,
+  css_select_html,
+  css_select_outer_html,
+  css_select_attr,
+  css_select1_text,
+  css_select1_html,
+  css_select1_outer_html,
+  css_select1_attr
 };
 
 // src/encoding/index.ts
@@ -629,10 +819,23 @@ export {
   cryptoFunctions,
   css_select,
   css_select1,
+  css_select1_attr,
+  css_select1_html,
+  css_select1_outer_html,
+  css_select1_text,
+  css_select_attr,
+  css_select_html,
+  css_select_outer_html,
+  css_select_text,
   decode2 as decode,
   decodeUri as decode_uri,
   decodeUriComponent as decode_uri_component,
   domFunctions,
+  el_attr,
+  el_has_attr,
+  el_inner_html,
+  el_inner_text,
+  el_outer_html,
   encode2 as encode,
   encodeUri as encode_uri,
   encodeUriComponent as encode_uri_component,

@@ -6,7 +6,7 @@ import type { AnyNode } from "domhandler";
  * 检查值是否为 domhandler 节点树（Document 或任意父节点）
  * 使用 duck-type 检查：domhandler 的根节点和父节点都有 type 属性和 children 数组
  */
-function isDomHandlerNode(val: unknown): boolean {
+export function isDomHandlerNode(val: unknown): boolean {
   return (
     val != null &&
     typeof val === "object" &&

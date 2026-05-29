@@ -65,6 +65,105 @@ declare function css_select(...args: AllowedValue[]): AllowedValue;
 declare function css_select1(...args: AllowedValue[]): AllowedValue;
 
 /**
+ * 提取 domhandler Element 的内部文本（递归提取所有文本节点）
+ * 底层使用 domutils 的 getText()
+ *
+ * @param args - args[0] 为 domhandler Element
+ * @returns 内部文本字符串，输入非法时返回 null
+ */
+declare function el_inner_text(...args: AllowedValue[]): AllowedValue;
+/**
+ * 提取 domhandler Element 的 innerHTML 字符串
+ * 底层使用 domutils 的 getInnerHTML()
+ *
+ * @param args - args[0] 为 domhandler Element
+ * @returns innerHTML 字符串，输入非法时返回 null
+ */
+declare function el_inner_html(...args: AllowedValue[]): AllowedValue;
+/**
+ * 提取 domhandler Element 的 outerHTML 字符串（包含自身标签）
+ * 底层使用 domutils 的 getOuterHTML()
+ *
+ * @param args - args[0] 为 domhandler Element
+ * @returns outerHTML 字符串，输入非法时返回 null
+ */
+declare function el_outer_html(...args: AllowedValue[]): AllowedValue;
+/**
+ * 获取 domhandler Element 的指定属性值
+ * 底层使用 domutils 的 getAttributeValue()
+ *
+ * @param args - args[0] 为 domhandler Element，args[1] 为属性名
+ * @returns 属性值字符串，属性不存在或输入非法时返回 null
+ */
+declare function el_attr(...args: AllowedValue[]): AllowedValue;
+/**
+ * 检查 domhandler Element 是否存在指定属性
+ * 底层使用 domutils 的 hasAttrib()
+ *
+ * @param args - args[0] 为 domhandler Element，args[1] 为属性名
+ * @returns 存在返回 true，不存在返回 false，输入非法返回 null
+ */
+declare function el_has_attr(...args: AllowedValue[]): AllowedValue;
+
+/**
+ * css_select + el_inner_text — 选择所有匹配元素并提取内部文本
+ *
+ * @param args - args[0] 为 domhandler Document，args[1] 为 CSS 选择器
+ * @returns 文本字符串数组，输入非法或选择器错误返回 null
+ */
+declare function css_select_text(...args: AllowedValue[]): AllowedValue;
+/**
+ * css_select + el_inner_html — 选择所有匹配元素并提取 innerHTML
+ *
+ * @param args - args[0] 为 domhandler Document，args[1] 为 CSS 选择器
+ * @returns innerHTML 字符串数组，输入非法或选择器错误返回 null
+ */
+declare function css_select_html(...args: AllowedValue[]): AllowedValue;
+/**
+ * css_select + el_outer_html — 选择所有匹配元素并提取 outerHTML
+ *
+ * @param args - args[0] 为 domhandler Document，args[1] 为 CSS 选择器
+ * @returns outerHTML 字符串数组，输入非法或选择器错误返回 null
+ */
+declare function css_select_outer_html(...args: AllowedValue[]): AllowedValue;
+/**
+ * css_select + el_attr — 选择所有匹配元素并提取指定属性值
+ * 属性不存在的元素用 null 填充
+ *
+ * @param args - args[0] 为 domhandler Document，args[1] 为 CSS 选择器，args[2] 为属性名
+ * @returns 属性值数组（含 null），输入非法或选择器错误返回 null
+ */
+declare function css_select_attr(...args: AllowedValue[]): AllowedValue;
+/**
+ * css_select1 + el_inner_text — 选择第一个匹配元素并提取内部文本
+ *
+ * @param args - args[0] 为 domhandler Document，args[1] 为 CSS 选择器
+ * @returns 文本字符串，无匹配或输入非法返回 null
+ */
+declare function css_select1_text(...args: AllowedValue[]): AllowedValue;
+/**
+ * css_select1 + el_inner_html — 选择第一个匹配元素并提取 innerHTML
+ *
+ * @param args - args[0] 为 domhandler Document，args[1] 为 CSS 选择器
+ * @returns innerHTML 字符串，无匹配或输入非法返回 null
+ */
+declare function css_select1_html(...args: AllowedValue[]): AllowedValue;
+/**
+ * css_select1 + el_outer_html — 选择第一个匹配元素并提取 outerHTML
+ *
+ * @param args - args[0] 为 domhandler Document，args[1] 为 CSS 选择器
+ * @returns outerHTML 字符串，无匹配或输入非法返回 null
+ */
+declare function css_select1_outer_html(...args: AllowedValue[]): AllowedValue;
+/**
+ * css_select1 + el_attr — 选择第一个匹配元素并提取指定属性值
+ *
+ * @param args - args[0] 为 domhandler Document，args[1] 为 CSS 选择器，args[2] 为属性名
+ * @returns 属性值字符串，属性不存在、无匹配或输入非法返回 null
+ */
+declare function css_select1_attr(...args: AllowedValue[]): AllowedValue;
+
+/**
  * DOM 解析/查询模块自定义函数集合
  * 注入 rune 引擎使用：
  *   new RuleEngine(rule, { functions: domFunctions })
@@ -210,4 +309,4 @@ declare function aes_decrypt(...args: AllowedValue[]): AllowedValue;
 /** crypto 模块自定义函数集合 */
 declare const cryptoFunctions: Record<string, CustomFunction>;
 
-export { aes_decrypt, aes_encrypt, cryptoFunctions, css_select, css_select1, decode, decodeUri as decode_uri, decodeUriComponent as decode_uri_component, domFunctions, encode, encodeUri as encode_uri, encodeUriComponent as encode_uri_component, encodingFunctions, hash, hmac, htmlEntityDecode as html_entity_decode, htmlEntityEncode as html_entity_encode, html_parse, xml_parse, xpath_select, xpath_select1 };
+export { aes_decrypt, aes_encrypt, cryptoFunctions, css_select, css_select1, css_select1_attr, css_select1_html, css_select1_outer_html, css_select1_text, css_select_attr, css_select_html, css_select_outer_html, css_select_text, decode, decodeUri as decode_uri, decodeUriComponent as decode_uri_component, domFunctions, el_attr, el_has_attr, el_inner_html, el_inner_text, el_outer_html, encode, encodeUri as encode_uri, encodeUriComponent as encode_uri_component, encodingFunctions, hash, hmac, htmlEntityDecode as html_entity_decode, htmlEntityEncode as html_entity_encode, html_parse, xml_parse, xpath_select, xpath_select1 };

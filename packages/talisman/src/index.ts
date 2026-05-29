@@ -12,6 +12,19 @@ export {
   xpath_select1,
   css_select,
   css_select1,
+  el_inner_text,
+  el_inner_html,
+  el_outer_html,
+  el_attr,
+  el_has_attr,
+  css_select_text,
+  css_select_html,
+  css_select_outer_html,
+  css_select_attr,
+  css_select1_text,
+  css_select1_html,
+  css_select1_outer_html,
+  css_select1_attr,
 } from "./dom";
 
 // encoding 模块

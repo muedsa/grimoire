@@ -55,11 +55,11 @@ const result = await engine.execute(rule);
 
 ## 模块概览
 
-| 模块     | 导出集合            | 函数                                                                                                                                       |
-| -------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| encoding | `encodingFunctions` | `decode`, `encode`, `encode_uri_component`, `decode_uri_component`, `encode_uri`, `decode_uri`, `html_entity_decode`, `html_entity_encode` |
-| crypto   | `cryptoFunctions`   | `hash`, `hmac`, `aes_encrypt`, `aes_decrypt`                                                                                               |
-| dom      | `domFunctions`      | `xml_parse`, `html_parse`, `xpath_select`, `xpath_select1`, `css_select`, `css_select1`                                                    |
+| 模块     | 导出集合            | 函数                                                                                                                                                                                                                                                                                                                                         |
+| -------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| encoding | `encodingFunctions` | `decode`, `encode`, `encode_uri_component`, `decode_uri_component`, `encode_uri`, `decode_uri`, `html_entity_decode`, `html_entity_encode`                                                                                                                                                                                                   |
+| crypto   | `cryptoFunctions`   | `hash`, `hmac`, `aes_encrypt`, `aes_decrypt`                                                                                                                                                                                                                                                                                                 |
+| dom      | `domFunctions`      | `xml_parse`, `html_parse`, `xpath_select`, `xpath_select1`, `css_select`, `css_select1`, `el_inner_text`, `el_inner_html`, `el_outer_html`, `el_attr`, `el_has_attr`, `css_select_text`, `css_select_html`, `css_select_outer_html`, `css_select_attr`, `css_select1_text`, `css_select1_html`, `css_select1_outer_html`, `css_select1_attr` |
 
 也可按需单独导入函数或集合：
 
@@ -71,6 +71,8 @@ import {
   html_parse,
   xpath_select,
   css_select,
+  css_select1_text,
+  el_attr,
 } from "@grimoire/talisman";
 ```
 
@@ -376,6 +378,101 @@ AES 对称解密，参数与 `aes_encrypt` 一致。
 
 **返回值**：匹配的 `Element`；无匹配返回 `null`；输入非法或选择器错误返回 `null`
 
+### 元素提取方法（配合 css_select / css_select1 使用）
+
+对 domhandler `Element` 提取文本、HTML 或属性，底层基于 [domutils](https://github.com/fb55/domutils)。
+
+#### el_inner_text(el)
+
+提取元素的内部文本（递归拼接所有后代文本节点）。
+
+| 参数 | 类型      | 说明                                     |
+| ---- | --------- | ---------------------------------------- |
+| `el` | `Element` | `css_select1` 或 `css_select` 返回的元素 |
+
+**返回值**：`string`；非 Element 输入返回 `null`
+
+#### el_inner_html(el)
+
+提取元素的 innerHTML 字符串。
+
+**返回值**：`string`；非 Element 输入返回 `null`
+
+#### el_outer_html(el)
+
+提取元素的 outerHTML 字符串（包含自身标签）。
+
+**返回值**：`string`；非 Element 输入返回 `null`
+
+#### el_attr(el, name)
+
+获取元素的指定属性值。
+
+| 参数   | 类型     | 说明     |
+| ------ | -------- | -------- |
+| `name` | `string` | 属性名称 |
+
+**返回值**：`string`；属性不存在或输入非法返回 `null`
+
+#### el_has_attr(el, name)
+
+检查元素是否存在指定属性。
+
+| 参数   | 类型     | 说明     |
+| ------ | -------- | -------- |
+| `name` | `string` | 属性名称 |
+
+**返回值**：`boolean`；存在返回 `true`，不存在返回 `false`，输入非法返回 `null`
+
+### CSS 快捷方法
+
+`css_select` / `css_select1` 与元素提取方法的组合，一步到位。
+
+| 方法                           | 等价于                                    | 返回               |
+| ------------------------------ | ----------------------------------------- | ------------------ |
+| `css_select_text(d, s)`        | `css_select` + 每个 el 取 `el_inner_text` | `string[]`         |
+| `css_select_html(d, s)`        | `css_select` + 每个 el 取 `el_inner_html` | `string[]`         |
+| `css_select_outer_html(d, s)`  | `css_select` + 每个 el 取 `el_outer_html` | `string[]`         |
+| `css_select_attr(d, s, n)`     | `css_select` + 每个 el 取 `el_attr`       | `(string\|null)[]` |
+| `css_select1_text(d, s)`       | `css_select1` + `el_inner_text`           | `string \| null`   |
+| `css_select1_html(d, s)`       | `css_select1` + `el_inner_html`           | `string \| null`   |
+| `css_select1_outer_html(d, s)` | `css_select1` + `el_outer_html`           | `string \| null`   |
+| `css_select1_attr(d, s, n)`    | `css_select1` + `el_attr`                 | `string \| null`   |
+
+> `d` = domhandler Document, `s` = CSS 选择器字符串, `n` = 属性名
+> 属性不存在的元素在 `css_select_attr` 结果中用 `null` 占位。
+
+**规则示例（HTML 轨道 + 快捷方法）**：
+
+```json
+{
+  "variables": {
+    "data": {
+      "html": "<div class=\"main\"><h1>标题</h1><a href=\"/p1\">链接1</a><a href=\"/p2\">链接2</a></div>"
+    }
+  },
+  "nodes": {
+    "main": [
+      {
+        "type": "set",
+        "variable": "doc",
+        "value": "${html_parse(data.html)}"
+      },
+      {
+        "type": "set",
+        "variable": "result.title",
+        "value": "${css_select1_text(doc, \"h1\")}"
+      },
+      {
+        "type": "set",
+        "variable": "result.links",
+        "value": "${css_select_attr(doc, \"a\", \"href\")}"
+      }
+    ]
+  }
+}
+```
+
 **规则示例（XML 轨道）**：
 
 ```json
@@ -464,7 +561,7 @@ const engine = new RuleEngine({
 
 encoding 与 crypto 模块采用 **fail-fast** 策略：参数类型错误抛出 `TypeError`，格式/算法/长度不合法抛出 `Error`。
 
-dom 模块采用 **容错** 策略：`xml_parse` / `html_parse` / `xpath_*` / `css_*` 在输入非法或解析/查询错误时返回 `null`（`xpath_select1` 无匹配返回 `undefined`，`css_select` 无匹配返回 `[]`，`css_select1` 无匹配返回 `null`），避免单条抓取规则导致整段流程失败。
+dom 模块采用 **容错** 策略：`xml_parse` / `html_parse` / `xpath_*` / `css_*` / `el_*` 在输入非法或解析/查询错误时返回 `null`（`xpath_select1` 无匹配返回 `undefined`，`css_select` 和 `css_select_*` 无匹配返回 `[]`，`css_select1` 和 `css_select1_*` 无匹配返回 `null`，`el_inner_text` 等空元素返回 `""`，`el_attr` 属性不存在返回 `null`），避免单条抓取规则导致整段流程失败。
 
 ---
 
@@ -498,13 +595,14 @@ yarn workspace @grimoire/talisman test:coverage
 | `xpath`          | XPath 查询（dom 模块 — XML 轨道）      | 否（可选 peer） |
 | `htmlparser2`    | HTML 解析（dom 模块 — HTML 轨道）      | 否（可选 peer） |
 | `css-select`     | CSS 选择器查询（dom 模块 — HTML 轨道） | 否（可选 peer） |
+| `domutils`       | 元素文本/属性提取（dom 模块）          | 否（可选 peer） |
 
 > 第三方依赖均为可选的 peerDependencies，按需安装：
 >
 > - 仅用 `encoding` 模块 → 无需安装额外依赖
 > - 使用 `crypto` 模块 → `yarn add @noble/hashes @noble/ciphers`
 > - 使用 `dom` 模块（XML 轨道）→ `yarn add @xmldom/xmldom xpath`
-> - 使用 `dom` 模块（HTML 轨道）→ `yarn add htmlparser2 css-select`
+> - 使用 `dom` 模块（HTML 轨道）→ `yarn add htmlparser2 css-select domutils`
 
 ## License
 

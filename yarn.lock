@@ -1976,6 +1976,7 @@ __metadata:
     "@vitest/coverage-v8": "npm:^4.1.7"
     "@xmldom/xmldom": "npm:*"
     css-select: "npm:*"
+    domutils: "npm:*"
     he: "npm:*"
     htmlparser2: "npm:*"
     tsup: "npm:^8.5.1"
@@ -1988,6 +1989,7 @@ __metadata:
     "@noble/hashes": ^2.2.0
     "@xmldom/xmldom": ^0.9.10
     css-select: ^5.1.0
+    domutils: ^3.0.0
     he: ^1.2.0
     htmlparser2: ^10.0.0
     xpath: ^0.0.34
@@ -1999,6 +2001,8 @@ __metadata:
     "@xmldom/xmldom":
       optional: true
     css-select:
+      optional: true
+    domutils:
       optional: true
     he:
       optional: true
@@ -4681,7 +4685,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"domutils@npm:^4.0.2":
+"domutils@npm:*, domutils@npm:^4.0.2":
   version: 4.0.2
   resolution: "domutils@npm:4.0.2"
   dependencies:
