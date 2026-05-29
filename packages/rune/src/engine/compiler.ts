@@ -94,9 +94,20 @@ export function compileRule(rule: RuleDefinition, logger?: Logger): void {
       nodeCount: groupNodes.length,
     });
 
-    for (const node of groupNodes) {
-      compileNode(node);
-    }
+    groupNodes.forEach((node, index) => {
+      try {
+        compileNode(node);
+      } catch (e) {
+        if (e instanceof EngineError) {
+          if (node.label) {
+            e.message = `[${groupName} -> ${node.label}]` + e.message;
+          } else {
+            e.message = `[${groupName} -> #${index}]` + e.message;
+          }
+        }
+        throw e;
+      }
+    });
   }
 
   logger?.debug("[compileRule] 编译完成");
