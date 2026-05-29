@@ -9,7 +9,7 @@ import type { LoopFrame } from "@grimoire/rune";
 import {
   encodingFunctions,
   cryptoFunctions,
-  htmlFunctions,
+  domFunctions,
 } from "@grimoire/talisman";
 import {
   FlowDebugger,
@@ -82,7 +82,7 @@ export const useDebugStore = create<DebugStore>((set, get) => ({
       functions: {
         ...encodingFunctions,
         ...cryptoFunctions,
-        ...htmlFunctions,
+        ...domFunctions,
       },
     });
     const dbg = new FlowDebugger(engine);
