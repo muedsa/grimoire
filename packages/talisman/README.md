@@ -57,7 +57,7 @@ const result = await engine.execute(rule);
 
 | 模块 | 导出集合 | 函数 |
 |------|----------|------|
-| encoding | `encodingFunctions` | `decode`, `encode` |
+| encoding | `encodingFunctions` | `decode`, `encode`, `encode_uri_component`, `decode_uri_component`, `encode_uri`, `decode_uri` |
 | crypto | `cryptoFunctions` | `hash`, `hmac`, `aes_encrypt`, `aes_decrypt` |
 | html | `htmlFunctions` | `html_parse`, `xpath_select`, `xpath_select1` |
 
@@ -108,6 +108,78 @@ decode(data.hexKey, "hex")
 
 ```
 encode(hash("sha256", decode(data.body, "utf8")), "hex")
+```
+
+### encode_uri_component(str)
+
+URI 组件编码 — 对特殊字符进行百分号编码，等价于 JavaScript 全局 `encodeURIComponent`。
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| `str` | `string` | 待编码字符串 |
+
+**返回值**：`string`
+
+保留字符（不编码）：`A-Z a-z 0-9 - _ . ! ~ * ' ( )`
+
+**示例**：
+
+```
+encode_uri_component("hello world")        → "hello%20world"
+encode_uri_component("搜索?q=你好")         → "%E6%90%9C%E7%B4%A2%3Fq%3D%E4%BD%A0%E5%A5%BD"
+```
+
+### decode_uri_component(str)
+
+URI 组件解码 — 将百分号编码的字符串还原，等价于 `decodeURIComponent`。
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| `str` | `string` | 百分号编码的字符串 |
+
+**返回值**：`string`
+
+**示例**：
+
+```
+decode_uri_component("hello%20world")      → "hello world"
+decode_uri_component(result.encoded)
+```
+
+### encode_uri(str)
+
+URI 编码 — 编码完整 URI，保留协议、域名等保留字符，等价于 `encodeURI`。
+
+与 `encode_uri_component` 的区别：`encode_uri` 不会编码 `: / ? # @ & = + $ , ;` 等 URI 结构保留字符，适合对整个 URL 编码。
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| `str` | `string` | 待编码的完整 URI |
+
+**返回值**：`string`
+
+**示例**：
+
+```
+encode_uri("https://example.com/搜索?q=你好")
+  → "https://example.com/%E6%90%9C%E7%B4%A2?q=%E4%BD%A0%E5%A5%BD"
+```
+
+### decode_uri(str)
+
+URI 解码 — 将 `encodeURI` 编码的字符串还原，等价于 `decodeURI`。
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| `str` | `string` | `encodeURI` 编码的字符串 |
+
+**返回值**：`string`
+
+**示例**：
+
+```
+decode_uri("https://example.com/%E6%90%9C%E7%B4%A2?q=%E4%BD%A0%E5%A5%BD")
+  → "https://example.com/搜索?q=你好"
 ```
 
 ---

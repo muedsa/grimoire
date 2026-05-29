@@ -1,9 +1,13 @@
 /**
- * encoding 模块 — 字符串与 bytes 之间的编码转换
+ * encoding 模块 — 字符串与 bytes 之间的编码转换 + URI 编解码
  *
- * 为 rune 规则引擎提供 decode / encode 两个自定义函数:
- *   decode(data, from) — 将字符串从指定编码转换为 Uint8Array
- *   encode(data, to)   — 将 Uint8Array 转换为指定编码的字符串
+ * 为 rune 规则引擎提供以下自定义函数:
+ *   decode(data, from)        — 将字符串从指定编码转换为 Uint8Array
+ *   encode(data, to)          — 将 Uint8Array 转换为指定编码的字符串
+ *   encode_uri_component(str) — URI 组件编码（等价于 encodeURIComponent）
+ *   decode_uri_component(str) — URI 组件解码（等价于 decodeURIComponent）
+ *   encode_uri(str)           — URI 编码（等价于 encodeURI）
+ *   decode_uri(str)           — URI 解码（等价于 decodeURI）
  *
  * 支持的编码格式: utf8, hex, base64, base64url
  * 错误策略: fail-fast，参数类型/格式错误时抛出 TypeError/Error
@@ -209,6 +213,56 @@ export function encode(...args: AllowedValue[]): AllowedValue {
   }
 }
 
+// ---- URI 编解码函数 ----
+
+/**
+ * URI 组件编码 — 对特殊字符进行百分号编码
+ * 等价于全局 encodeURIComponent，但不编码 A-Z a-z 0-9 - _ . ! ~ * ' ( )
+ */
+export function encodeUriComponent(...args: AllowedValue[]): AllowedValue {
+  const str = args[0];
+  if (typeof str !== "string") {
+    throw new TypeError("encode_uri_component: 参数必须是字符串");
+  }
+  return encodeURIComponent(str);
+}
+
+/**
+ * URI 组件解码 — 将百分号编码的字符串还原
+ * 等价于全局 decodeURIComponent
+ */
+export function decodeUriComponent(...args: AllowedValue[]): AllowedValue {
+  const str = args[0];
+  if (typeof str !== "string") {
+    throw new TypeError("decode_uri_component: 参数必须是字符串");
+  }
+  return decodeURIComponent(str);
+}
+
+/**
+ * URI 编码 — 编码完整 URI，保留协议、域名等保留字符（:, /, ?, #, &, = 等不编码）
+ * 等价于全局 encodeURI
+ */
+export function encodeUri(...args: AllowedValue[]): AllowedValue {
+  const str = args[0];
+  if (typeof str !== "string") {
+    throw new TypeError("encode_uri: 参数必须是字符串");
+  }
+  return encodeURI(str);
+}
+
+/**
+ * URI 解码 — 将 encodeURI 编码的字符串还原
+ * 等价于全局 decodeURI
+ */
+export function decodeUri(...args: AllowedValue[]): AllowedValue {
+  const str = args[0];
+  if (typeof str !== "string") {
+    throw new TypeError("decode_uri: 参数必须是字符串");
+  }
+  return decodeURI(str);
+}
+
 /**
  * encoding 模块自定义函数集合
  * 注入 rune 引擎: new RuleEngine(rule, { functions: { ...encodingFunctions } })
@@ -216,4 +270,8 @@ export function encode(...args: AllowedValue[]): AllowedValue {
 export const encodingFunctions: Record<string, CustomFunction> = {
   decode,
   encode,
+  encode_uri_component: encodeUriComponent,
+  decode_uri_component: decodeUriComponent,
+  encode_uri: encodeUri,
+  decode_uri: decodeUri,
 };

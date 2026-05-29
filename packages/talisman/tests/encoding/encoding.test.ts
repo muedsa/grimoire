@@ -3,7 +3,14 @@
  * 覆盖: decode/encode 正常流程、往返测试、非法输入、边界情况
  */
 import { describe, it, expect } from "vitest";
-import { decode, encode } from "../../src/encoding";
+import {
+  decode,
+  encode,
+  encodeUriComponent,
+  decodeUriComponent,
+  encodeUri,
+  decodeUri,
+} from "../../src/encoding";
 
 // ---- decode 测试 ----
 
@@ -213,5 +220,101 @@ describe("encoding 往返测试", () => {
     const bytes = decode(original, "base64url") as unknown as Uint8Array;
     const back = encode(bytes as any, "base64url");
     expect(back).toBe(original);
+  });
+});
+
+// ---- URI 编解码测试 ----
+
+describe("URI 编解码", () => {
+  describe("encodeUriComponent", () => {
+    it("编码特殊字符", () => {
+      const result = encodeUriComponent("hello world");
+      expect(result).toBe("hello%20world");
+    });
+
+    it("编码中文", () => {
+      const result = encodeUriComponent("你好");
+      expect(result).toBe("%E4%BD%A0%E5%A5%BD");
+    });
+
+    it("编码 URI 保留字符", () => {
+      const result = encodeUriComponent("a=1&b=2");
+      expect(result).toBe("a%3D1%26b%3D2");
+    });
+
+    it("不编码字母数字和 - _ . ! ~ * ' ( )", () => {
+      const result = encodeUriComponent("abc123-_.!~*'()");
+      expect(result).toBe("abc123-_.!~*'()");
+    });
+
+    it("空字符串", () => {
+      expect(encodeUriComponent("")).toBe("");
+    });
+  });
+
+  describe("decodeUriComponent", () => {
+    it("解码百分号编码", () => {
+      const result = decodeUriComponent("hello%20world");
+      expect(result).toBe("hello world");
+    });
+
+    it("解码中文", () => {
+      const result = decodeUriComponent("%E4%BD%A0%E5%A5%BD");
+      expect(result).toBe("你好");
+    });
+
+    it("往返测试", () => {
+      const original = "Hello 世界!@#$";
+      const encoded = encodeUriComponent(original) as string;
+      const decoded = decodeUriComponent(encoded);
+      expect(decoded).toBe(original);
+    });
+  });
+
+  describe("encodeUri", () => {
+    it("编码完整 URI（保留协议、域名等保留字符）", () => {
+      const result = encodeUri("https://example.com/搜索?q=你好");
+      expect(result).toBe("https://example.com/%E6%90%9C%E7%B4%A2?q=%E4%BD%A0%E5%A5%BD");
+    });
+
+    it("不编码 URI 保留字符 : / ? # @ & =", () => {
+      const result = encodeUri("http://a.com/path?q=1&r=2#top");
+      expect(result).toBe("http://a.com/path?q=1&r=2#top");
+    });
+
+    it("空字符串", () => {
+      expect(encodeUri("")).toBe("");
+    });
+  });
+
+  describe("decodeUri", () => {
+    it("解码 URI", () => {
+      const result = decodeUri("https://example.com/%E6%90%9C%E7%B4%A2?q=%E4%BD%A0%E5%A5%BD");
+      expect(result).toBe("https://example.com/搜索?q=你好");
+    });
+
+    it("往返测试", () => {
+      const original = "https://example.com/path?name=你好&type=1";
+      const encoded = encodeUri(original) as string;
+      const decoded = decodeUri(encoded);
+      expect(decoded).toBe(original);
+    });
+  });
+
+  describe("URI 非法输入", () => {
+    const cases = [
+      { fn: encodeUriComponent, name: "encode_uri_component" },
+      { fn: decodeUriComponent, name: "decode_uri_component" },
+      { fn: encodeUri, name: "encode_uri" },
+      { fn: decodeUri, name: "decode_uri" },
+    ];
+
+    cases.forEach(({ fn, name }) => {
+      it(`${name} 非字符串参数抛出 TypeError`, () => {
+        expect(() => fn(123 as any)).toThrow(TypeError);
+        expect(() => fn(null as any)).toThrow(TypeError);
+        expect(() => fn(undefined as any)).toThrow(TypeError);
+      });
+    });
   });
 });

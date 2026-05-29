@@ -7,7 +7,15 @@
 export { htmlFunctions, html_parse, xpath_select, xpath_select1 } from "./html";
 
 // encoding 模块
-export { encodingFunctions, decode, encode } from "./encoding";
+export {
+  encodingFunctions,
+  decode,
+  encode,
+  encodeUriComponent as encode_uri_component,
+  decodeUriComponent as decode_uri_component,
+  encodeUri as encode_uri,
+  decodeUri as decode_uri,
+} from "./encoding";
 
 // crypto 模块
 export { cryptoFunctions, hash, hmac, aes_encrypt, aes_decrypt } from "./crypto";
