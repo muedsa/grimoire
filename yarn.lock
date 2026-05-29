@@ -1951,6 +1951,7 @@ __metadata:
     eslint-plugin-react-hooks: "npm:^7.1.1"
     eslint-plugin-react-refresh: "npm:^0.5.2"
     globals: "npm:^17.5.0"
+    he: "npm:*"
     lucide-react: "npm:^1.14.0"
     react: "npm:^19.2.5"
     react-dom: "npm:^19.2.5"
