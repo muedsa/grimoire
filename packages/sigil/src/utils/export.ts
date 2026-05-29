@@ -3,8 +3,8 @@ import {
   RuleNode,
   AllowedValue,
   AssignTemplate,
-} from '@grimoire/rune';
-import { useFlowStore, SigilNode, START_NODE_ID } from '../store/flow';
+} from "@grimoire/rune";
+import { useFlowStore, SigilNode, START_NODE_ID } from "../store/flow";
 
 /** 邻接表条目类型 */
 type ChildEntry = { targetId: string; handle: string };
@@ -25,7 +25,7 @@ export function exportToRuleDefinition(): RuleDefinition {
   // 构建邻接表: nodeId -> [{ targetId, handle }]
   const childrenMap = new Map<string, ChildEntry[]>();
   for (const edge of edges) {
-    const handle = edge.sourceHandle ?? 'out';
+    const handle = edge.sourceHandle ?? "out";
     const list = childrenMap.get(edge.source) ?? [];
     list.push({ targetId: edge.target, handle });
     childrenMap.set(edge.source, list);
@@ -33,11 +33,14 @@ export function exportToRuleDefinition(): RuleDefinition {
 
   // 从起始节点获取初始变量（直接映射为 AllowedValue）
   const startNode = nodes.find((n) => n.id === START_NODE_ID);
-  const startConfig = startNode?.data.config as Record<string, unknown> | undefined;
+  const startConfig = startNode?.data.config as
+    | Record<string, unknown>
+    | undefined;
   const startVars = startConfig?.variables as AllowedValue | undefined;
-  const variables: Record<string, AllowedValue> = typeof startVars === 'object' && startVars !== null
-    ? startVars as Record<string, AllowedValue>
-    : {};
+  const variables: Record<string, AllowedValue> =
+    typeof startVars === "object" && startVars !== null
+      ? (startVars as Record<string, AllowedValue>)
+      : {};
 
   // 从起始节点开始，获取其直接连接的第一批节点
   const startChildren = childrenMap.get(START_NODE_ID) ?? [];
@@ -47,17 +50,24 @@ export function exportToRuleDefinition(): RuleDefinition {
   const ruleNodes: Record<string, RuleNode[]> = {};
   if (entryIds.length === 0) {
     ruleNodes.main = [];
-    return { name: 'sigil-exported', entry: 'main', variables, nodes: ruleNodes };
+    return {
+      name: "sigil-exported",
+      entry: "main",
+      variables,
+      nodes: ruleNodes,
+    };
   }
 
   const entries: RuleNode[] = entryIds
-    .map((id) => collectLinearChain(id, nodes, childrenMap, new Set([START_NODE_ID])))
+    .map((id) =>
+      collectLinearChain(id, nodes, childrenMap, new Set([START_NODE_ID])),
+    )
     .flat()
     .filter((n): n is RuleNode => n !== null);
 
   ruleNodes.main = entries;
 
-  return { name: 'sigil-exported', entry: 'main', variables, nodes: ruleNodes };
+  return { name: "sigil-exported", entry: "main", variables, nodes: ruleNodes };
 }
 
 /**
@@ -74,18 +84,18 @@ function convertSingleNode(
   const children = childrenMap.get(node.id) ?? [];
 
   switch (sigilNodeType) {
-    case 'set': {
+    case "set": {
       return {
-        type: 'set',
+        type: "set",
         label: node.id,
-        variable: (config.variable as string) ?? '',
-        value: config.value as AssignTemplate ?? '',
+        variable: (config.variable as string) ?? "",
+        value: (config.value as AssignTemplate) ?? "",
       };
     }
 
-    case 'if': {
-      const thenChild = children.find((c) => c.handle === 'then')?.targetId;
-      const elseChild = children.find((c) => c.handle === 'else')?.targetId;
+    case "if": {
+      const thenChild = children.find((c) => c.handle === "then")?.targetId;
+      const elseChild = children.find((c) => c.handle === "else")?.targetId;
 
       const thenBody = thenChild
         ? collectLinearChain(thenChild, allNodes, childrenMap, new Set(visited))
@@ -95,75 +105,85 @@ function convertSingleNode(
         : [];
 
       return {
-        type: 'if',
+        type: "if",
         label: node.id,
-        condition: (config.condition as string) ?? 'true',
+        condition: (config.condition as string) ?? "true",
         then: thenBody,
         else: elseBody.length > 0 ? elseBody : undefined,
       };
     }
 
-    case 'foreach': {
+    case "foreach": {
       // 从 foreach 的 body handle 连接的第一个节点开始收集 body
-      const bodyEntry = children.find((c) => c.handle === 'body');
+      const bodyEntry = children.find((c) => c.handle === "body");
       const body = bodyEntry
-        ? collectLinearChain(bodyEntry.targetId, allNodes, childrenMap, new Set())
+        ? collectLinearChain(
+            bodyEntry.targetId,
+            allNodes,
+            childrenMap,
+            new Set(),
+          )
         : [];
 
       return {
-        type: 'foreach',
+        type: "foreach",
         label: node.id,
-        collection: (config.collection as string) ?? '[]',
-        item: (config.item as string) ?? 'item',
+        collection: (config.collection as string) ?? "[]",
+        item: (config.item as string) ?? "item",
         index: (config.index as string) ?? undefined,
         body,
       };
     }
 
-    case 'while': {
-      const bodyEntry = children.find((c) => c.handle === 'body');
+    case "while": {
+      const bodyEntry = children.find((c) => c.handle === "body");
       const body = bodyEntry
-        ? collectLinearChain(bodyEntry.targetId, allNodes, childrenMap, new Set())
+        ? collectLinearChain(
+            bodyEntry.targetId,
+            allNodes,
+            childrenMap,
+            new Set(),
+          )
         : [];
 
       return {
-        type: 'while',
+        type: "while",
         label: node.id,
-        condition: (config.condition as string) ?? 'true',
+        condition: (config.condition as string) ?? "true",
         body,
       };
     }
 
-    case 'break': {
-      return { type: 'break', label: node.id };
+    case "break": {
+      return { type: "break", label: node.id };
     }
 
-    case 'continue': {
-      return { type: 'continue', label: node.id };
+    case "continue": {
+      return { type: "continue", label: node.id };
     }
 
-    case 'return': {
+    case "return": {
       return {
-        type: 'return',
+        type: "return",
         label: node.id,
         value: (config.value as string) ?? undefined,
       };
     }
 
-    case 'custom': {
+    case "custom": {
       return {
-        type: 'custom',
+        type: "custom",
         label: node.id,
-        name: (config.name as string) ?? '',
-        params: config.params as AssignTemplate ?? {},
+        name: (config.name as string) ?? "",
+        params: (config.params as AssignTemplate) ?? {},
       };
     }
 
-    case 'exec': {
+    case "exec": {
       return {
-        type: 'exec',
+        type: "exec",
         label: node.id,
-        expression: (config.expression as string) ?? '',
+        expression: (config.expression as string) ?? "",
       };
     }
 
@@ -201,7 +221,9 @@ function collectLinearChain(
     // 找到下一个线性节点
     const children: ChildEntry[] = childrenMap.get(currentId) ?? [];
     const nextHandle = getNextLinearHandle(node, children);
-    const nextChild: ChildEntry | undefined = nextHandle ? children.find((c) => c.handle === nextHandle) : undefined;
+    const nextChild: ChildEntry | undefined = nextHandle
+      ? children.find((c) => c.handle === nextHandle)
+      : undefined;
 
     currentId = nextChild?.targetId;
   }
@@ -218,16 +240,16 @@ function getNextLinearHandle(
   children: ChildEntry[],
 ): string | null {
   switch (node.data.sigilNodeType) {
-    case 'if':
+    case "if":
       // if 执行完后通过 out handle 继续
-      return 'out';
-    case 'foreach':
-    case 'while':
+      return "out";
+    case "foreach":
+    case "while":
       // foreach/while 的 next 是其 out handle
-      return 'out';
-    case 'break':
-    case 'continue':
-    case 'return':
+      return "out";
+    case "break":
+    case "continue":
+    case "return":
       return null;
     default:
       return children[0]?.handle ?? null;

@@ -1,25 +1,38 @@
 import { describe, it, expect } from "vitest";
-import { compileRule, RuleDefinition, clearExpressionCache } from "../../src/index";
+import {
+  compileRule,
+  RuleDefinition,
+  clearExpressionCache,
+} from "../../src/index";
 import { EngineError, ErrorCode } from "../../src/index";
 
 describe("compileRule — error paths", () => {
   it("throws on empty nodes object", () => {
     const rule: RuleDefinition = { variables: {}, nodes: {} };
-    expect(() => compileRule(rule)).toThrow("must have a non-empty nodes object");
+    expect(() => compileRule(rule)).toThrow(
+      "must have a non-empty nodes object",
+    );
   });
 
   it("throws on missing nodes field", () => {
     const rule: RuleDefinition = { variables: {}, nodes: undefined as any };
-    expect(() => compileRule(rule)).toThrow("must have a non-empty nodes object");
+    expect(() => compileRule(rule)).toThrow(
+      "must have a non-empty nodes object",
+    );
   });
 
   it("throws on missing entry node group", () => {
     const rule: RuleDefinition = { variables: {}, nodes: { other: [] } };
-    expect(() => compileRule(rule)).toThrow("Entry node group 'main' not found or empty");
+    expect(() => compileRule(rule)).toThrow(
+      "Entry node group 'main' not found or empty",
+    );
   });
 
   it("throws on non-array node group", () => {
-    const rule: RuleDefinition = { variables: {}, nodes: { main: { not: "array" } as any } };
+    const rule: RuleDefinition = {
+      variables: {},
+      nodes: { main: { not: "array" } as any },
+    };
     expect(() => compileRule(rule)).toThrow("must be an array");
   });
 
@@ -34,7 +47,9 @@ describe("compileRule — error paths", () => {
   it("throws on loop node without collection", () => {
     const rule: RuleDefinition = {
       variables: {},
-      nodes: { main: [{ type: "foreach", collection: "", item: "x", body: [] }] },
+      nodes: {
+        main: [{ type: "foreach", collection: "", item: "x", body: [] }],
+      },
     };
     expect(() => compileRule(rule)).toThrow("must have a collection");
   });
@@ -50,7 +65,9 @@ describe("compileRule — error paths", () => {
   it("throws on while node with undefined condition", () => {
     const rule: RuleDefinition = {
       variables: {},
-      nodes: { main: [{ type: "while", condition: undefined as any, body: [] }] },
+      nodes: {
+        main: [{ type: "while", condition: undefined as any, body: [] }],
+      },
     };
     expect(() => compileRule(rule)).toThrow("While node must have a condition");
   });
@@ -66,7 +83,9 @@ describe("compileRule — error paths", () => {
   it("throws on invalid expression in custom params", () => {
     const rule: RuleDefinition = {
       variables: {},
-      nodes: { main: [{ type: "custom", name: "handler", params: { x: "${a @ b}" } }] },
+      nodes: {
+        main: [{ type: "custom", name: "handler", params: { x: "${a @ b}" } }],
+      },
     };
     expect(() => compileRule(rule)).toThrow();
   });
@@ -101,10 +120,7 @@ describe("compileRule — success paths", () => {
     const rule: RuleDefinition = {
       variables: {},
       nodes: {
-        main: [
-          { type: "break" },
-          { type: "return", value: "1" },
-        ],
+        main: [{ type: "break" }, { type: "return", value: "1" }],
       },
     };
     expect(() => compileRule(rule)).not.toThrow();
@@ -114,9 +130,7 @@ describe("compileRule — success paths", () => {
     const rule: RuleDefinition = {
       variables: {},
       nodes: {
-        main: [
-          { type: "if", condition: "true", then: [], else: [] },
-        ],
+        main: [{ type: "if", condition: "true", then: [], else: [] }],
       },
     };
     expect(() => compileRule(rule)).not.toThrow();
@@ -129,7 +143,9 @@ describe("compileRule — set node validation", () => {
       variables: {},
       nodes: { main: [{ type: "set", variable: "", value: "val" }] },
     };
-    expect(() => compileRule(rule)).toThrow("Set node must have a non-empty variable");
+    expect(() => compileRule(rule)).toThrow(
+      "Set node must have a non-empty variable",
+    );
   });
 
   it("throws on set node with whitespace-only variable", () => {
@@ -137,15 +153,21 @@ describe("compileRule — set node validation", () => {
       variables: {},
       nodes: { main: [{ type: "set", variable: "   ", value: "val" }] },
     };
-    expect(() => compileRule(rule)).toThrow("Set node must have a non-empty variable");
+    expect(() => compileRule(rule)).toThrow(
+      "Set node must have a non-empty variable",
+    );
   });
 
   it("throws on set node with missing variable field", () => {
     const rule: RuleDefinition = {
       variables: {},
-      nodes: { main: [{ type: "set", variable: undefined as any, value: "val" }] },
+      nodes: {
+        main: [{ type: "set", variable: undefined as any, value: "val" }],
+      },
     };
-    expect(() => compileRule(rule)).toThrow("Set node must have a non-empty variable");
+    expect(() => compileRule(rule)).toThrow(
+      "Set node must have a non-empty variable",
+    );
   });
 });
 
@@ -163,7 +185,9 @@ describe("compileRule — exec node validation", () => {
       variables: {},
       nodes: { main: [{ type: "exec", expression: "" }] },
     };
-    expect(() => compileRule(rule)).toThrow("Exec node must have a non-empty expression");
+    expect(() => compileRule(rule)).toThrow(
+      "Exec node must have a non-empty expression",
+    );
   });
 
   it("throws on exec node with whitespace-only expression", () => {
@@ -171,7 +195,9 @@ describe("compileRule — exec node validation", () => {
       variables: {},
       nodes: { main: [{ type: "exec", expression: "   " }] },
     };
-    expect(() => compileRule(rule)).toThrow("Exec node must have a non-empty expression");
+    expect(() => compileRule(rule)).toThrow(
+      "Exec node must have a non-empty expression",
+    );
   });
 
   it("throws on exec node with missing expression field", () => {
@@ -179,7 +205,9 @@ describe("compileRule — exec node validation", () => {
       variables: {},
       nodes: { main: [{ type: "exec", expression: undefined as any }] },
     };
-    expect(() => compileRule(rule)).toThrow("Exec node must have a non-empty expression");
+    expect(() => compileRule(rule)).toThrow(
+      "Exec node must have a non-empty expression",
+    );
   });
 });
 

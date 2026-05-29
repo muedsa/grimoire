@@ -1,29 +1,29 @@
-import { RuleNode } from '../types/rule';
-import { ExecutionContext } from '../context/context';
-import { ExecuteResult } from '../types/node';
+import { RuleNode } from "../types/rule";
+import { ExecutionContext } from "../context/context";
+import { ExecuteResult } from "../types/node";
 
 /** 单层循环帧 — 描述当前所在的一层循环 */
 export interface LoopFrame {
   type: "foreach" | "while";
-  index: number;       // 0-based 迭代索引
-  itemKey?: string;    // foreach 专用：当前 item 变量名
-  total?: number;      // foreach 专用：集合总长度（while 无）
+  index: number; // 0-based 迭代索引
+  itemKey?: string; // foreach 专用：当前 item 变量名
+  total?: number; // foreach 专用：集合总长度（while 无）
 }
 
 /** 步进上下文 — 替换原来单独传 node 的方式 */
 export interface StepContext {
   node: RuleNode;
-  loopStack: LoopFrame[];  // 从外到内的循环帧栈，空数组表示不在循环内
+  loopStack: LoopFrame[]; // 从外到内的循环帧栈，空数组表示不在循环内
 }
 
 /** 条件检查信息 — 在 while/if/foreach 的条件判断时传递 */
 export interface ConditionCheckInfo {
   type: "while" | "if" | "foreach";
-  condition: string;          // 条件表达式原文，如 "x < 3"
-  result: boolean;            // 条件求值结果（before 阶段为占位值）
-  loopStack: LoopFrame[];     // 当前循环栈快照
-  iterationIndex?: number;    // while/foreach 特有：当前迭代次数
-  phase: "before" | "after";  // before=暂停前通知UI, after=求值后记录日志
+  condition: string; // 条件表达式原文，如 "x < 3"
+  result: boolean; // 条件求值结果（before 阶段为占位值）
+  loopStack: LoopFrame[]; // 当前循环栈快照
+  iterationIndex?: number; // while/foreach 特有：当前迭代次数
+  phase: "before" | "after"; // before=暂停前通知UI, after=求值后记录日志
   /** 所在节点的 label（用于调试态高亮对应节点） */
   nodeId?: string;
 }
@@ -36,7 +36,7 @@ export interface ConditionCheckInfo {
  * - running: 不暂停，连续执行
  */
 export class DebugStepController {
-  private mode: 'stepping' | 'running' = 'stepping';
+  private mode: "stepping" | "running" = "stepping";
   private resolveWait: (() => void) | null = null;
   private rejectWait: ((err: Error) => void) | null = null;
   private lastResult: ExecuteResult | null = null;
@@ -45,7 +45,11 @@ export class DebugStepController {
   onPause?: (context: StepContext) => void;
 
   /** 节点执行完成后的回调，用于记录日志。 */
-  onAfterStep?: (context: StepContext, ctx: ExecutionContext, prevResult: ExecuteResult | null) => void;
+  onAfterStep?: (
+    context: StepContext,
+    ctx: ExecutionContext,
+    prevResult: ExecuteResult | null,
+  ) => void;
 
   /** 条件检查事件回调 — before 阶段暂停UI，after 阶段记录日志。 */
   onConditionCheck?: (info: ConditionCheckInfo) => void;
@@ -58,21 +62,27 @@ export class DebugStepController {
    * @returns true 表示可以继续执行，false 表示被中止
    */
   async beforeStep(context: StepContext): Promise<boolean> {
-    if (this.mode === 'running') return true;
+    if (this.mode === "running") return true;
 
     this.onPause?.(context);
 
     return new Promise<boolean>((resolve, reject) => {
       this.resolveWait = () => resolve(true);
-      this.rejectWait = () => reject(new Error('Debug session aborted'));
-    }).catch(() => false).finally(() => {
-      this.resolveWait = null;
-      this.rejectWait = null;
-    });
+      this.rejectWait = () => reject(new Error("Debug session aborted"));
+    })
+      .catch(() => false)
+      .finally(() => {
+        this.resolveWait = null;
+        this.rejectWait = null;
+      });
   }
 
   /** 节点执行完成后调用，触发 onAfterStep 回调。 */
-  afterStep(context: StepContext, ctx: ExecutionContext, result: ExecuteResult): void {
+  afterStep(
+    context: StepContext,
+    ctx: ExecutionContext,
+    result: ExecuteResult,
+  ): void {
     this.lastResult = result;
     this.onAfterStep?.(context, ctx, result);
   }
@@ -93,8 +103,7 @@ export class DebugStepController {
     // 与 beforeStep 相同的暂停 Promise 机制
     return new Promise<boolean>((resolve, reject) => {
       this.resolveWait = () => resolve(true);
-      this.rejectWait = () =>
-        reject(new Error("Debug session aborted"));
+      this.rejectWait = () => reject(new Error("Debug session aborted"));
     })
       .catch(() => false)
       .finally(() => {
@@ -110,13 +119,13 @@ export class DebugStepController {
 
   /** 继续运行直到结束（恢复执行，不再暂停） */
   runToCompletion(): void {
-    this.mode = 'running';
+    this.mode = "running";
     this.resolveWait?.();
   }
 
   /** 中止调试会话 */
   abort(): void {
-    this.mode = 'running';
-    this.rejectWait?.(new Error('Debug session aborted'));
+    this.mode = "running";
+    this.rejectWait?.(new Error("Debug session aborted"));
   }
 }

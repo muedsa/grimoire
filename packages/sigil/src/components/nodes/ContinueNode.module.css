@@ -6,12 +6,12 @@
   gap: 6px;
   padding: 8px 16px;
   background: var(--bg-elevated);
-  border: 2px solid #F97316;
+  border: 2px solid #f97316;
   border-radius: 20px;
-  color: #F97316;
+  color: #f97316;
   font-weight: 600;
   font-size: 13px;
-  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-family: "SF Mono", "Fira Code", monospace;
   position: relative;
   cursor: default;
   transition: box-shadow 0.15s;
@@ -23,8 +23,8 @@
 }
 
 .returnPill.executed {
-  border-color: #22C55E;
-  color: #34D399;
+  border-color: #22c55e;
+  color: #34d399;
   background-color: rgba(34, 197, 94, 0.08);
 }
 
@@ -35,8 +35,13 @@
 }
 
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.4); }
-  50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.2); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.2);
+  }
 }
 
 .pillIcon {

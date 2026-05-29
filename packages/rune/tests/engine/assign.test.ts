@@ -73,7 +73,10 @@ describe("evaluateAssign — template edge cases", () => {
 
   it("evaluates nested object/array templates", async () => {
     const ctx = new ExecutionContext({ x: 10 });
-    const result = await evaluateAssign({ items: ["${x}", { nested: "${x}" }] }, ctx);
+    const result = await evaluateAssign(
+      { items: ["${x}", { nested: "${x}" }] },
+      ctx,
+    );
     expect(result).toEqual({ items: [10, { nested: 10 }] });
   });
 

@@ -27,9 +27,12 @@ type AesAlgorithm =
   | "aes-256-ctr";
 
 const AES_ALGORITHMS: readonly string[] = [
-  "aes-128-cbc", "aes-256-cbc",
-  "aes-128-gcm", "aes-256-gcm",
-  "aes-128-ctr", "aes-256-ctr",
+  "aes-128-cbc",
+  "aes-256-cbc",
+  "aes-128-gcm",
+  "aes-256-gcm",
+  "aes-128-ctr",
+  "aes-256-ctr",
 ];
 
 /** 填充模式类型 */
@@ -48,7 +51,11 @@ function getKeySize(algorithm: AesAlgorithm): number {
 }
 
 /** 验证密钥/IV 长度并抛出友好错误 */
-function validateSizes(algorithm: AesAlgorithm, key: Uint8Array, iv: Uint8Array): void {
+function validateSizes(
+  algorithm: AesAlgorithm,
+  key: Uint8Array,
+  iv: Uint8Array,
+): void {
   const expectedKeySize = getKeySize(algorithm);
   if (key.length !== expectedKeySize) {
     throw new Error(
@@ -126,8 +133,10 @@ function zeroUnpad(data: Uint8Array): Uint8Array {
 /** 应用填充 */
 function applyPadding(data: Uint8Array, mode: PaddingMode): Uint8Array {
   switch (mode) {
-    case "pkcs7": return pkcs7Pad(data);
-    case "zero":  return zeroPad(data);
+    case "pkcs7":
+      return pkcs7Pad(data);
+    case "zero":
+      return zeroPad(data);
     case "none":
       if (data.length % AES_BLOCK_SIZE !== 0) {
         throw new Error(
@@ -143,9 +152,12 @@ function applyPadding(data: Uint8Array, mode: PaddingMode): Uint8Array {
 /** 去除填充 */
 function removePadding(data: Uint8Array, mode: PaddingMode): Uint8Array {
   switch (mode) {
-    case "pkcs7": return pkcs7Unpad(data);
-    case "zero":  return zeroUnpad(data);
-    case "none":  return data;
+    case "pkcs7":
+      return pkcs7Unpad(data);
+    case "zero":
+      return zeroUnpad(data);
+    case "none":
+      return data;
     default:
       throw new Error(`aes: 不支持的填充模式 "${mode}"`);
   }
@@ -154,7 +166,11 @@ function removePadding(data: Uint8Array, mode: PaddingMode): Uint8Array {
 // ---- Raw CBC（无内置填充，用于 zero/none 模式） ----
 
 /** Raw CBC 加密 — 使用 unsafe.encryptBlock 实现，调用方负责填充 */
-function rawCbcEncrypt(key: Uint8Array, iv: Uint8Array, data: Uint8Array): Uint8Array {
+function rawCbcEncrypt(
+  key: Uint8Array,
+  iv: Uint8Array,
+  data: Uint8Array,
+): Uint8Array {
   const expandedKey = unsafe.expandKeyLE(key);
   const result = new Uint8Array(data.length);
   // 从 iv 副本开始，避免修改原始 IV
@@ -168,14 +184,23 @@ function rawCbcEncrypt(key: Uint8Array, iv: Uint8Array, data: Uint8Array): Uint8
     }
     const cipherBlock = unsafe.encryptBlock(expandedKey, input);
     // 复制密文作为下一轮的 prev（避免共享底层 buffer）
-    prev = new Uint8Array(cipherBlock.buffer.slice(cipherBlock.byteOffset, cipherBlock.byteOffset + AES_BLOCK_SIZE));
+    prev = new Uint8Array(
+      cipherBlock.buffer.slice(
+        cipherBlock.byteOffset,
+        cipherBlock.byteOffset + AES_BLOCK_SIZE,
+      ),
+    );
     result.set(prev, i);
   }
   return result;
 }
 
 /** Raw CBC 解密 — 使用 unsafe.decryptBlock 实现，调用方负责去填充 */
-function rawCbcDecrypt(key: Uint8Array, iv: Uint8Array, data: Uint8Array): Uint8Array {
+function rawCbcDecrypt(
+  key: Uint8Array,
+  iv: Uint8Array,
+  data: Uint8Array,
+): Uint8Array {
   const expandedKey = unsafe.expandKeyDecLE(key);
   const result = new Uint8Array(data.length);
   let prev = new Uint8Array(iv);

@@ -51,7 +51,7 @@
   background: var(--bg-elevated);
   color: var(--fg-default);
   transition: border-color 0.15s;
-  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-family: "SF Mono", "Fira Code", monospace;
 }
 
 .field input:focus {
@@ -83,7 +83,7 @@
 
 .templatePreview code {
   flex: 1;
-  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-family: "SF Mono", "Fira Code", monospace;
   font-size: 12px;
   overflow: hidden;
   text-overflow: ellipsis;

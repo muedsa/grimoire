@@ -32,13 +32,13 @@
 }
 
 .debugBtn {
-  background: #7C3AED;
+  background: #7c3aed;
   color: #fff;
-  border-color: #7C3AED;
+  border-color: #7c3aed;
 }
 
 .debugBtn:hover:not(:disabled) {
-  background: #6D28D9;
+  background: #6d28d9;
 }
 
 .resetBtn {
@@ -48,7 +48,7 @@
 }
 
 .resetBtn:hover:not(:disabled) {
-  background: #DC2626;
+  background: #dc2626;
 }
 
 .status {

@@ -136,7 +136,10 @@ function layoutIfNode(
       ctx.getSize,
       ctx.depth + 1,
     );
-    log(`[${ctx.depth}] if then tree`, JSON.stringify(thenLayout.treeSize, null, 2));
+    log(
+      `[${ctx.depth}] if then tree`,
+      JSON.stringify(thenLayout.treeSize, null, 2),
+    );
     const shifted = shiftChildNodesX(thenLayout, -1, nodeWidth);
     result.push(...shifted.nodes);
     boxHalfWidth = Math.max(boxHalfWidth, shifted.halfWidth);
@@ -152,7 +155,10 @@ function layoutIfNode(
       ctx.getSize,
       ctx.depth + 1,
     );
-    log(`[${ctx.depth}] if else tree`, JSON.stringify(elseLayout.treeSize, null, 2));
+    log(
+      `[${ctx.depth}] if else tree`,
+      JSON.stringify(elseLayout.treeSize, null, 2),
+    );
     const shifted = shiftChildNodesX(elseLayout, 1, nodeWidth);
     result.push(...shifted.nodes);
     boxHalfWidth = Math.max(boxHalfWidth, shifted.halfWidth);
@@ -193,8 +199,7 @@ function layoutGroupNode(
   );
 
   const groupWidth = bodyLayout.treeSize.width + PADDING * 2;
-  const groupHeight =
-    GROUP_HEADER_H + bodyLayout.treeSize.height + PADDING * 2;
+  const groupHeight = GROUP_HEADER_H + bodyLayout.treeSize.height + PADDING * 2;
 
   // 仅偏移直接子节点（不偏移孙子节点，它们已在各自父节点的 children 中）
   const shiftedChildren = bodyLayout.nodes.map((child) => ({

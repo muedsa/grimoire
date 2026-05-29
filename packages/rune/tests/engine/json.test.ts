@@ -9,11 +9,17 @@ describe("JSON — json_stringify", () => {
       variables: { data: { user: { name: "Alice", age: 30 } } },
       nodes: {
         main: [
-          { type: "set", variable: "result.jsonStr", value: "${json_stringify(data.user)}" },
+          {
+            type: "set",
+            variable: "result.jsonStr",
+            value: "${json_stringify(data.user)}",
+          },
         ],
       },
     });
-    expect((d(result).result as any)?.jsonStr).toBe('{"name":"Alice","age":30}');
+    expect((d(result).result as any)?.jsonStr).toBe(
+      '{"name":"Alice","age":30}',
+    );
   });
 
   it("serializes array", async () => {
@@ -22,7 +28,11 @@ describe("JSON — json_stringify", () => {
       variables: { data: { items: [1, 2, 3] } },
       nodes: {
         main: [
-          { type: "set", variable: "result.jsonStr", value: "${json_stringify(data.items)}" },
+          {
+            type: "set",
+            variable: "result.jsonStr",
+            value: "${json_stringify(data.items)}",
+          },
         ],
       },
     });
@@ -37,8 +47,16 @@ describe("JSON — json_parse", () => {
       variables: { data: { jsonStr: '{"name":"Alice","age":30}' } },
       nodes: {
         main: [
-          { type: "set", variable: "result.user", value: "${json_parse(data.jsonStr)}" },
-          { type: "set", variable: "result.userName", value: "${result.user.name}" },
+          {
+            type: "set",
+            variable: "result.user",
+            value: "${json_parse(data.jsonStr)}",
+          },
+          {
+            type: "set",
+            variable: "result.userName",
+            value: "${result.user.name}",
+          },
         ],
       },
     });
@@ -53,9 +71,21 @@ describe("JSON — round-trip", () => {
       variables: { data: { payload: { items: [1, 2, 3], flag: true } } },
       nodes: {
         main: [
-          { type: "set", variable: "result.serialized", value: "${json_stringify(data.payload)}" },
-          { type: "set", variable: "result.parsed", value: "${json_parse(result.serialized)}" },
-          { type: "set", variable: "result.flag", value: "${result.parsed.flag}" },
+          {
+            type: "set",
+            variable: "result.serialized",
+            value: "${json_stringify(data.payload)}",
+          },
+          {
+            type: "set",
+            variable: "result.parsed",
+            value: "${json_parse(result.serialized)}",
+          },
+          {
+            type: "set",
+            variable: "result.flag",
+            value: "${result.parsed.flag}",
+          },
         ],
       },
     });

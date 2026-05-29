@@ -68,8 +68,7 @@ export function resolveDanmakuConfig(
     ...config.merge,
   };
 
-  const targetFps =
-    config.adaptive?.targetFps ?? DEFAULT_ADAPTIVE.targetFps;
+  const targetFps = config.adaptive?.targetFps ?? DEFAULT_ADAPTIVE.targetFps;
   const adaptive: Required<DanmakuAdaptiveConfig> = {
     enabled: config.adaptive?.enabled ?? DEFAULT_ADAPTIVE.enabled,
     targetFps,

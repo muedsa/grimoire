@@ -55,9 +55,9 @@ describe("evaluate — array builtins", () => {
 
     it("非数组参数抛出 TypeError", async () => {
       const ctx = new ExecutionContext({ val: "hello" });
-      await expect(
-        evaluateExpression("arr_pop(val)", ctx),
-      ).rejects.toThrow(TypeError);
+      await expect(evaluateExpression("arr_pop(val)", ctx)).rejects.toThrow(
+        TypeError,
+      );
     });
   });
 
@@ -103,9 +103,9 @@ describe("evaluate — array builtins", () => {
 
     it("非数组参数抛出 TypeError", async () => {
       const ctx = new ExecutionContext({ val: 123 });
-      await expect(
-        evaluateExpression("arr_shift(val)", ctx),
-      ).rejects.toThrow(TypeError);
+      await expect(evaluateExpression("arr_shift(val)", ctx)).rejects.toThrow(
+        TypeError,
+      );
     });
   });
 
@@ -125,18 +125,18 @@ describe("evaluate — array builtins", () => {
 
     it("非数组第一参数抛出 TypeError", async () => {
       const ctx = new ExecutionContext({ a: "str", b: [1, 2] });
-      await expect(
-        evaluateExpression("arr_concat(a, b)", ctx),
-      ).rejects.toThrow(TypeError);
+      await expect(evaluateExpression("arr_concat(a, b)", ctx)).rejects.toThrow(
+        TypeError,
+      );
     });
   });
 
   describe("arr_join", () => {
     it("用分隔符连接数组元素", async () => {
       const ctx = new ExecutionContext({ items: ["a", "b", "c"] });
-      expect(
-        await evaluateExpression("arr_join(items, ', ')", ctx),
-      ).toBe("a, b, c");
+      expect(await evaluateExpression("arr_join(items, ', ')", ctx)).toBe(
+        "a, b, c",
+      );
     });
 
     it("空分隔符连接", async () => {
@@ -169,9 +169,9 @@ describe("evaluate — array builtins", () => {
 
     it("非数组参数抛出 TypeError", async () => {
       const ctx = new ExecutionContext({ val: "abc" });
-      await expect(
-        evaluateExpression("arr_reverse(val)", ctx),
-      ).rejects.toThrow(TypeError);
+      await expect(evaluateExpression("arr_reverse(val)", ctx)).rejects.toThrow(
+        TypeError,
+      );
     });
   });
 
@@ -205,9 +205,9 @@ describe("evaluate — array builtins", () => {
 
     it("非数组参数抛出 TypeError", async () => {
       const ctx = new ExecutionContext({ val: "hello" });
-      await expect(
-        evaluateExpression("arr_sort(val)", ctx),
-      ).rejects.toThrow(TypeError);
+      await expect(evaluateExpression("arr_sort(val)", ctx)).rejects.toThrow(
+        TypeError,
+      );
     });
   });
 });

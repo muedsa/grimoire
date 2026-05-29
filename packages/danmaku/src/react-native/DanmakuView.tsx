@@ -35,8 +35,7 @@ export function DanmakuView({
   // font 加载中时 measurer 为 EstimateTextMeasurer（不含 fontFor 方法），
   // 仅 SkiaTextMeasurer 可用时才渲染弹幕节点。
   const rawMeasurer = controller.getMeasurer();
-  const measurer =
-    rawMeasurer instanceof SkiaTextMeasurer ? rawMeasurer : null;
+  const measurer = rawMeasurer instanceof SkiaTextMeasurer ? rawMeasurer : null;
 
   useEffect(() => {
     const offLayout = controller.on("layout", ({ snapshot: snap }) => {

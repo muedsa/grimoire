@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { ExecutionContext, evaluateExpression, evaluate } from "../../src/index";
+import {
+  ExecutionContext,
+  evaluateExpression,
+  evaluate,
+} from "../../src/index";
 
 describe("evaluate — binary operators", () => {
   it("arithmetic: +, -, *, /, %", async () => {
@@ -63,8 +67,12 @@ describe("evaluate — unary operator", () => {
 
 describe("evaluate — path resolution", () => {
   it("resolves nested object property", async () => {
-    const ctx = new ExecutionContext({ data: { user: { profile: { email: "test@example.com" } } } });
-    expect(await evaluateExpression("data.user.profile.email", ctx)).toBe("test@example.com");
+    const ctx = new ExecutionContext({
+      data: { user: { profile: { email: "test@example.com" } } },
+    });
+    expect(await evaluateExpression("data.user.profile.email", ctx)).toBe(
+      "test@example.com",
+    );
   });
 
   it("returns undefined for missing property", async () => {
@@ -80,7 +88,14 @@ describe("evaluate — path resolution", () => {
   });
 
   it("resolves nested array elements", async () => {
-    const ctx = new ExecutionContext({ data: { matrix: [[1, 2], [3, 4]] } });
+    const ctx = new ExecutionContext({
+      data: {
+        matrix: [
+          [1, 2],
+          [3, 4],
+        ],
+      },
+    });
     expect(await evaluateExpression("data.matrix.0.0", ctx)).toBe(1);
     expect(await evaluateExpression("data.matrix.1.1", ctx)).toBe(4);
   });
@@ -93,7 +108,9 @@ describe("evaluate — path resolution", () => {
   it("resolves array element in expression", async () => {
     const ctx = new ExecutionContext({ data: { nums: [10, 20, 30] } });
     expect(await evaluateExpression("data.nums.0 + data.nums.2", ctx)).toBe(40);
-    expect(await evaluateExpression("data.nums.0 * data.nums.1", ctx)).toBe(200);
+    expect(await evaluateExpression("data.nums.0 * data.nums.1", ctx)).toBe(
+      200,
+    );
   });
 });
 
@@ -149,9 +166,15 @@ describe("evaluate — builtin functions", () => {
       num: 42,
       nil: null,
     });
-    expect(await evaluateExpression("json_stringify(obj)", ctx)).toBe('{"name":"Alice","age":30}');
-    expect(await evaluateExpression("json_stringify(arr)", ctx)).toBe("[1,2,3]");
-    expect(await evaluateExpression("json_stringify(str)", ctx)).toBe('"hello"');
+    expect(await evaluateExpression("json_stringify(obj)", ctx)).toBe(
+      '{"name":"Alice","age":30}',
+    );
+    expect(await evaluateExpression("json_stringify(arr)", ctx)).toBe(
+      "[1,2,3]",
+    );
+    expect(await evaluateExpression("json_stringify(str)", ctx)).toBe(
+      '"hello"',
+    );
     expect(await evaluateExpression("json_stringify(num)", ctx)).toBe("42");
     expect(await evaluateExpression("json_stringify(nil)", ctx)).toBe("null");
   });
@@ -159,13 +182,18 @@ describe("evaluate — builtin functions", () => {
   it("json_parse deserializes JSON strings", async () => {
     const ctx = new ExecutionContext({
       objStr: '{"name":"Alice","age":30}',
-      arrStr: '[1,2,3]',
+      arrStr: "[1,2,3]",
       strStr: '"hello"',
       numStr: "42",
       nilStr: "null",
     });
-    expect(await evaluateExpression("json_parse(objStr)", ctx)).toEqual({ name: "Alice", age: 30 });
-    expect(await evaluateExpression("json_parse(arrStr)", ctx)).toEqual([1, 2, 3]);
+    expect(await evaluateExpression("json_parse(objStr)", ctx)).toEqual({
+      name: "Alice",
+      age: 30,
+    });
+    expect(await evaluateExpression("json_parse(arrStr)", ctx)).toEqual([
+      1, 2, 3,
+    ]);
     expect(await evaluateExpression("json_parse(strStr)", ctx)).toBe("hello");
     expect(await evaluateExpression("json_parse(numStr)", ctx)).toBe(42);
     expect(await evaluateExpression("json_parse(nilStr)", ctx)).toBe(null);
@@ -173,12 +201,12 @@ describe("evaluate — builtin functions", () => {
 
   it("json_parse 对非法 JSON 抛出错误", async () => {
     const ctx = new ExecutionContext({ bad: "not json", notStr: 123 });
-    await expect(
-      evaluateExpression("json_parse(bad)", ctx),
-    ).rejects.toThrow(SyntaxError);
-    await expect(
-      evaluateExpression("json_parse(notStr)", ctx),
-    ).rejects.toThrow(TypeError);
+    await expect(evaluateExpression("json_parse(bad)", ctx)).rejects.toThrow(
+      SyntaxError,
+    );
+    await expect(evaluateExpression("json_parse(notStr)", ctx)).rejects.toThrow(
+      TypeError,
+    );
   });
 
   it("builtin functions accept nested expressions as arguments", async () => {
@@ -206,28 +234,39 @@ describe("evaluate — array and object literals", () => {
 
   it("evaluates object with identifier keys", async () => {
     const ctx = new ExecutionContext({ name: "Alice", age: 30 });
-    expect(await evaluateExpression("{name: name, age: age}", ctx)).toEqual({ name: "Alice", age: 30 });
+    expect(await evaluateExpression("{name: name, age: age}", ctx)).toEqual({
+      name: "Alice",
+      age: 30,
+    });
   });
 
   it("evaluates object with expression values", async () => {
     const ctx = new ExecutionContext({ x: 10 });
-    expect(await evaluateExpression("{value: x * 2}", ctx)).toEqual({ value: 20 });
+    expect(await evaluateExpression("{value: x * 2}", ctx)).toEqual({
+      value: 20,
+    });
   });
 
   it("evaluates nested object and array", async () => {
     const ctx = new ExecutionContext({ items: [1, 2] });
-    expect(await evaluateExpression("{data: items, count: len(items)}", ctx)).toEqual({ data: [1, 2], count: 2 });
+    expect(
+      await evaluateExpression("{data: items, count: len(items)}", ctx),
+    ).toEqual({ data: [1, 2], count: 2 });
   });
 });
 
 describe("evaluate — error scenarios", () => {
   it("throws on unknown function call", async () => {
     const ctx = new ExecutionContext({});
-    await expect(evaluateExpression("unknownFunc()", ctx)).rejects.toThrow("Unknown function: unknownFunc");
+    await expect(evaluateExpression("unknownFunc()", ctx)).rejects.toThrow(
+      "Unknown function: unknownFunc",
+    );
   });
 
   it("throws on unknown AST node kind", async () => {
-    await expect(evaluate({ kind: "unknown" } as any, new ExecutionContext({}))).rejects.toThrow("Unknown AST node kind");
+    await expect(
+      evaluate({ kind: "unknown" } as any, new ExecutionContext({})),
+    ).rejects.toThrow("Unknown AST node kind");
   });
 });
 
@@ -243,7 +282,10 @@ describe("evaluate — bracket notation", () => {
 
   it("accesses nested array with bracket notation", async () => {
     const ctx = new ExecutionContext({
-      matrix: [[1, 2], [3, 4]],
+      matrix: [
+        [1, 2],
+        [3, 4],
+      ],
       i: 1,
       j: 0,
     });
@@ -357,17 +399,14 @@ describe("evaluateExpression — unary minus", () => {
 describe("evaluate — 函数调用链式属性访问", () => {
   it("json_parse 的结果上访问 .prop", async () => {
     const ctx = new ExecutionContext({});
-    const result = await evaluateExpression(
-      "json_parse('{\"x\":1}').x",
-      ctx,
-    );
+    const result = await evaluateExpression("json_parse('{\"x\":1}').x", ctx);
     expect(result).toBe(1);
   });
 
   it("json_parse 的结果上访问多层属性", async () => {
     const ctx = new ExecutionContext({});
     const result = await evaluateExpression(
-      "json_parse('{\"a\":{\"b\":2}}').a.b",
+      'json_parse(\'{"a":{"b":2}}\').a.b',
       ctx,
     );
     expect(result).toBe(2);
@@ -377,7 +416,7 @@ describe("evaluate — 函数调用链式属性访问", () => {
     // 使用 json_stringify({body: '{}'}) 模拟返回 HttpResponse 形态
     const ctx = new ExecutionContext({});
     const result = await evaluateExpression(
-      "json_parse(json_parse('{\"body\":\"[1,2,3]\"}').body)",
+      'json_parse(json_parse(\'{"body":"[1,2,3]"}\').body)',
       ctx,
     );
     expect(result).toEqual([1, 2, 3]);

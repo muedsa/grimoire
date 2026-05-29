@@ -22,7 +22,7 @@ yarn add @grimoire/rune
 ## 快速开始
 
 ```typescript
-import { RuleEngine } from '@grimoire/rune';
+import { RuleEngine } from "@grimoire/rune";
 
 const engine = new RuleEngine();
 
@@ -31,10 +31,10 @@ const rule = {
   nodes: {
     main: [
       {
-        type: 'if',
-        condition: 'data.level > 3',
-        then: [{ type: 'set', variable: 'result.tier', value: 'premium' }],
-        else: [{ type: 'set', variable: 'result.tier', value: 'basic' }],
+        type: "if",
+        condition: "data.level > 3",
+        then: [{ type: "set", variable: "result.tier", value: "premium" }],
+        else: [{ type: "set", variable: "result.tier", value: "basic" }],
       },
     ],
   },
@@ -58,8 +58,8 @@ const result = await engine.execute(rule);
 { "type": "exec", "expression": "log(data.result)" }
 ```
 
-| 字段 | 说明 |
-|------|------|
+| 字段         | 说明                                    |
+| ------------ | --------------------------------------- |
 | `expression` | 纯表达式字符串，如 `"log(data.result)"` |
 
 ### Set — 设置变量值
@@ -68,10 +68,10 @@ const result = await engine.execute(rule);
 { "type": "set", "variable": "result.greeting", "value": "Hello, ${data.name}" }
 ```
 
-| 字段 | 说明 |
-|------|------|
+| 字段       | 说明                                                              |
+| ---------- | ----------------------------------------------------------------- |
 | `variable` | 目标变量路径，支持点路径如 `result.user.name`、数组索引 `items.0` |
-| `value` | 赋值模板，支持表达式 `${expr}`、字面量、嵌套对象/数组 |
+| `value`    | 赋值模板，支持表达式 `${expr}`、字面量、嵌套对象/数组             |
 
 **模板语法：**
 
@@ -92,11 +92,11 @@ const result = await engine.execute(rule);
 }
 ```
 
-| 字段 | 说明 |
-|------|------|
-| `condition` | 条件表达式，求值为真/假 |
-| `then` | 条件为真时执行的节点数组 |
-| `else` | 条件为假时执行的节点数组（可选） |
+| 字段        | 说明                             |
+| ----------- | -------------------------------- |
+| `condition` | 条件表达式，求值为真/假          |
+| `then`      | 条件为真时执行的节点数组         |
+| `else`      | 条件为假时执行的节点数组（可选） |
 
 分支在子作用域中执行，`set` 自动向上查找父级变量并写入。
 
@@ -109,17 +109,21 @@ const result = await engine.execute(rule);
   "item": "item",
   "index": "idx",
   "body": [
-    { "type": "set", "variable": "result.total", "value": "${result.total + item.price}" }
+    {
+      "type": "set",
+      "variable": "result.total",
+      "value": "${result.total + item.price}"
+    }
   ]
 }
 ```
 
-| 字段 | 说明 |
-|------|------|
-| `collection` | 求值为数组的表达式 |
-| `item` | 当前项的变量名 |
-| `index` | 索引的变量名（可选） |
-| `body` | 每次迭代执行的节点数组 |
+| 字段         | 说明                   |
+| ------------ | ---------------------- |
+| `collection` | 求值为数组的表达式     |
+| `item`       | 当前项的变量名         |
+| `index`      | 索引的变量名（可选）   |
+| `body`       | 每次迭代执行的节点数组 |
 
 每次迭代创建子作用域，`set` 自动向上查找父级变量。循环局部变量（`item`、`index`）在结束后不可见。
 
@@ -129,16 +133,14 @@ const result = await engine.execute(rule);
 {
   "type": "while",
   "condition": "i < 10",
-  "body": [
-    { "type": "set", "variable": "i", "value": "${i + 1}" }
-  ]
+  "body": [{ "type": "set", "variable": "i", "value": "${i + 1}" }]
 }
 ```
 
-| 字段 | 说明 |
-|------|------|
+| 字段        | 说明                       |
+| ----------- | -------------------------- |
 | `condition` | 条件表达式，每次迭代前求值 |
-| `body` | 条件为真时执行的节点数组 |
+| `body`      | 条件为真时执行的节点数组   |
 
 ### Break — 跳出循环
 
@@ -162,8 +164,8 @@ const result = await engine.execute(rule);
 { "type": "return", "value": "result" }
 ```
 
-| 字段 | 说明 |
-|------|------|
+| 字段    | 说明               |
+| ------- | ------------------ |
 | `value` | 可选的返回值表达式 |
 
 ### Custom — 自定义节点
@@ -179,9 +181,9 @@ const result = await engine.execute(rule);
 }
 ```
 
-| 字段 | 说明 |
-|------|------|
-| `name` | 注册的处理器名称 |
+| 字段     | 说明                                                       |
+| -------- | ---------------------------------------------------------- |
+| `name`   | 注册的处理器名称                                           |
 | `params` | 参数，使用赋值模板（支持字面量、嵌套对象/数组、`${expr}`） |
 
 ---
@@ -192,14 +194,14 @@ const result = await engine.execute(rule);
 
 ### 字面量
 
-| 类型 | 示例 |
-|------|------|
-| 字符串 | `'hello'`、`"hello"` |
-| 数字 | `42`、`3.14`、`.5` |
-| 布尔 | `true`、`false` |
-| null | `null` |
-| 数组 | `[1, 2, 3]`、`["a", "b"]` |
-| 对象 | `{name: "Alice", age: 30}`、`{"key": val}` |
+| 类型   | 示例                                       |
+| ------ | ------------------------------------------ |
+| 字符串 | `'hello'`、`"hello"`                       |
+| 数字   | `42`、`3.14`、`.5`                         |
+| 布尔   | `true`、`false`                            |
+| null   | `null`                                     |
+| 数组   | `[1, 2, 3]`、`["a", "b"]`                  |
+| 对象   | `{name: "Alice", age: 30}`、`{"key": val}` |
 
 ### 路径引用
 
@@ -214,12 +216,12 @@ arr[len(arr) - 1]            — 方括号内可调用函数
 
 ### 运算符
 
-| 类别 | 运算符 | 示例 |
-|------|--------|------|
-| 算术 | `+` `-` `*` `/` `%` | `data.a + data.b` |
-| 比较 | `>` `<` `>=` `<=` `==` `!=` | `data.level >= 3` |
-| 逻辑 | `&&` `\|\|` `!` | `flag && value > 0` |
-| 括号 | `(...)` | `(a + b) * c` |
+| 类别 | 运算符                      | 示例                |
+| ---- | --------------------------- | ------------------- |
+| 算术 | `+` `-` `*` `/` `%`         | `data.a + data.b`   |
+| 比较 | `>` `<` `>=` `<=` `==` `!=` | `data.level >= 3`   |
+| 逻辑 | `&&` `\|\|` `!`             | `flag && value > 0` |
+| 括号 | `(...)`                     | `(a + b) * c`       |
 
 优先级：`||` < `&&` < `==`/`!=` < `>`/`<`/`>=`/`<=` < `+`/`-` < `*`/`/`/`%` < `!` < 括号
 
@@ -238,47 +240,47 @@ regex_replace(str, '\\d+', 'NUM')  — 需要转义的参数字符串
 
 ### 通用函数
 
-| 函数 | 说明 | 示例 | 返回值 |
-|------|------|------|--------|
-| `len(val)` | 数组/字符串/对象长度 | `len(data.items)` | `number` |
-| `exists(val)` | 值不为 undefined/null | `exists(data.user)` | `boolean` |
-| `empty(val)` | 空数组/空字符串/空对象 | `empty(data.name)` | `boolean` |
-| `str(val)` | 转为字符串 | `str(data.id)` | `string` |
-| `num(val)` | 转为数字，失败返回 0 | `num(data.count)` | `number` |
-| `typeof(val)` | 返回类型字符串 | `typeof(data.arr)` | `"string"` / `"number"` / `"boolean"` / `"object"` / `"array"` / `"null"` / `"undefined"` |
-| `type(val)` | `typeof` 的别名 | `type(data.val)` | 同上 |
-| `json_stringify(val)` | 序列化为 JSON 字符串 | `json_stringify(result)` | `string` |
-| `json_parse(val)` | 解析 JSON 字符串，失败返回 null | `json_parse(data.raw)` | `any \| null` |
+| 函数                  | 说明                            | 示例                     | 返回值                                                                                    |
+| --------------------- | ------------------------------- | ------------------------ | ----------------------------------------------------------------------------------------- |
+| `len(val)`            | 数组/字符串/对象长度            | `len(data.items)`        | `number`                                                                                  |
+| `exists(val)`         | 值不为 undefined/null           | `exists(data.user)`      | `boolean`                                                                                 |
+| `empty(val)`          | 空数组/空字符串/空对象          | `empty(data.name)`       | `boolean`                                                                                 |
+| `str(val)`            | 转为字符串                      | `str(data.id)`           | `string`                                                                                  |
+| `num(val)`            | 转为数字，失败返回 0            | `num(data.count)`        | `number`                                                                                  |
+| `typeof(val)`         | 返回类型字符串                  | `typeof(data.arr)`       | `"string"` / `"number"` / `"boolean"` / `"object"` / `"array"` / `"null"` / `"undefined"` |
+| `type(val)`           | `typeof` 的别名                 | `type(data.val)`         | 同上                                                                                      |
+| `json_stringify(val)` | 序列化为 JSON 字符串            | `json_stringify(result)` | `string`                                                                                  |
+| `json_parse(val)`     | 解析 JSON 字符串，失败返回 null | `json_parse(data.raw)`   | `any \| null`                                                                             |
 
 ### 字符串函数 — `str_*`
 
-| 函数 | 说明 | 示例 |
-|------|------|------|
-| `str_starts_with(str, prefix)` | 是否以 prefix 开头 | `str_starts_with(url, 'https')` |
-| `str_ends_with(str, suffix)` | 是否以 suffix 结尾 | `str_ends_with(file, '.pdf')` |
-| `str_contains(str, item)` | 是否包含子串（也支持数组） | `str_contains(text, 'error')` |
-| `str_index_of(str, item)` | 查找子串位置（也支持数组） | `str_index_of(text, '@')` |
-| `str_slice(str, start, end?)` | 切片（也支持数组） | `str_slice(name, 0, 5)` |
-| `str_to_upper_case(str)` | 转大写 | `str_to_upper_case(code)` |
-| `str_to_lower_case(str)` | 转小写 | `str_to_lower_case(code)` |
-| `str_replace(str, old, new)` | 替换所有匹配子串 | `str_replace(text, '-', '_')` |
-| `str_split(str, delimiter)` | 按分隔符拆分 | `str_split(tags, ',')` |
-| `str_trim(str)` | 去除首尾空白 | `str_trim(input)` |
+| 函数                           | 说明                       | 示例                            |
+| ------------------------------ | -------------------------- | ------------------------------- |
+| `str_starts_with(str, prefix)` | 是否以 prefix 开头         | `str_starts_with(url, 'https')` |
+| `str_ends_with(str, suffix)`   | 是否以 suffix 结尾         | `str_ends_with(file, '.pdf')`   |
+| `str_contains(str, item)`      | 是否包含子串（也支持数组） | `str_contains(text, 'error')`   |
+| `str_index_of(str, item)`      | 查找子串位置（也支持数组） | `str_index_of(text, '@')`       |
+| `str_slice(str, start, end?)`  | 切片（也支持数组）         | `str_slice(name, 0, 5)`         |
+| `str_to_upper_case(str)`       | 转大写                     | `str_to_upper_case(code)`       |
+| `str_to_lower_case(str)`       | 转小写                     | `str_to_lower_case(code)`       |
+| `str_replace(str, old, new)`   | 替换所有匹配子串           | `str_replace(text, '-', '_')`   |
+| `str_split(str, delimiter)`    | 按分隔符拆分               | `str_split(tags, ',')`          |
+| `str_trim(str)`                | 去除首尾空白               | `str_trim(input)`               |
 
 ### 数学函数 — `math_*`
 
-| 函数 | 说明 | 示例 |
-|------|------|------|
-| `math_min(...args)` | 取最小值 | `math_min(a, b, c)` |
-| `math_max(...args)` | 取最大值 | `math_max(a, b, c)` |
-| `math_abs(val)` | 绝对值 | `math_abs(diff)` |
-| `math_round(val)` | 四舍五入 | `math_round(price)` |
-| `math_floor(val)` | 向下取整 | `math_floor(price)` |
-| `math_ceil(val)` | 向上取整 | `math_ceil(price)` |
-| `math_pow(base, exp)` | 幂运算 | `math_pow(x, 2)` |
-| `math_sqrt(val)` | 平方根 | `math_sqrt(area)` |
-| `math_sum(...args)` | 求和 | `math_sum(a, b, c)` |
-| `math_avg(...args)` | 求平均值 | `math_avg(a, b, c)` |
+| 函数                  | 说明     | 示例                |
+| --------------------- | -------- | ------------------- |
+| `math_min(...args)`   | 取最小值 | `math_min(a, b, c)` |
+| `math_max(...args)`   | 取最大值 | `math_max(a, b, c)` |
+| `math_abs(val)`       | 绝对值   | `math_abs(diff)`    |
+| `math_round(val)`     | 四舍五入 | `math_round(price)` |
+| `math_floor(val)`     | 向下取整 | `math_floor(price)` |
+| `math_ceil(val)`      | 向上取整 | `math_ceil(price)`  |
+| `math_pow(base, exp)` | 幂运算   | `math_pow(x, 2)`    |
+| `math_sqrt(val)`      | 平方根   | `math_sqrt(area)`   |
+| `math_sum(...args)`   | 求和     | `math_sum(a, b, c)` |
+| `math_avg(...args)`   | 求平均值 | `math_avg(a, b, c)` |
 
 所有数学函数对非数字参数调用 `Number()` 转换，NaN 被过滤。
 
@@ -286,26 +288,26 @@ regex_replace(str, '\\d+', 'NUM')  — 需要转义的参数字符串
 
 所有函数为不可变纯函数，返回新数组，不修改入参。
 
-| 函数 | 说明 | 示例 |
-|------|------|------|
-| `arr_push(arr, item)` | 末尾追加，返回新数组 | `arr_push(items, 'new')` |
-| `arr_pop(arr)` | 移除末尾，返回新数组 | `arr_pop(items)` |
-| `arr_unshift(arr, item)` | 头部插入，返回新数组 | `arr_unshift(items, 'first')` |
-| `arr_shift(arr)` | 移除头部，返回新数组 | `arr_shift(items)` |
-| `arr_concat(a, b)` | 合并两个数组 | `arr_concat([1,2], [3,4])` |
-| `arr_join(arr, sep)` | 用分隔符连接为字符串 | `arr_join(items, ', ')` |
-| `arr_reverse(arr)` | 反转顺序 | `arr_reverse([1,2,3])` |
-| `arr_sort(arr, order?)` | 排序，order 可选 `"desc"` | `arr_sort(nums, 'desc')` |
+| 函数                     | 说明                      | 示例                          |
+| ------------------------ | ------------------------- | ----------------------------- |
+| `arr_push(arr, item)`    | 末尾追加，返回新数组      | `arr_push(items, 'new')`      |
+| `arr_pop(arr)`           | 移除末尾，返回新数组      | `arr_pop(items)`              |
+| `arr_unshift(arr, item)` | 头部插入，返回新数组      | `arr_unshift(items, 'first')` |
+| `arr_shift(arr)`         | 移除头部，返回新数组      | `arr_shift(items)`            |
+| `arr_concat(a, b)`       | 合并两个数组              | `arr_concat([1,2], [3,4])`    |
+| `arr_join(arr, sep)`     | 用分隔符连接为字符串      | `arr_join(items, ', ')`       |
+| `arr_reverse(arr)`       | 反转顺序                  | `arr_reverse([1,2,3])`        |
+| `arr_sort(arr, order?)`  | 排序，order 可选 `"desc"` | `arr_sort(nums, 'desc')`      |
 
 `arr_sort` 全数字元素按数值排序，否则按字符串排序。非数组入参返回安全默认值。
 
 ### 正则函数 — `regex_*`
 
-| 函数 | 说明 | 返回值 |
-|------|------|--------|
-| `regex_test(str, pattern)` | 测试是否匹配正则 | `boolean` |
-| `regex_match(str, pattern)` | 返回第一个匹配及捕获组 | `{ match, groups, index } \| null` |
-| `regex_match_all(str, pattern)` | 返回所有匹配 | `Array<{ match, groups, index }>` |
+| 函数                            | 说明                   | 返回值                             |
+| ------------------------------- | ---------------------- | ---------------------------------- |
+| `regex_test(str, pattern)`      | 测试是否匹配正则       | `boolean`                          |
+| `regex_match(str, pattern)`     | 返回第一个匹配及捕获组 | `{ match, groups, index } \| null` |
+| `regex_match_all(str, pattern)` | 返回所有匹配           | `Array<{ match, groups, index }>`  |
 
 非法正则或非字符串入参返回安全默认值（`false` / `null` / `[]`），不抛异常。
 
@@ -345,10 +347,10 @@ async execute(rule: RuleDefinition, options?: ExecuteOptions): Promise<ExecuteRe
 
 ```typescript
 interface RuleDefinition {
-  name?: string;                           // 规则名称（可选）
-  entry?: string;                          // 入口节点组名，默认 "main"
+  name?: string; // 规则名称（可选）
+  entry?: string; // 入口节点组名，默认 "main"
   variables?: Record<string, AllowedValue>; // 初始变量
-  nodes: Record<string, RuleNode[]>;       // 命名节点组
+  nodes: Record<string, RuleNode[]>; // 命名节点组
 }
 ```
 
@@ -368,26 +370,30 @@ type ExecuteResult = {
 
 ```typescript
 type AllowedValue =
-  | string | number | boolean | null | undefined
-  | AllowedObject          // { [key: string]: AllowedValue }
-  | AllowedValue[];        // 数组
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | AllowedObject // { [key: string]: AllowedValue }
+  | AllowedValue[]; // 数组
 ```
 
 ### 错误码
 
-| 错误码 | 说明 |
-|--------|------|
-| `NODE_TYPE_ERROR` | 节点结构无效（如空 variable、未知 type） |
-| `EXECUTE_ERROR` | 执行期间发生异常 |
-| `EXPRESSION_ERROR` | 表达式解析失败 |
-| `CUSTOM_NODE_NOT_FOUND` | 未注册的自定义处理器 |
+| 错误码                  | 说明                                     |
+| ----------------------- | ---------------------------------------- |
+| `NODE_TYPE_ERROR`       | 节点结构无效（如空 variable、未知 type） |
+| `EXECUTE_ERROR`         | 执行期间发生异常                         |
+| `EXPRESSION_ERROR`      | 表达式解析失败                           |
+| `CUSTOM_NODE_NOT_FOUND` | 未注册的自定义处理器                     |
 
 ### compileRule
 
 预编译规则中的所有表达式，并校验结构完整性。可在执行前单独调用以提前发现错误。
 
 ```typescript
-import { compileRule } from '@grimoire/rune';
+import { compileRule } from "@grimoire/rune";
 
 compileRule(rule); // 结构无效时抛出 EngineError
 ```
@@ -395,15 +401,15 @@ compileRule(rule); // 结构无效时抛出 EngineError
 ### CustomNodeRegistry
 
 ```typescript
-import { CustomNodeRegistry } from '@grimoire/rune';
+import { CustomNodeRegistry } from "@grimoire/rune";
 
 const registry = new CustomNodeRegistry();
 
-registry.register('http.get', async (params, ctx) => {
+registry.register("http.get", async (params, ctx) => {
   const url = params.url as string;
   const res = await fetch(url);
   const data = await res.json();
-  return { status: 'success', data };
+  return { status: "success", data };
 });
 
 const engine = new RuleEngine({ registry });
@@ -438,7 +444,7 @@ class ExecutionContext {
 调试步进控制器，用于单步执行和断点式调试。
 
 ```typescript
-import { DebugStepController } from '@grimoire/rune';
+import { DebugStepController } from "@grimoire/rune";
 
 const controller = new DebugStepController();
 
@@ -450,15 +456,15 @@ controller.onAfterStep = (stepCtx, execCtx, result) => {
 const result = await engine.execute(rule, { stepController: controller });
 ```
 
-| 模式 | 说明 |
-|------|------|
+| 模式               | 说明                                 |
+| ------------------ | ------------------------------------ |
 | `stepping`（默认） | 每节点执行前暂停，等待 `step()` 调用 |
-| `running` | 连续执行，不暂停 |
+| `running`          | 连续执行，不暂停                     |
 
 ```typescript
-controller.step();           // 执行下一步
+controller.step(); // 执行下一步
 controller.runToCompletion(); // 切换到 running 模式，连续执行
-controller.abort();          // 中止执行
+controller.abort(); // 中止执行
 ```
 
 ### Logger
@@ -527,7 +533,11 @@ interface Logger {
         "collection": "data.items",
         "item": "item",
         "body": [
-          { "type": "set", "variable": "result.total", "value": "${result.total + item}" }
+          {
+            "type": "set",
+            "variable": "result.total",
+            "value": "${result.total + item}"
+          }
         ]
       },
       { "type": "return", "value": "result.total" }
@@ -588,7 +598,11 @@ interface Logger {
         "type": "while",
         "condition": "i < data.limit",
         "body": [
-          { "type": "set", "variable": "result.sum", "value": "${result.sum + i}" },
+          {
+            "type": "set",
+            "variable": "result.sum",
+            "value": "${result.sum + i}"
+          },
           { "type": "set", "variable": "i", "value": "${i + 1}" }
         ]
       },
@@ -623,19 +637,19 @@ interface Logger {
 ```
 
 ```typescript
-import { RuleEngine, CustomNodeRegistry } from '@grimoire/rune';
+import { RuleEngine, CustomNodeRegistry } from "@grimoire/rune";
 
 const registry = new CustomNodeRegistry();
 
-registry.register('http.get', async (params, ctx) => {
+registry.register("http.get", async (params, ctx) => {
   const url = params.url as string;
   try {
     const res = await fetch(url);
     const data = await res.json();
-    ctx.set('result.data', data);
-    return { status: 'success', data };
+    ctx.set("result.data", data);
+    return { status: "success", data };
   } catch (err) {
-    return { status: 'failed', data: null };
+    return { status: "failed", data: null };
   }
 });
 
@@ -648,7 +662,9 @@ const result = await engine.execute(rule);
 ```json
 {
   "name": "phone-validate",
-  "variables": { "data": { "phone": "13812345678", "text": "订单 ORD-001 金额 99.00" } },
+  "variables": {
+    "data": { "phone": "13812345678", "text": "订单 ORD-001 金额 99.00" }
+  },
   "nodes": {
     "main": [
       {
@@ -676,9 +692,21 @@ const result = await engine.execute(rule);
   "nodes": {
     "main": [
       { "type": "set", "variable": "items", "value": "${arr_sort(data.raw)}" },
-      { "type": "set", "variable": "items", "value": "${arr_push(items, 'e')}" },
-      { "type": "set", "variable": "items", "value": "${arr_unshift(items, '_')}" },
-      { "type": "set", "variable": "result.csv", "value": "${arr_join(items, ',')}" },
+      {
+        "type": "set",
+        "variable": "items",
+        "value": "${arr_push(items, 'e')}"
+      },
+      {
+        "type": "set",
+        "variable": "items",
+        "value": "${arr_unshift(items, '_')}"
+      },
+      {
+        "type": "set",
+        "variable": "result.csv",
+        "value": "${arr_join(items, ',')}"
+      },
       { "type": "return", "value": "result.csv" }
     ]
   }
@@ -695,7 +723,11 @@ const result = await engine.execute(rule);
   "nodes": {
     "main": [
       { "type": "exec", "expression": "log(data.name)" },
-      { "type": "set", "variable": "result.upper", "value": "${str_to_upper_case(data.name)}" },
+      {
+        "type": "set",
+        "variable": "result.upper",
+        "value": "${str_to_upper_case(data.name)}"
+      },
       { "type": "return", "value": "result.upper" }
     ]
   }
@@ -709,7 +741,7 @@ const result = await engine.execute(rule);
 ```typescript
 try {
   const result = await engine.execute(rule);
-  if (result.status === 'failed') {
+  if (result.status === "failed") {
     console.error(`[${result.error?.code}] ${result.error?.message}`);
   }
 } catch (err) {

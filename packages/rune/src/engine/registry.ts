@@ -6,8 +6,8 @@ import { AllowedValue } from "../types/node";
  * 自定义节点处理器 - 由外部注册的业务逻辑
  */
 export type CustomNodeHandler = (
-  params: AllowedValue,       // 已求值的参数（与 set.value 使用同一套模板系统）
-  context: ExecutionContext
+  params: AllowedValue, // 已求值的参数（与 set.value 使用同一套模板系统）
+  context: ExecutionContext,
 ) => ExecuteResult | Promise<ExecuteResult>;
 
 /**

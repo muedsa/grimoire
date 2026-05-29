@@ -1,7 +1,8 @@
 import type { Logger } from "@grimoire/rune";
 
 /** 引擎日志的前缀样式 — 深紫背景 + 亮青色文字，在控制台中一眼可辨 */
-const TAG_STYLE = "background:#2d1b4e;color:#0ff;padding:1px 4px;border-radius:2px;font-weight:bold";
+const TAG_STYLE =
+  "background:#2d1b4e;color:#0ff;padding:1px 4px;border-radius:2px;font-weight:bold";
 const TAG = "%c[RuneEngine]%c";
 
 /** 各日志级别对应的 console 方法和样式 */

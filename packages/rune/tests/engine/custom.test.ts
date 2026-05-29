@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { RuleEngine, RuleDefinition, CustomNodeRegistry } from "../../src/index";
+import {
+  RuleEngine,
+  RuleDefinition,
+  CustomNodeRegistry,
+} from "../../src/index";
 import { d } from "../helpers";
 
 describe("CustomNode — registration", () => {
@@ -7,7 +11,7 @@ describe("CustomNode — registration", () => {
     const registry = new CustomNodeRegistry();
     registry.register("double", (params) => ({
       status: "success",
-      data: ((params as Record<string, number>).value) * 2,
+      data: (params as Record<string, number>).value * 2,
     }));
 
     const engine = new RuleEngine({ registry });
@@ -15,7 +19,11 @@ describe("CustomNode — registration", () => {
       variables: { data: { value: 21 } },
       nodes: {
         main: [
-          { type: "custom", name: "double", params: { value: "${data.value}" } },
+          {
+            type: "custom",
+            name: "double",
+            params: { value: "${data.value}" },
+          },
         ],
       },
     };
@@ -104,7 +112,10 @@ describe("CustomNode — context access", () => {
   it("custom node params use AssignTemplate", async () => {
     const registry = new CustomNodeRegistry();
     registry.register("buildUrl", (params, ctx) => {
-      const config = (params as Record<string, unknown>).config as Record<string, unknown>;
+      const config = (params as Record<string, unknown>).config as Record<
+        string,
+        unknown
+      >;
       const url = (config.baseUrl as string) + (config.path as string);
       ctx.set("result.url", url);
       return { status: "success" };
@@ -129,7 +140,9 @@ describe("CustomNode — context access", () => {
       },
     };
     const result = await engine.execute(rule);
-    expect((d(result).result as any)?.url).toBe("https://api.example.com/users/42");
+    expect((d(result).result as any)?.url).toBe(
+      "https://api.example.com/users/42",
+    );
   });
 
   it("custom node modifies context inside loop", async () => {
@@ -150,9 +163,7 @@ describe("CustomNode — context access", () => {
             type: "foreach",
             collection: "data.items",
             item: "item",
-            body: [
-              { type: "custom", name: "addTen", params: {} },
-            ],
+            body: [{ type: "custom", name: "addTen", params: {} }],
           },
         ],
       },

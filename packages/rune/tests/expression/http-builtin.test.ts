@@ -1,5 +1,9 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
-import { http_get, http_post, http_fetch } from "../../src/expression/builtins/http";
+import {
+  http_get,
+  http_post,
+  http_fetch,
+} from "../../src/expression/builtins/http";
 
 // mock fetch
 const mockFetch = vi.fn<typeof fetch>();

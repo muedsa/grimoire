@@ -6,12 +6,12 @@
 
 返回值的长度。
 
-| 类型 | 行为 |
-|------|------|
+| 类型     | 行为     |
+| -------- | -------- |
 | `string` | 字符数量 |
-| `array` | 元素数量 |
-| `object` | 键数量 |
-| 其他 | `0` |
+| `array`  | 元素数量 |
+| `object` | 键数量   |
+| 其他     | `0`      |
 
 ```
 len("hello")            → 5
@@ -90,10 +90,10 @@ json_parse(123)         // 抛出 TypeError：非字符串参数
 
 抛出一个 `EngineError`，终止当前规则执行。
 
-| 参数 | 说明 |
-|------|------|
-| `code` | 错误码，任意字符串。非字符串时默认 `"EXECUTE_ERROR"` |
-| `message` | 错误描述。非字符串时默认 `""` |
+| 参数      | 说明                                                 |
+| --------- | ---------------------------------------------------- |
+| `code`    | 错误码，任意字符串。非字符串时默认 `"EXECUTE_ERROR"` |
+| `message` | 错误描述。非字符串时默认 `""`                        |
 
 ```
 throw_err('VALIDATION_FAILED', 'x must be greater than 0')
@@ -121,12 +121,12 @@ sleep(-1)               → null
 
 返回值的运行时类型。
 
-| 值 | 返回 |
-|----|------|
-| `null` | `"null"` |
-| `undefined` | `"undefined"` |
-| `[]` 或数组 | `"array"` |
-| 其他 | JS typeof 结果 |
+| 值          | 返回           |
+| ----------- | -------------- |
+| `null`      | `"null"`       |
+| `undefined` | `"undefined"`  |
+| `[]` 或数组 | `"array"`      |
+| 其他        | JS typeof 结果 |
 
 ```
 typeof(42)              → "number"
@@ -480,11 +480,11 @@ regex_match("foo=123", "(\\w+)=(\\d+)")
 regex_match("hello", "\\d+")             → null
 ```
 
-| 返回字段 | 说明 |
-|----------|------|
-| `match` | 完整匹配字符串 |
-| `groups` | 捕获组数组 |
-| `index` | 起始位置 |
+| 返回字段 | 说明           |
+| -------- | -------------- |
+| `match`  | 完整匹配字符串 |
+| `groups` | 捕获组数组     |
+| `index`  | 起始位置       |
 
 ### `regex_match_all(str, pattern) → array`
 
@@ -517,15 +517,15 @@ date_now()                               → 1715761845123
 
 **占位符：**
 
-| 占位符 | 含义 | 输出 |
-|--------|------|------|
-| `YYYY` | 四位年 | `2026` |
-| `MM` | 两位月 | `05` |
-| `DD` | 两位日 | `15` |
-| `HH` | 24小时制时 | `14` |
-| `mm` | 分 | `30` |
-| `ss` | 秒 | `45` |
-| `SSS` | 毫秒 | `123` |
+| 占位符 | 含义       | 输出   |
+| ------ | ---------- | ------ |
+| `YYYY` | 四位年     | `2026` |
+| `MM`   | 两位月     | `05`   |
+| `DD`   | 两位日     | `15`   |
+| `HH`   | 24小时制时 | `14`   |
+| `mm`   | 分         | `30`   |
+| `ss`   | 秒         | `45`   |
+| `SSS`  | 毫秒       | `123`  |
 
 ```
 date_format(ts, 'YYYY-MM-DD')            → "2026-05-15"
@@ -587,16 +587,16 @@ date_diff(date_parse('2026-06-01', 'YYYY-MM-DD'), date_now(), 'day')
 
 **field 可取值：** `"year"`, `"month"`, `"day"`, `"hour"`, `"minute"`, `"second"`, `"millisecond"`, `"weekday"`
 
-| field | 说明 | 范围 |
-|-------|------|------|
-| `year` | 年 | 四位数字 |
-| `month` | 月 | 1–12 |
-| `day` | 日 | 1–31 |
-| `hour` | 时 | 0–23 |
-| `minute` | 分 | 0–59 |
-| `second` | 秒 | 0–59 |
-| `millisecond` | 毫秒 | 0–999 |
-| `weekday` | 星期 | 0–6，0=周日 |
+| field         | 说明 | 范围        |
+| ------------- | ---- | ----------- |
+| `year`        | 年   | 四位数字    |
+| `month`       | 月   | 1–12        |
+| `day`         | 日   | 1–31        |
+| `hour`        | 时   | 0–23        |
+| `minute`      | 分   | 0–59        |
+| `second`      | 秒   | 0–59        |
+| `millisecond` | 毫秒 | 0–999       |
+| `weekday`     | 星期 | 0–6，0=周日 |
 
 ```
 date_get(ts, 'year')                     → 2026
@@ -616,12 +616,12 @@ date_get(ts, 'weekday')                  → 5    // 周五
 { status: number; headers: object; body: string; error?: string }
 ```
 
-| 场景 | status | body | error |
-|------|--------|------|-------|
-| 成功 | HTTP 状态码 | 响应文本 | 无 |
-| 404/500 等 | 对应状态码 | 响应文本 | 无 |
-| 网络故障 | `0` | `""` | `"network_error"` |
-| 超时 | `0` | `""` | `"timeout"` |
+| 场景       | status      | body     | error             |
+| ---------- | ----------- | -------- | ----------------- |
+| 成功       | HTTP 状态码 | 响应文本 | 无                |
+| 404/500 等 | 对应状态码  | 响应文本 | 无                |
+| 网络故障   | `0`         | `""`     | `"network_error"` |
+| 超时       | `0`         | `""`     | `"timeout"`       |
 
 ### `http_get(url, headers?) → HttpResponse`
 
@@ -637,12 +637,12 @@ json_parse(http_get('https://api.example.com/data').body)
 
 `body` 为 `string` 时直传；`body` 为 `object` 时根据 `Content-Type` 自动序列化：
 
-| Content-Type (含) | body 为 object | body 为 string |
-|---|---|---|
-| `application/json` | `JSON.stringify` | 直传 |
-| `x-www-form-urlencoded` | `URLSearchParams` | 直传 |
-| `multipart/form-data` | 自动生成 boundary | 直传 |
-| 无匹配 | `error: "unsupported_content_type"` | 直传 |
+| Content-Type (含)       | body 为 object                      | body 为 string |
+| ----------------------- | ----------------------------------- | -------------- |
+| `application/json`      | `JSON.stringify`                    | 直传           |
+| `x-www-form-urlencoded` | `URLSearchParams`                   | 直传           |
+| `multipart/form-data`   | 自动生成 boundary                   | 直传           |
+| 无匹配                  | `error: "unsupported_content_type"` | 直传           |
 
 ```
 // JSON 请求
@@ -679,14 +679,14 @@ http_fetch(url, {timeout: 5000})    // 5 秒超时
 
 ## 函数索引
 
-| 分类 | 函数 |
-|------|------|
-| 核心 | `len`, `exists`, `empty`, `str`, `num`, `json_stringify`, `json_parse`, `throw_err`, `sleep` |
-| 类型 | `typeof`, `type` |
-| 字符串 | `str_starts_with`, `str_ends_with`, `str_contains`, `str_index_of`, `str_slice`, `str_to_upper_case`, `str_to_lower_case`, `str_replace`, `str_split`, `str_trim` |
-| URL 编码 | `url_encode`, `url_decode` |
-| 数学 | `math_min`, `math_max`, `math_abs`, `math_round`, `math_floor`, `math_ceil`, `math_pow`, `math_sqrt`, `math_sum`, `math_avg` |
-| 数组 | `arr_push`, `arr_pop`, `arr_unshift`, `arr_shift`, `arr_concat`, `arr_join`, `arr_reverse`, `arr_sort` |
-| 正则 | `regex_test`, `regex_match`, `regex_match_all` |
-| 日期 | `date_now`, `date_format`, `date_parse`, `date_add`, `date_diff`, `date_get` |
-| HTTP | `http_get`, `http_post`, `http_fetch` |
+| 分类     | 函数                                                                                                                                                              |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 核心     | `len`, `exists`, `empty`, `str`, `num`, `json_stringify`, `json_parse`, `throw_err`, `sleep`                                                                      |
+| 类型     | `typeof`, `type`                                                                                                                                                  |
+| 字符串   | `str_starts_with`, `str_ends_with`, `str_contains`, `str_index_of`, `str_slice`, `str_to_upper_case`, `str_to_lower_case`, `str_replace`, `str_split`, `str_trim` |
+| URL 编码 | `url_encode`, `url_decode`                                                                                                                                        |
+| 数学     | `math_min`, `math_max`, `math_abs`, `math_round`, `math_floor`, `math_ceil`, `math_pow`, `math_sqrt`, `math_sum`, `math_avg`                                      |
+| 数组     | `arr_push`, `arr_pop`, `arr_unshift`, `arr_shift`, `arr_concat`, `arr_join`, `arr_reverse`, `arr_sort`                                                            |
+| 正则     | `regex_test`, `regex_match`, `regex_match_all`                                                                                                                    |
+| 日期     | `date_now`, `date_format`, `date_parse`, `date_add`, `date_diff`, `date_get`                                                                                      |
+| HTTP     | `http_get`, `http_post`, `http_fetch`                                                                                                                             |

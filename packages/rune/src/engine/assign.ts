@@ -25,7 +25,10 @@ function parseTemplate(input: string): TemplatePart[] {
 
   while ((match = regex.exec(input)) !== null) {
     if (match.index > lastIndex) {
-      parts.push({ type: "literal", value: input.slice(lastIndex, match.index) });
+      parts.push({
+        type: "literal",
+        value: input.slice(lastIndex, match.index),
+      });
     }
     parts.push({ type: "expr", value: match[1] });
     lastIndex = regex.lastIndex;
@@ -62,7 +65,12 @@ async function evaluateTemplate(
   }
 
   if (parts.length === 1 && parts[0].type === "expr") {
-    return await evaluateExpression(parts[0].value, ctx, logger, customFunctions);
+    return await evaluateExpression(
+      parts[0].value,
+      ctx,
+      logger,
+      customFunctions,
+    );
   }
 
   let result = "";
@@ -70,7 +78,12 @@ async function evaluateTemplate(
     if (part.type === "literal") {
       result += part.value;
     } else {
-      const value = await evaluateExpression(part.value, ctx, logger, customFunctions);
+      const value = await evaluateExpression(
+        part.value,
+        ctx,
+        logger,
+        customFunctions,
+      );
       result += String(value ?? "");
     }
   }
@@ -99,9 +112,11 @@ export async function evaluateAssign(
   }
 
   if (Array.isArray(template)) {
-    return await Promise.all(
-      template.map((item) => evaluateAssign(item, ctx, logger, customFunctions)),
-    ) as AllowedValue[];
+    return (await Promise.all(
+      template.map((item) =>
+        evaluateAssign(item, ctx, logger, customFunctions),
+      ),
+    )) as AllowedValue[];
   }
 
   if (typeof template === "object") {

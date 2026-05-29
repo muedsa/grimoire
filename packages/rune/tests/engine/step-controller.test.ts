@@ -1,6 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { DebugStepController } from "../../src/engine/debugger";
-import type { StepContext, ConditionCheckInfo } from "../../src/engine/debugger";
+import type {
+  StepContext,
+  ConditionCheckInfo,
+} from "../../src/engine/debugger";
 import type { RuleNode } from "../../src/types/rule";
 import { ExecutionContext } from "../../src/context/context";
 
@@ -130,7 +133,9 @@ describe("DebugStepController", () => {
 
       // 不应立即 resolve
       let resolved = false;
-      promise.then(() => { resolved = true; });
+      promise.then(() => {
+        resolved = true;
+      });
       await Promise.resolve();
       expect(resolved).toBe(false);
 

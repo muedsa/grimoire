@@ -47,7 +47,9 @@ export class EstimateTextMeasurer implements TextMeasurer {
       const cp = char.codePointAt(0) ?? 0;
       baseWidth += cp > 0xff ? CJK_FACTOR * fontSize : ASCII_FACTOR * fontSize;
     }
-    const width = Math.ceil(weight === "bold" ? baseWidth * BOLD_FACTOR : baseWidth);
+    const width = Math.ceil(
+      weight === "bold" ? baseWidth * BOLD_FACTOR : baseWidth,
+    );
     const entry: CacheEntry = { width, height: fontSize };
 
     if (this.cache.size >= this.cacheSize) {

@@ -25,7 +25,14 @@ function mkScheduler(items: DanmakuItem[]) {
     config,
   });
   const measurer = new EstimateTextMeasurer();
-  return new DanmakuScheduler({ store, filter, merger, allocator, measurer, config });
+  return new DanmakuScheduler({
+    store,
+    filter,
+    merger,
+    allocator,
+    measurer,
+    config,
+  });
 }
 
 describe("DanmakuScheduler", () => {

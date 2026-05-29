@@ -18,8 +18,7 @@ export const arrayBuiltins: Record<string, CustomFunction> = {
 
   /** 移除数组最后一个元素，修改原数组，返回被移除的元素（空数组返回 undefined） */
   arr_pop: (arr: AllowedValue) => {
-    if (!Array.isArray(arr))
-      throw new TypeError("arr_pop: 参数必须是数组");
+    if (!Array.isArray(arr)) throw new TypeError("arr_pop: 参数必须是数组");
     return arr.pop();
   },
 
@@ -32,8 +31,7 @@ export const arrayBuiltins: Record<string, CustomFunction> = {
 
   /** 移除数组第一个元素，修改原数组，返回被移除的元素（空数组返回 undefined） */
   arr_shift: (arr: AllowedValue) => {
-    if (!Array.isArray(arr))
-      throw new TypeError("arr_shift: 参数必须是数组");
+    if (!Array.isArray(arr)) throw new TypeError("arr_shift: 参数必须是数组");
     return arr.shift();
   },
 
@@ -55,8 +53,7 @@ export const arrayBuiltins: Record<string, CustomFunction> = {
 
   /** 原地反转数组，返回原数组引用 */
   arr_reverse: (arr: AllowedValue) => {
-    if (!Array.isArray(arr))
-      throw new TypeError("arr_reverse: 参数必须是数组");
+    if (!Array.isArray(arr)) throw new TypeError("arr_reverse: 参数必须是数组");
     return arr.reverse();
   },
 
@@ -70,9 +67,7 @@ export const arrayBuiltins: Record<string, CustomFunction> = {
     const desc = order === "desc";
     if (arr.every((v) => typeof v === "number")) {
       arr.sort((a, b) =>
-        desc
-          ? (b as number) - (a as number)
-          : (a as number) - (b as number),
+        desc ? (b as number) - (a as number) : (a as number) - (b as number),
       );
     } else {
       arr.sort();

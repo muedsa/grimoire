@@ -1,7 +1,16 @@
 import { EngineError } from "./error";
 
 // 节点类型 - 字符串字面量联合类型
-export type NodeType = "if" | "foreach" | "while" | "break" | "continue" | "return" | "custom" | "set" | "exec";
+export type NodeType =
+  | "if"
+  | "foreach"
+  | "while"
+  | "break"
+  | "continue"
+  | "return"
+  | "custom"
+  | "set"
+  | "exec";
 
 // 执行状态
 export type ExecuteStatus = "success" | "failed";

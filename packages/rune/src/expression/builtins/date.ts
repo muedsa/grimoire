@@ -3,7 +3,14 @@ import { CustomFunction } from "../evaluator";
 
 // ========== 内部 helpers ==========
 
-type DateUnit = "second" | "minute" | "hour" | "day" | "week" | "month" | "year";
+type DateUnit =
+  | "second"
+  | "minute"
+  | "hour"
+  | "day"
+  | "week"
+  | "month"
+  | "year";
 
 const MS_PER_UNIT: Record<DateUnit, number> = {
   second: 1_000,
@@ -137,15 +144,7 @@ function toDate(ts: AllowedValue): Date | null {
 function isUnit(val: AllowedValue): val is DateUnit {
   return (
     typeof val === "string" &&
-    [
-      "second",
-      "minute",
-      "hour",
-      "day",
-      "week",
-      "month",
-      "year",
-    ].includes(val)
+    ["second", "minute", "hour", "day", "week", "month", "year"].includes(val)
   );
 }
 
@@ -209,11 +208,7 @@ export const dateBuiltins: Record<string, CustomFunction> = {
    *   date_diff(end, start, 'hour')  → 2.5
    *   date_diff(ts2, ts1, 'day')     → 3
    */
-  date_diff: (
-    ts1: AllowedValue,
-    ts2: AllowedValue,
-    unit: AllowedValue,
-  ) => {
+  date_diff: (ts1: AllowedValue, ts2: AllowedValue, unit: AllowedValue) => {
     const a = toTs(ts1);
     const b = toTs(ts2);
     if (a === null || b === null || !isUnit(unit)) return null;

@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { RuleEngine, RuleDefinition, ExecutionContext, CustomNodeRegistry, DebugStepController } from "../../src/index";
+import {
+  RuleEngine,
+  RuleDefinition,
+  ExecutionContext,
+  CustomNodeRegistry,
+  DebugStepController,
+} from "../../src/index";
 import type { StepContext } from "../../src/index";
 
 /** 收集 onAfterStep 调用记录 */
@@ -34,7 +40,9 @@ describe("RuleEngine -- DebugStepController", () => {
   it("should call onAfterStep for each executed node", async () => {
     const calls: Array<{ nodeType: string }> = [];
     const engine = new RuleEngine();
-    const controller = createCollectingController(calls as unknown as DebugCall[]);
+    const controller = createCollectingController(
+      calls as unknown as DebugCall[],
+    );
 
     const rule: RuleDefinition = {
       name: "test",
@@ -59,9 +67,7 @@ describe("RuleEngine -- DebugStepController", () => {
       name: "test",
       variables: { x: 0 },
       nodes: {
-        main: [
-          { type: "set", variable: "x", value: 42 },
-        ],
+        main: [{ type: "set", variable: "x", value: 42 }],
       },
     });
 
@@ -79,9 +85,7 @@ describe("RuleEngine -- DebugStepController", () => {
           {
             type: "if",
             condition: "x > 5",
-            then: [
-              { type: "set", variable: "result", value: "big" },
-            ],
+            then: [{ type: "set", variable: "result", value: "big" }],
           },
         ],
       },
@@ -102,9 +106,7 @@ describe("RuleEngine -- DebugStepController", () => {
             type: "foreach",
             collection: "[1, 2, 3]",
             item: "item",
-            body: [
-              { type: "set", variable: "sum", value: "${sum + item}" },
-            ],
+            body: [{ type: "set", variable: "sum", value: "${sum + item}" }],
           },
         ],
       },
@@ -124,9 +126,7 @@ describe("RuleEngine -- DebugStepController", () => {
           {
             type: "while",
             condition: "i < 3",
-            body: [
-              { type: "set", variable: "i", value: "${i + 1}" },
-            ],
+            body: [{ type: "set", variable: "i", value: "${i + 1}" }],
           },
         ],
       },
@@ -198,7 +198,9 @@ describe("RuleEngine -- DebugStepController", () => {
     const continueCalls = calls.filter((c) => c.nodeType === "continue");
     expect(continueCalls).toHaveLength(3);
 
-    const skipCalls = calls.filter((c) => c.nodeType === "set" && (c.contextSnapshot.skip === "never"));
+    const skipCalls = calls.filter(
+      (c) => c.nodeType === "set" && c.contextSnapshot.skip === "never",
+    );
     expect(skipCalls).toHaveLength(0);
   });
 
@@ -208,9 +210,7 @@ describe("RuleEngine -- DebugStepController", () => {
       name: "test",
       variables: {},
       nodes: {
-        main: [
-          { type: "set", variable: "x", value: 1 },
-        ],
+        main: [{ type: "set", variable: "x", value: 1 }],
       },
     };
 
@@ -232,9 +232,7 @@ describe("RuleEngine -- DebugStepController", () => {
       name: "test",
       variables: {},
       nodes: {
-        main: [
-          { type: "custom", name: "test.node", params: {} },
-        ],
+        main: [{ type: "custom", name: "test.node", params: {} }],
       },
     };
 
@@ -254,12 +252,8 @@ describe("RuleEngine -- DebugStepController", () => {
           {
             type: "if",
             condition: "x > 10",
-            then: [
-              { type: "set", variable: "branch", value: "then" },
-            ],
-            else: [
-              { type: "set", variable: "branch", value: "else" },
-            ],
+            then: [{ type: "set", variable: "branch", value: "then" }],
+            else: [{ type: "set", variable: "branch", value: "else" }],
           },
         ],
       },
@@ -275,9 +269,7 @@ describe("RuleEngine -- DebugStepController", () => {
       name: "test",
       variables: {},
       nodes: {
-        main: [
-          { type: "exec", expression: "len([1, 2, 3])" },
-        ],
+        main: [{ type: "exec", expression: "len([1, 2, 3])" }],
       },
     });
 
@@ -288,7 +280,10 @@ describe("RuleEngine -- DebugStepController", () => {
 
 describe("StepContext — loopStack in foreach", () => {
   it("should provide loopStack with correct index and total for each foreach iteration", async () => {
-    const afterCalls: { nodeType: string; loopStack: StepContext["loopStack"] }[] = [];
+    const afterCalls: {
+      nodeType: string;
+      loopStack: StepContext["loopStack"];
+    }[] = [];
     const engine = new RuleEngine();
     const controller = new DebugStepController();
     controller.onAfterStep = (ctx) => {
@@ -305,9 +300,7 @@ describe("StepContext — loopStack in foreach", () => {
             type: "foreach",
             collection: "[10, 20, 30]",
             item: "item",
-            body: [
-              { type: "set", variable: "sum", value: "${sum + item}" },
-            ],
+            body: [{ type: "set", variable: "sum", value: "${sum + item}" }],
           },
         ],
       },
@@ -332,10 +325,15 @@ describe("StepContext — loopStack in foreach", () => {
   });
 
   it("should provide empty loopStack for nodes outside loops", async () => {
-    const afterCalls: { nodeType: string; loopStack: StepContext["loopStack"] }[] = [];
+    const afterCalls: {
+      nodeType: string;
+      loopStack: StepContext["loopStack"];
+    }[] = [];
     const engine = new RuleEngine();
     const controller = new DebugStepController();
-    controller.onAfterStep = (ctx) => { afterCalls.push({ nodeType: ctx.node.type, loopStack: ctx.loopStack }); };
+    controller.onAfterStep = (ctx) => {
+      afterCalls.push({ nodeType: ctx.node.type, loopStack: ctx.loopStack });
+    };
     controller.runToCompletion();
 
     const rule: RuleDefinition = {
@@ -360,10 +358,15 @@ describe("StepContext — loopStack in foreach", () => {
 
 describe("StepContext — loopStack in while", () => {
   it("should provide loopStack with index for each while iteration", async () => {
-    const afterCalls: { nodeType: string; loopStack: StepContext["loopStack"] }[] = [];
+    const afterCalls: {
+      nodeType: string;
+      loopStack: StepContext["loopStack"];
+    }[] = [];
     const engine = new RuleEngine();
     const controller = new DebugStepController();
-    controller.onAfterStep = (ctx) => { afterCalls.push({ nodeType: ctx.node.type, loopStack: ctx.loopStack }); };
+    controller.onAfterStep = (ctx) => {
+      afterCalls.push({ nodeType: ctx.node.type, loopStack: ctx.loopStack });
+    };
     controller.runToCompletion();
 
     const rule: RuleDefinition = {
@@ -374,9 +377,7 @@ describe("StepContext — loopStack in while", () => {
           {
             type: "while",
             condition: "i < 2",
-            body: [
-              { type: "set", variable: "i", value: "${i + 1}" },
-            ],
+            body: [{ type: "set", variable: "i", value: "${i + 1}" }],
           },
         ],
       },
@@ -386,21 +387,22 @@ describe("StepContext — loopStack in while", () => {
 
     const bodyCalls = afterCalls.filter((c) => c.nodeType === "set");
     expect(bodyCalls).toHaveLength(2);
-    expect(bodyCalls[0].loopStack).toEqual([
-      { type: "while", index: 0 },
-    ]);
-    expect(bodyCalls[1].loopStack).toEqual([
-      { type: "while", index: 1 },
-    ]);
+    expect(bodyCalls[0].loopStack).toEqual([{ type: "while", index: 0 }]);
+    expect(bodyCalls[1].loopStack).toEqual([{ type: "while", index: 1 }]);
   });
 });
 
 describe("StepContext — nested loops", () => {
   it("should provide nested loopStack for nested foreach", async () => {
-    const afterCalls: { nodeType: string; loopStack: StepContext["loopStack"] }[] = [];
+    const afterCalls: {
+      nodeType: string;
+      loopStack: StepContext["loopStack"];
+    }[] = [];
     const engine = new RuleEngine();
     const controller = new DebugStepController();
-    controller.onAfterStep = (ctx) => { afterCalls.push({ nodeType: ctx.node.type, loopStack: ctx.loopStack }); };
+    controller.onAfterStep = (ctx) => {
+      afterCalls.push({ nodeType: ctx.node.type, loopStack: ctx.loopStack });
+    };
     controller.runToCompletion();
 
     const rule: RuleDefinition = {
@@ -450,10 +452,15 @@ describe("StepContext — nested loops", () => {
 
 describe("StepContext — break/continue/return", () => {
   it("should not include loopStack for nodes after break exits the loop", async () => {
-    const afterCalls: { nodeType: string; loopStack: StepContext["loopStack"] }[] = [];
+    const afterCalls: {
+      nodeType: string;
+      loopStack: StepContext["loopStack"];
+    }[] = [];
     const engine = new RuleEngine();
     const controller = new DebugStepController();
-    controller.onAfterStep = (ctx) => { afterCalls.push({ nodeType: ctx.node.type, loopStack: ctx.loopStack }); };
+    controller.onAfterStep = (ctx) => {
+      afterCalls.push({ nodeType: ctx.node.type, loopStack: ctx.loopStack });
+    };
     controller.runToCompletion();
 
     const rule: RuleDefinition = {
@@ -491,7 +498,10 @@ describe("StepContext — break/continue/return", () => {
     const engine = new RuleEngine();
     const controller = new DebugStepController();
     controller.onAfterStep = (stepCtx, execCtx) => {
-      afterCalls.push({ nodeType: stepCtx.node.type, contextSnapshot: execCtx.toJSON() });
+      afterCalls.push({
+        nodeType: stepCtx.node.type,
+        contextSnapshot: execCtx.toJSON(),
+      });
     };
     controller.runToCompletion();
 

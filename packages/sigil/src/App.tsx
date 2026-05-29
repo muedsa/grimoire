@@ -1,10 +1,10 @@
-import NodePalette from './components/panels/NodePalette';
-import PropertiesPanel from './components/panels/PropertiesPanel';
-import FlowCanvas from './components/FlowCanvas';
-import ToolBar from './components/ToolBar';
-import ExecutionControls from './components/ExecutionControls';
-import LogPanel from './components/panels/LogPanel';
-import styles from './App.module.css';
+import NodePalette from "./components/panels/NodePalette";
+import PropertiesPanel from "./components/panels/PropertiesPanel";
+import FlowCanvas from "./components/FlowCanvas";
+import ToolBar from "./components/ToolBar";
+import ExecutionControls from "./components/ExecutionControls";
+import LogPanel from "./components/panels/LogPanel";
+import styles from "./App.module.css";
 
 export default function App() {
   return (

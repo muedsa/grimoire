@@ -10,8 +10,10 @@ import { SkiaTextMeasurer } from "./skia-measurer";
 
 // useDanmakuController 的入参：基于 DanmakuControllerOptions，
 // 但 measurer 由 hook 内部创建，font 由用户通过 RN-Skia 的 useFont 提供。
-export interface UseDanmakuControllerOptions
-  extends Omit<DanmakuControllerOptions, "measurer"> {
+export interface UseDanmakuControllerOptions extends Omit<
+  DanmakuControllerOptions,
+  "measurer"
+> {
   // RN-Skia useFont 的返回值；可为 null（字体加载中）。
   // font 为 null 时 controller 仍会创建，使用 EstimateTextMeasurer 回退；
   // font 就绪后通过 useEffect 注入 SkiaTextMeasurer 替换。
@@ -32,9 +34,7 @@ export function useDanmakuController(
   const [controller] = useState(() => {
     return new DanmakuController({
       ...rest,
-      measurer: font
-        ? new SkiaTextMeasurer(font)
-        : undefined,
+      measurer: font ? new SkiaTextMeasurer(font) : undefined,
     });
   });
 

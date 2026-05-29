@@ -10,7 +10,7 @@ export interface LiteralNode {
 
 export interface PathNode {
   kind: "path";
-  segments: PathSegment[];  // ["data", "user", "level"] 或 ["data", "items", 0] 或 ["data", BracketSegment{ expr }]
+  segments: PathSegment[]; // ["data", "user", "level"] 或 ["data", "items", 0] 或 ["data", BracketSegment{ expr }]
 }
 
 /** 方括号索引段 — 存储括号内的表达式 */
@@ -24,7 +24,20 @@ export type PathSegment = string | BracketSegment;
 
 export interface BinaryOpNode {
   kind: "binary";
-  operator: "==" | "!=" | ">" | "<" | ">=" | "<=" | "&&" | "||" | "+" | "-" | "*" | "/" | "%";
+  operator:
+    | "=="
+    | "!="
+    | ">"
+    | "<"
+    | ">="
+    | "<="
+    | "&&"
+    | "||"
+    | "+"
+    | "-"
+    | "*"
+    | "/"
+    | "%";
   left: ASTNode;
   right: ASTNode;
 }
@@ -37,7 +50,7 @@ export interface UnaryOpNode {
 
 export interface CallNode {
   kind: "call";
-  target: PathNode;        // 被调用的函数路径，如 ["len"] 或 ["data", "items", "len"]
+  target: PathNode; // 被调用的函数路径，如 ["len"] 或 ["data", "items", "len"]
   args: ASTNode[];
 }
 

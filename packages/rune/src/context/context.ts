@@ -9,8 +9,13 @@ export class ExecutionContext {
   private store: Map<string, AllowedValue>;
   private parent?: ExecutionContext;
 
-  constructor(initial?: Record<string, AllowedValue>, parent?: ExecutionContext) {
-    this.store = new Map(Object.entries(initial ?? {}) as [string, AllowedValue][]);
+  constructor(
+    initial?: Record<string, AllowedValue>,
+    parent?: ExecutionContext,
+  ) {
+    this.store = new Map(
+      Object.entries(initial ?? {}) as [string, AllowedValue][],
+    );
     this.parent = parent;
   }
 
@@ -134,7 +139,11 @@ export class ExecutionContext {
   }
 
   /** 递归设置嵌套值（支持数组索引） */
-  private setNestedValue(obj: AllowedValue, parts: string[], value: AllowedValue): void {
+  private setNestedValue(
+    obj: AllowedValue,
+    parts: string[],
+    value: AllowedValue,
+  ): void {
     if (parts.length === 0) return;
 
     const [head, ...rest] = parts;

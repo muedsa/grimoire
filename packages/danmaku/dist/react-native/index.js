@@ -452,7 +452,9 @@ var EstimateTextMeasurer = class {
       const cp = char.codePointAt(0) ?? 0;
       baseWidth += cp > 255 ? CJK_FACTOR * fontSize : ASCII_FACTOR * fontSize;
     }
-    const width = Math.ceil(weight === "bold" ? baseWidth * BOLD_FACTOR : baseWidth);
+    const width = Math.ceil(
+      weight === "bold" ? baseWidth * BOLD_FACTOR : baseWidth
+    );
     const entry = { width, height: fontSize };
     if (this.cache.size >= this.cacheSize) {
       const oldest = this.cache.keys().next().value;
@@ -619,7 +621,10 @@ var DanmakuScheduler = class {
         meta.mergeCount = mergeRes.mergeCount;
         const layout2 = this.active.get(repId);
         if (layout2 && layout2.mergeCount !== mergeRes.mergeCount) {
-          this.active.set(repId, { ...layout2, mergeCount: mergeRes.mergeCount });
+          this.active.set(repId, {
+            ...layout2,
+            mergeCount: mergeRes.mergeCount
+          });
         }
       }
       return;
@@ -676,7 +681,10 @@ var DanmakuScheduler = class {
   findRaw(id) {
     const ref = this.active.get(id);
     if (!ref) return void 0;
-    const candidates = this.store.slice(ref.startTimeMs - 1, ref.startTimeMs + 1);
+    const candidates = this.store.slice(
+      ref.startTimeMs - 1,
+      ref.startTimeMs + 1
+    );
     return candidates.find((it) => it.id === id);
   }
   recalcStartX(layout, _width) {
@@ -820,7 +828,14 @@ var TrackAllocator = class {
     const mode = item.mode ?? "scroll";
     const lineHeight = this.lineHeight(height);
     if (mode === "top" || mode === "bottom") {
-      return this.allocateFixed(item, mode, currentTimeMs, width, height, lineHeight);
+      return this.allocateFixed(
+        item,
+        mode,
+        currentTimeMs,
+        width,
+        height,
+        lineHeight
+      );
     }
     return this.allocateScroll(item, currentTimeMs, width, height, lineHeight);
   }
@@ -1021,7 +1036,11 @@ var DanmakuController = class {
     this.paused = false;
     this.visible = true;
     this.destroyed = false;
-    this.lastSnapshot = { timeMs: 0, items: [], version: 0 };
+    this.lastSnapshot = {
+      timeMs: 0,
+      items: [],
+      version: 0
+    };
     this.config = resolveDanmakuConfig(options.config);
     this.viewport = options.viewport;
     this.measurer = options.measurer ?? new EstimateTextMeasurer();
@@ -1082,7 +1101,11 @@ var DanmakuController = class {
   tick(timeMs) {
     if (this.destroyed) return this.lastSnapshot;
     if (!this.visible) {
-      this.lastSnapshot = { timeMs, items: [], version: this.lastSnapshot.version };
+      this.lastSnapshot = {
+        timeMs,
+        items: [],
+        version: this.lastSnapshot.version
+      };
       this.bus.emit({ type: "tick", timeMs });
       return this.lastSnapshot;
     }
@@ -1106,12 +1129,20 @@ var DanmakuController = class {
   setItems(items) {
     this.store = new DanmakuStore(items);
     this.scheduler.resetData(this.store);
-    this.lastSnapshot = { timeMs: 0, items: [], version: this.lastSnapshot.version };
+    this.lastSnapshot = {
+      timeMs: 0,
+      items: [],
+      version: this.lastSnapshot.version
+    };
   }
   clearItems() {
     this.store.clear();
     this.scheduler.resetData(this.store);
-    this.lastSnapshot = { timeMs: 0, items: [], version: this.lastSnapshot.version };
+    this.lastSnapshot = {
+      timeMs: 0,
+      items: [],
+      version: this.lastSnapshot.version
+    };
   }
   // ===== 播放控制 =====
   pause() {
@@ -1124,7 +1155,11 @@ var DanmakuController = class {
     this.visible = visible;
     if (!visible) {
       this.scheduler.resetData(this.store);
-      this.lastSnapshot = { timeMs: 0, items: [], version: this.lastSnapshot.version };
+      this.lastSnapshot = {
+        timeMs: 0,
+        items: [],
+        version: this.lastSnapshot.version
+      };
       this.bus.emit({ type: "layout", snapshot: this.lastSnapshot });
     }
   }

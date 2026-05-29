@@ -55,9 +55,9 @@ describe("evaluate — error scenarios", () => {
   });
 
   it("throws on unknown AST node kind", async () => {
-    await expect(evaluate({ kind: "unknown" } as any, new ExecutionContext({}))).rejects.toThrow(
-      "Unknown AST node kind",
-    );
+    await expect(
+      evaluate({ kind: "unknown" } as any, new ExecutionContext({})),
+    ).rejects.toThrow("Unknown AST node kind");
   });
 
   it("throws on empty function name in call", async () => {
@@ -66,9 +66,9 @@ describe("evaluate — error scenarios", () => {
       target: { kind: "path", segments: [""] },
       args: [],
     };
-    await expect(evaluate(node as any, new ExecutionContext({}))).rejects.toThrow(
-      "Invalid function name",
-    );
+    await expect(
+      evaluate(node as any, new ExecutionContext({})),
+    ).rejects.toThrow("Invalid function name");
   });
 
   it("evaluates bracket node directly", async () => {

@@ -1,15 +1,15 @@
 /** Rune 规则引擎的节点类型定义（与 packages/rune 保持一致） */
 
 export type NodeType =
-  | 'set'
-  | 'if'
-  | 'foreach'
-  | 'while'
-  | 'break'
-  | 'continue'
-  | 'return'
-  | 'custom'
-  | 'exec';
+  | "set"
+  | "if"
+  | "foreach"
+  | "while"
+  | "break"
+  | "continue"
+  | "return"
+  | "custom"
+  | "exec";
 
 export interface BaseNodeDef {
   type: NodeType;
@@ -17,20 +17,20 @@ export interface BaseNodeDef {
 }
 
 export interface SetNodeDef extends BaseNodeDef {
-  type: 'set';
+  type: "set";
   variable: string;
   value: string | number | boolean | null | object | Array<unknown>;
 }
 
 export interface IfNodeDef extends BaseNodeDef {
-  type: 'if';
+  type: "if";
   condition: string;
   then: RuleNodeDef[];
   else?: RuleNodeDef[];
 }
 
 export interface ForeachNodeDef extends BaseNodeDef {
-  type: 'foreach';
+  type: "foreach";
   collection: string;
   item: string;
   index?: string;
@@ -38,32 +38,32 @@ export interface ForeachNodeDef extends BaseNodeDef {
 }
 
 export interface WhileNodeDef extends BaseNodeDef {
-  type: 'while';
+  type: "while";
   condition: string;
   body: RuleNodeDef[];
 }
 
 export interface BreakNodeDef extends BaseNodeDef {
-  type: 'break';
+  type: "break";
 }
 
 export interface ContinueNodeDef extends BaseNodeDef {
-  type: 'continue';
+  type: "continue";
 }
 
 export interface ReturnNodeDef extends BaseNodeDef {
-  type: 'return';
+  type: "return";
   value?: string;
 }
 
 export interface CustomNodeDef extends BaseNodeDef {
-  type: 'custom';
+  type: "custom";
   name: string;
   params?: Record<string, unknown>;
 }
 
 export interface ExecNodeDef extends BaseNodeDef {
-  type: 'exec';
+  type: "exec";
   expression: string;
 }
 
@@ -100,14 +100,17 @@ import {
 } from "lucide-react";
 
 /** 节点类型的显示名称和图标映射 */
-export const NODE_META: Record<NodeType, { label: string; color: string; icon: LucideIcon }> = {
-  set:      { label: 'Set',      color: '#3b82f6', icon: Pencil },
-  if:       { label: 'If',       color: '#f59e0b', icon: GitBranch },
-  foreach:  { label: 'Foreach',  color: '#8b5cf6', icon: List },
-  while:    { label: 'While',    color: '#f59e0b', icon: RefreshCw },
-  break:    { label: 'Break',    color: '#ef4444', icon: CircleStop },
-  continue: { label: 'Continue', color: '#f97316', icon: SkipForward },
-  return:   { label: 'Return',   color: '#10b981', icon: CornerDownLeft },
-  custom:   { label: 'Custom',   color: '#6366f1', icon: Puzzle },
-  exec:     { label: 'Exec',     color: '#06b6d4', icon: Zap },
+export const NODE_META: Record<
+  NodeType,
+  { label: string; color: string; icon: LucideIcon }
+> = {
+  set: { label: "Set", color: "#3b82f6", icon: Pencil },
+  if: { label: "If", color: "#f59e0b", icon: GitBranch },
+  foreach: { label: "Foreach", color: "#8b5cf6", icon: List },
+  while: { label: "While", color: "#f59e0b", icon: RefreshCw },
+  break: { label: "Break", color: "#ef4444", icon: CircleStop },
+  continue: { label: "Continue", color: "#f97316", icon: SkipForward },
+  return: { label: "Return", color: "#10b981", icon: CornerDownLeft },
+  custom: { label: "Custom", color: "#6366f1", icon: Puzzle },
+  exec: { label: "Exec", color: "#06b6d4", icon: Zap },
 };

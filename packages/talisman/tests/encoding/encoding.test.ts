@@ -276,7 +276,9 @@ describe("URI 编解码", () => {
   describe("encodeUri", () => {
     it("编码完整 URI（保留协议、域名等保留字符）", () => {
       const result = encodeUri("https://example.com/搜索?q=你好");
-      expect(result).toBe("https://example.com/%E6%90%9C%E7%B4%A2?q=%E4%BD%A0%E5%A5%BD");
+      expect(result).toBe(
+        "https://example.com/%E6%90%9C%E7%B4%A2?q=%E4%BD%A0%E5%A5%BD",
+      );
     });
 
     it("不编码 URI 保留字符 : / ? # @ & =", () => {
@@ -291,7 +293,9 @@ describe("URI 编解码", () => {
 
   describe("decodeUri", () => {
     it("解码 URI", () => {
-      const result = decodeUri("https://example.com/%E6%90%9C%E7%B4%A2?q=%E4%BD%A0%E5%A5%BD");
+      const result = decodeUri(
+        "https://example.com/%E6%90%9C%E7%B4%A2?q=%E4%BD%A0%E5%A5%BD",
+      );
       expect(result).toBe("https://example.com/搜索?q=你好");
     });
 

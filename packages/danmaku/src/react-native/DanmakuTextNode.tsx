@@ -40,11 +40,8 @@ export function DanmakuTextNode({
   // Web 端使用 baseFont + scale 变换渲染不同字号；
   // CanvasKit WASM 中 font.getTypeface() 返回的是借用指针，无法用于创建新 SkFont。
   const scale =
-    measurer.baseFontSize > 0
-      ? item.fontSize / measurer.baseFontSize
-      : 1;
-  const needsScale =
-    Platform.OS === "web" && Math.abs(scale - 1) > 0.001;
+    measurer.baseFontSize > 0 ? item.fontSize / measurer.baseFontSize : 1;
+  const needsScale = Platform.OS === "web" && Math.abs(scale - 1) > 0.001;
 
   // 始终计算 scaledX（避免 React hooks 条件调用）。
   const scaledX = useDerivedValue(() => {

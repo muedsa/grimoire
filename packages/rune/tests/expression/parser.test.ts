@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { parseExpression, compileExpression, clearExpressionCache } from "../../src/index";
+import {
+  parseExpression,
+  compileExpression,
+  clearExpressionCache,
+} from "../../src/index";
 
 describe("parseExpression — literals", () => {
   it("parses true/false/null as literal nodes", () => {
@@ -206,7 +210,9 @@ describe("parseExpression — array and object literals", () => {
   });
 
   it("throws on invalid object property key", () => {
-    expect(() => parseExpression("{123: val}")).toThrow("Expected property key");
+    expect(() => parseExpression("{123: val}")).toThrow(
+      "Expected property key",
+    );
   });
 });
 
@@ -265,7 +271,9 @@ describe("parseExpression — error scenarios", () => {
   });
 
   it("throws on missing identifier after dot", () => {
-    expect(() => parseExpression("data.")).toThrow("Expected identifier or number after '.'");
+    expect(() => parseExpression("data.")).toThrow(
+      "Expected identifier or number after '.'",
+    );
   });
 
   it("throws on missing closing parenthesis", () => {
@@ -278,7 +286,11 @@ describe("parseExpression — unary minus", () => {
     const ast = parseExpression("-3");
     expect(ast.kind).toBe("unary");
     expect((ast as any).operator).toBe("-");
-    expect((ast as any).argument).toEqual({ kind: "literal", type: "number", value: 3 });
+    expect((ast as any).argument).toEqual({
+      kind: "literal",
+      type: "number",
+      value: 3,
+    });
   });
 
   it("parses negative variable", () => {

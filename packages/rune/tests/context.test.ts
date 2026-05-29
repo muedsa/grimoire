@@ -22,7 +22,9 @@ describe("ExecutionContext — variable access", () => {
 
 describe("ExecutionContext — parent chain lookup", () => {
   it("get traverses parent chain when root key not in current scope", () => {
-    const grandparent = new ExecutionContext({ data: { user: { name: "Alice" } } });
+    const grandparent = new ExecutionContext({
+      data: { user: { name: "Alice" } },
+    });
     const parent = grandparent.fork();
     const child = parent.fork();
 
@@ -130,7 +132,9 @@ describe("ExecutionContext — fork", () => {
 
 describe("ExecutionContext — toJSON", () => {
   it("flattens all scope layers", () => {
-    const parent = new ExecutionContext({ data: { name: "test", items: [1, 2] } });
+    const parent = new ExecutionContext({
+      data: { name: "test", items: [1, 2] },
+    });
     const child = parent.fork({ result: { count: 3 } });
     const json = child.toJSON();
     expect(json.data).toEqual({ name: "test", items: [1, 2] });

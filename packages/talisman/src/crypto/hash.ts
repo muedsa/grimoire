@@ -19,7 +19,13 @@ import { hmac as nobleHmac } from "@noble/hashes/hmac.js";
 
 /** 哈希算法类型 */
 type HashAlgorithm = "md5" | "sha1" | "sha256" | "sha384" | "sha512";
-const HASH_ALGORITHMS: readonly string[] = ["md5", "sha1", "sha256", "sha384", "sha512"];
+const HASH_ALGORITHMS: readonly string[] = [
+  "md5",
+  "sha1",
+  "sha256",
+  "sha384",
+  "sha512",
+];
 
 /** HMAC 算法类型（排除安全强度较弱的 md5/sha1） */
 type HmacAlgorithm = "sha256" | "sha384" | "sha512";
@@ -28,11 +34,16 @@ const HMAC_ALGORITHMS: readonly string[] = ["sha256", "sha384", "sha512"];
 /** 根据算法名获取对应的哈希实现 */
 function getHashImpl(algorithm: HashAlgorithm) {
   switch (algorithm) {
-    case "md5":    return md5;
-    case "sha1":   return sha1;
-    case "sha256": return sha256;
-    case "sha384": return sha384;
-    case "sha512": return sha512;
+    case "md5":
+      return md5;
+    case "sha1":
+      return sha1;
+    case "sha256":
+      return sha256;
+    case "sha384":
+      return sha384;
+    case "sha512":
+      return sha512;
     default:
       throw new Error(`hash: 不支持的哈希算法 "${algorithm}"`);
   }

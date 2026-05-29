@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { ExecutionContext, evaluateExpression, RuleEngine } from "../../src/index";
+import {
+  ExecutionContext,
+  evaluateExpression,
+  RuleEngine,
+} from "../../src/index";
 
 describe("evaluateExpression — 自定义函数", () => {
   const customFunctions = {
@@ -12,41 +16,75 @@ describe("evaluateExpression — 自定义函数", () => {
 
   it("调用自定义函数 — 单参数", async () => {
     const ctx = new ExecutionContext({ x: 5 });
-    expect(await evaluateExpression("double(x)", ctx, undefined, customFunctions)).toBe(10);
+    expect(
+      await evaluateExpression("double(x)", ctx, undefined, customFunctions),
+    ).toBe(10);
   });
 
   it("调用自定义函数 — 多参数", async () => {
     const ctx = new ExecutionContext({ a: 3, b: 7 });
-    expect(await evaluateExpression("add(a, b)", ctx, undefined, customFunctions)).toBe(10);
+    expect(
+      await evaluateExpression("add(a, b)", ctx, undefined, customFunctions),
+    ).toBe(10);
   });
 
   it("调用自定义函数 — 不定参数", async () => {
     const ctx = new ExecutionContext({});
-    expect(await evaluateExpression("sum_all(1, 2, 3, 4)", ctx, undefined, customFunctions)).toBe(10);
+    expect(
+      await evaluateExpression(
+        "sum_all(1, 2, 3, 4)",
+        ctx,
+        undefined,
+        customFunctions,
+      ),
+    ).toBe(10);
   });
 
   it("自定义函数在条件表达式中使用", async () => {
     const ctx = new ExecutionContext({ n: 5 });
-    expect(await evaluateExpression("is_positive(n)", ctx, undefined, customFunctions)).toBe(true);
-    expect(await evaluateExpression("is_positive(-3)", ctx, undefined, customFunctions)).toBe(false);
+    expect(
+      await evaluateExpression(
+        "is_positive(n)",
+        ctx,
+        undefined,
+        customFunctions,
+      ),
+    ).toBe(true);
+    expect(
+      await evaluateExpression(
+        "is_positive(-3)",
+        ctx,
+        undefined,
+        customFunctions,
+      ),
+    ).toBe(false);
   });
 
   it("自定义函数在混合表达式中使用", async () => {
     const ctx = new ExecutionContext({ x: 3, y: 4 });
     // double(x) + double(y) = 6 + 8 = 14
-    expect(await evaluateExpression("double(x) + double(y)", ctx, undefined, customFunctions)).toBe(14);
+    expect(
+      await evaluateExpression(
+        "double(x) + double(y)",
+        ctx,
+        undefined,
+        customFunctions,
+      ),
+    ).toBe(14);
   });
 
   it("未注册的函数名抛出异常", async () => {
     const ctx = new ExecutionContext({ x: 1 });
-    await expect(evaluateExpression("unknown_fn(x)", ctx, undefined, customFunctions)).rejects.toThrow(
-      "Unknown function: unknown_fn",
-    );
+    await expect(
+      evaluateExpression("unknown_fn(x)", ctx, undefined, customFunctions),
+    ).rejects.toThrow("Unknown function: unknown_fn");
   });
 
   it("未注册的函数名 — 无 customFunctions 时也抛出异常", async () => {
     const ctx = new ExecutionContext({ x: 1 });
-    await expect(evaluateExpression("unknown_fn(x)", ctx)).rejects.toThrow("Unknown function: unknown_fn");
+    await expect(evaluateExpression("unknown_fn(x)", ctx)).rejects.toThrow(
+      "Unknown function: unknown_fn",
+    );
   });
 });
 
@@ -140,7 +178,9 @@ describe("RuleEngine — 自定义函数", () => {
     const result = await engine.execute({
       variables: { x: 6, y: 7 },
       nodes: {
-        main: [{ type: "set", variable: "result.p", value: "${multiply(x, y)}" }],
+        main: [
+          { type: "set", variable: "result.p", value: "${multiply(x, y)}" },
+        ],
       },
     });
     expect(result.status).toBe("success");

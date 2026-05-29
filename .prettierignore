@@ -1,0 +1,41 @@
+# ---- 依赖 & 包管理器 ----
+node_modules/
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# ---- 构建产物 ----
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# ---- 锁文件（自动生成，格式由包管理器控制） ----
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+
+# ---- Expo / React Native ----
+apps/grimoire/.expo/
+apps/grimoire/android/app/build/
+apps/grimoire/ios/Pods/
+
+# ---- IDE & 工具 ----
+.vscode/
+.idea/
+*.code-workspace
+
+# ---- Claude Code ----
+.claude/
+
+# ---- 压缩 & map 文件 ----
+*.min.js
+*.min.css
+**/*.map
+
+# ---- 自动生成 ----
+CHANGELOG.md

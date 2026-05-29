@@ -87,11 +87,15 @@ describe("hash", () => {
 
   describe("非法输入", () => {
     it("不支持的算法抛出 TypeError", () => {
-      expect(() => hash("ripemd160" as any, decode("hi", "utf8") as any)).toThrow(TypeError);
+      expect(() =>
+        hash("ripemd160" as any, decode("hi", "utf8") as any),
+      ).toThrow(TypeError);
     });
 
     it("algorithm 非字符串抛出 TypeError", () => {
-      expect(() => hash(123 as any, decode("hi", "utf8") as any)).toThrow(TypeError);
+      expect(() => hash(123 as any, decode("hi", "utf8") as any)).toThrow(
+        TypeError,
+      );
     });
 
     it("data 非 Uint8Array 抛出 TypeError", () => {
@@ -117,7 +121,10 @@ describe("hmac", () => {
 
     it("HMAC-SHA256 Test Case 2", () => {
       const key = decode("Jefe", "utf8") as unknown as Uint8Array;
-      const data = decode("what do ya want for nothing?", "utf8") as unknown as Uint8Array;
+      const data = decode(
+        "what do ya want for nothing?",
+        "utf8",
+      ) as unknown as Uint8Array;
       const result = hmac("sha256", data as any, key as any);
       expect(toHex(result)).toBe(
         "5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843",
@@ -136,14 +143,18 @@ describe("hmac", () => {
     it("相同输入产生相同 MAC", () => {
       const key = decode("key", "utf8") as any;
       const data = decode("data", "utf8") as any;
-      expect(toHex(hmac("sha256", data, key))).toBe(toHex(hmac("sha256", data, key)));
+      expect(toHex(hmac("sha256", data, key))).toBe(
+        toHex(hmac("sha256", data, key)),
+      );
     });
 
     it("不同 key 产生不同 MAC", () => {
       const data = decode("data", "utf8") as any;
       const k1 = decode("key1", "utf8") as any;
       const k2 = decode("key2", "utf8") as any;
-      expect(toHex(hmac("sha256", data, k1))).not.toBe(toHex(hmac("sha256", data, k2)));
+      expect(toHex(hmac("sha256", data, k1))).not.toBe(
+        toHex(hmac("sha256", data, k2)),
+      );
     });
   });
 

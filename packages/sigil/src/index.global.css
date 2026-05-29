@@ -14,10 +14,10 @@
   --border-default: #e2e8f0;
   --border-visible: #cbd5e1;
 
-  --accent: #22C55E;
-  --accent-blue: #3B82F6;
-  --destructive: #EF4444;
-  --warning: #F59E0B;
+  --accent: #22c55e;
+  --accent-blue: #3b82f6;
+  --destructive: #ef4444;
+  --warning: #f59e0b;
 
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -39,11 +39,16 @@
   box-sizing: border-box;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
   font-size: 14px;
   color: var(--fg-default);
   background: var(--bg-base);

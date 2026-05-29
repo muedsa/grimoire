@@ -519,12 +519,12 @@ export class RuleEngine {
     let value: AllowedValue = undefined;
 
     if (node.value !== undefined) {
-      value = await evaluateExpression(
+      value = (await evaluateExpression(
         node.value,
         ctx,
         this.logger,
         this.customFunctions,
-      ) as AllowedValue;
+      )) as AllowedValue;
     }
 
     this.logger.debug("[executeReturn] 终止执行", {
@@ -569,7 +569,12 @@ export class RuleEngine {
 
     // 求值参数（params 是 AssignTemplate，求值后传给 handler）
     const params = node.params
-      ? await evaluateAssign(node.params, ctx, this.logger, this.customFunctions)
+      ? await evaluateAssign(
+          node.params,
+          ctx,
+          this.logger,
+          this.customFunctions,
+        )
       : undefined;
 
     // 执行自定义处理器
@@ -629,7 +634,12 @@ export class RuleEngine {
       );
     }
 
-    await evaluateExpression(node.expression, ctx, this.logger, this.customFunctions);
+    await evaluateExpression(
+      node.expression,
+      ctx,
+      this.logger,
+      this.customFunctions,
+    );
     return {
       signal: ControlSignal.NONE,
       result: { status: "success", data: null },

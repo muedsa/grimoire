@@ -35,7 +35,9 @@ export class DensityGovernor {
     }
   }
 
-  setOnOverload(handler: ((fps: number, effective: number) => void) | null): void {
+  setOnOverload(
+    handler: ((fps: number, effective: number) => void) | null,
+  ): void {
     this.onOverload = handler;
   }
 

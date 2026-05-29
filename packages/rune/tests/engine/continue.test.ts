@@ -20,7 +20,11 @@ describe("RuleEngine — continue", () => {
                 condition: "item == 3",
                 then: [{ type: "continue" }],
               },
-              { type: "set", variable: "result.sum", value: "${result.sum + item}" },
+              {
+                type: "set",
+                variable: "result.sum",
+                value: "${result.sum + item}",
+              },
             ],
           },
         ],
@@ -34,7 +38,14 @@ describe("RuleEngine — continue", () => {
   it("works in nested loops", async () => {
     const engine = new RuleEngine();
     const result = await engine.execute({
-      variables: { data: { rows: [[1, 2], [3, 4]] } },
+      variables: {
+        data: {
+          rows: [
+            [1, 2],
+            [3, 4],
+          ],
+        },
+      },
       nodes: {
         main: [
           { type: "set", variable: "result.count", value: 0 },
@@ -53,7 +64,11 @@ describe("RuleEngine — continue", () => {
                     condition: "val == 2",
                     then: [{ type: "continue" }],
                   },
-                  { type: "set", variable: "result.count", value: "${result.count + 1}" },
+                  {
+                    type: "set",
+                    variable: "result.count",
+                    value: "${result.count + 1}",
+                  },
                 ],
               },
             ],
@@ -105,7 +120,9 @@ describe("RuleEngine — break outside loop detection", () => {
       },
     });
     expect(result.status).toBe("failed");
-    expect(result.error?.message).toContain("'break' can only be used inside a foreach/while");
+    expect(result.error?.message).toContain(
+      "'break' can only be used inside a foreach/while",
+    );
   });
 
   it("continue outside loop returns failed", async () => {
@@ -117,7 +134,9 @@ describe("RuleEngine — break outside loop detection", () => {
       },
     });
     expect(result.status).toBe("failed");
-    expect(result.error?.message).toContain("'continue' can only be used inside a foreach/while");
+    expect(result.error?.message).toContain(
+      "'continue' can only be used inside a foreach/while",
+    );
   });
 
   it("break inside if outside loop returns failed", async () => {
@@ -125,12 +144,12 @@ describe("RuleEngine — break outside loop detection", () => {
     const result = await engine.execute({
       variables: {},
       nodes: {
-        main: [
-          { type: "if", condition: "true", then: [{ type: "break" }] },
-        ],
+        main: [{ type: "if", condition: "true", then: [{ type: "break" }] }],
       },
     });
     expect(result.status).toBe("failed");
-    expect(result.error?.message).toContain("'break' can only be used inside a foreach/while");
+    expect(result.error?.message).toContain(
+      "'break' can only be used inside a foreach/while",
+    );
   });
 });

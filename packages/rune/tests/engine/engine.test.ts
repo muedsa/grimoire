@@ -9,7 +9,11 @@ describe("RuleEngine — set", () => {
       variables: { data: { name: "test" } },
       nodes: {
         main: [
-          { type: "set", variable: "result.greeting", value: "Hello, ${data.name}" },
+          {
+            type: "set",
+            variable: "result.greeting",
+            value: "Hello, ${data.name}",
+          },
         ],
       },
     };
@@ -188,7 +192,11 @@ describe("RuleEngine — if", () => {
       variables: { data: { flag: false } },
       nodes: {
         main: [
-          { type: "if", condition: "data.flag", then: [{ type: "set", variable: "result.then", value: true }] },
+          {
+            type: "if",
+            condition: "data.flag",
+            then: [{ type: "set", variable: "result.then", value: true }],
+          },
           { type: "set", variable: "result.reached", value: true },
         ],
       },
@@ -212,7 +220,11 @@ describe("RuleEngine — foreach", () => {
             collection: "data.items",
             item: "item",
             body: [
-              { type: "set", variable: "result.total", value: "${result.total + item}" },
+              {
+                type: "set",
+                variable: "result.total",
+                value: "${result.total + item}",
+              },
             ],
           },
         ],
@@ -234,7 +246,11 @@ describe("RuleEngine — foreach", () => {
             collection: "data.items",
             item: "item",
             body: [
-              { type: "set", variable: "result.total", value: "${result.total + item}" },
+              {
+                type: "set",
+                variable: "result.total",
+                value: "${result.total + item}",
+              },
             ],
           },
         ],
@@ -276,7 +292,11 @@ describe("RuleEngine — foreach", () => {
             item: "item",
             index: "idx",
             body: [
-              { type: "set", variable: "result.count", value: "${result.count + idx}" },
+              {
+                type: "set",
+                variable: "result.count",
+                value: "${result.count + idx}",
+              },
             ],
           },
         ],
@@ -299,7 +319,11 @@ describe("RuleEngine — foreach", () => {
             collection: "data.items",
             item: "item",
             body: [
-              { type: "set", variable: "result.total", value: "${result.total + item}" },
+              {
+                type: "set",
+                variable: "result.total",
+                value: "${result.total + item}",
+              },
             ],
           },
         ],
@@ -320,7 +344,11 @@ describe("RuleEngine — while", () => {
             type: "while",
             condition: "data.count < 3",
             body: [
-              { type: "set", variable: "data.count", value: "${data.count + 1}" },
+              {
+                type: "set",
+                variable: "data.count",
+                value: "${data.count + 1}",
+              },
             ],
           },
         ],
@@ -341,8 +369,16 @@ describe("RuleEngine — while", () => {
             type: "while",
             condition: "true",
             body: [
-              { type: "set", variable: "data.count", value: "${data.count + 1}" },
-              { type: "if", condition: "data.count >= 5", then: [{ type: "break" }] },
+              {
+                type: "set",
+                variable: "data.count",
+                value: "${data.count + 1}",
+              },
+              {
+                type: "if",
+                condition: "data.count >= 5",
+                then: [{ type: "break" }],
+              },
             ],
           },
         ],
@@ -364,8 +400,16 @@ describe("RuleEngine — while", () => {
             condition: "data.i < 5",
             body: [
               { type: "set", variable: "data.i", value: "${data.i + 1}" },
-              { type: "if", condition: "data.i % 2 == 0", then: [{ type: "continue" }] },
-              { type: "set", variable: "data.sum", value: "${data.sum + data.i}" },
+              {
+                type: "if",
+                condition: "data.i % 2 == 0",
+                then: [{ type: "continue" }],
+              },
+              {
+                type: "set",
+                variable: "data.sum",
+                value: "${data.sum + data.i}",
+              },
             ],
           },
         ],
@@ -374,7 +418,10 @@ describe("RuleEngine — while", () => {
     const result = await engine.execute(rule);
     expect(result.status).toBe("success");
     // i=1,3,5(但5不满足condition), 跳过i=2,4, sum=1+3+5=9
-    expect((result.data as Record<string, unknown>).data).toEqual({ i: 5, sum: 9 });
+    expect((result.data as Record<string, unknown>).data).toEqual({
+      i: 5,
+      sum: 9,
+    });
   });
 
   it("false condition skips body", async () => {
@@ -442,7 +489,11 @@ describe("RuleEngine — break", () => {
                 condition: "item > 3",
                 then: [{ type: "break" }],
               },
-              { type: "set", variable: "result.count", value: "${result.count + 1}" },
+              {
+                type: "set",
+                variable: "result.count",
+                value: "${result.count + 1}",
+              },
             ],
           },
         ],
@@ -469,7 +520,11 @@ describe("RuleEngine — break", () => {
                 condition: "item > 2",
                 then: [{ type: "break" }],
               },
-              { type: "set", variable: "result.count", value: "${result.count + 1}" },
+              {
+                type: "set",
+                variable: "result.count",
+                value: "${result.count + 1}",
+              },
             ],
           },
         ],
@@ -488,7 +543,11 @@ describe("RuleEngine — return", () => {
       nodes: {
         main: [
           { type: "return", value: "data.value * 2" },
-          { type: "set", variable: "result.unreachable", value: "should not reach here" },
+          {
+            type: "set",
+            variable: "result.unreachable",
+            value: "should not reach here",
+          },
         ],
       },
     };
@@ -578,11 +637,26 @@ describe("RuleEngine — array element access", () => {
   it("nested array element access", async () => {
     const engine = new RuleEngine();
     const rule: RuleDefinition = {
-      variables: { data: { matrix: [[1, 2], [3, 4]] } },
+      variables: {
+        data: {
+          matrix: [
+            [1, 2],
+            [3, 4],
+          ],
+        },
+      },
       nodes: {
         main: [
-          { type: "set", variable: "result.topLeft", value: "${data.matrix.0.0}" },
-          { type: "set", variable: "result.bottomRight", value: "${data.matrix.1.1}" },
+          {
+            type: "set",
+            variable: "result.topLeft",
+            value: "${data.matrix.0.0}",
+          },
+          {
+            type: "set",
+            variable: "result.bottomRight",
+            value: "${data.matrix.1.1}",
+          },
         ],
       },
     };
@@ -597,8 +671,16 @@ describe("RuleEngine — array element access", () => {
       variables: { data: { nums: [10, 20, 30] } },
       nodes: {
         main: [
-          { type: "set", variable: "result.sum", value: "${data.nums.0 + data.nums.2}" },
-          { type: "set", variable: "result.product", value: "${data.nums.0 * data.nums.1}" },
+          {
+            type: "set",
+            variable: "result.sum",
+            value: "${data.nums.0 + data.nums.2}",
+          },
+          {
+            type: "set",
+            variable: "result.product",
+            value: "${data.nums.0 * data.nums.1}",
+          },
         ],
       },
     };
@@ -624,7 +706,14 @@ describe("RuleEngine — array element access", () => {
   it("array element in loop body", async () => {
     const engine = new RuleEngine();
     const rule: RuleDefinition = {
-      variables: { data: { rows: [["a", "b"], ["c", "d"]] } },
+      variables: {
+        data: {
+          rows: [
+            ["a", "b"],
+            ["c", "d"],
+          ],
+        },
+      },
       nodes: {
         main: [
           { type: "set", variable: "result.concatenated", value: "" },
@@ -633,7 +722,11 @@ describe("RuleEngine — array element access", () => {
             collection: "data.rows",
             item: "row",
             body: [
-              { type: "set", variable: "result.concatenated", value: "${result.concatenated + row.0 + row.1}" },
+              {
+                type: "set",
+                variable: "result.concatenated",
+                value: "${result.concatenated + row.0 + row.1}",
+              },
             ],
           },
         ],
@@ -649,8 +742,16 @@ describe("RuleEngine — array element access", () => {
       variables: { data: { items: ["hello", "world"], nums: [1, 2, 3] } },
       nodes: {
         main: [
-          { type: "set", variable: "result.len", value: "${len(data.items.0)}" },
-          { type: "set", variable: "result.exists", value: "${exists(data.nums.0)}" },
+          {
+            type: "set",
+            variable: "result.len",
+            value: "${len(data.items.0)}",
+          },
+          {
+            type: "set",
+            variable: "result.exists",
+            value: "${exists(data.nums.0)}",
+          },
         ],
       },
     };
@@ -670,7 +771,9 @@ describe("RuleEngine — set node validation", () => {
     };
     const result = await engine.execute(rule);
     expect(result.status).toBe("failed");
-    expect(result.error?.message).toBe("Set node must have a non-empty variable");
+    expect(result.error?.message).toBe(
+      "Set node must have a non-empty variable",
+    );
   });
 });
 
@@ -680,9 +783,7 @@ describe("RuleEngine — exec", () => {
     const rule: RuleDefinition = {
       variables: { data: { items: [1, 2, 3] } },
       nodes: {
-        main: [
-          { type: "exec", expression: "len(data.items)" },
-        ],
+        main: [{ type: "exec", expression: "len(data.items)" }],
       },
     };
     const result = await engine.execute(rule);
@@ -696,9 +797,7 @@ describe("RuleEngine — exec", () => {
     const rule: RuleDefinition = {
       variables: { x: 42 },
       nodes: {
-        main: [
-          { type: "exec", expression: "x + 1" },
-        ],
+        main: [{ type: "exec", expression: "x + 1" }],
       },
     };
     const result = await engine.execute(rule);
@@ -716,9 +815,7 @@ describe("RuleEngine — exec", () => {
           {
             type: "if",
             condition: "flag",
-            then: [
-              { type: "exec", expression: "len([1, 2])" },
-            ],
+            then: [{ type: "exec", expression: "len([1, 2])" }],
           },
         ],
       },
@@ -776,7 +873,9 @@ describe("RuleEngine — exec", () => {
     const result = await engine.execute(rule);
     // 编译期先拦截，返回 failed
     expect(result.status).toBe("failed");
-    expect(result.error?.message).toBe("Exec node must have a non-empty expression");
+    expect(result.error?.message).toBe(
+      "Exec node must have a non-empty expression",
+    );
   });
 });
 
@@ -786,9 +885,7 @@ describe("RuleEngine — array builtins integration", () => {
     const rule: RuleDefinition = {
       variables: { items: ["a", "b"] },
       nodes: {
-        main: [
-          { type: "exec", expression: "arr_push(items, 'c')" },
-        ],
+        main: [{ type: "exec", expression: "arr_push(items, 'c')" }],
       },
     };
     const result = await engine.execute(rule);
@@ -800,9 +897,7 @@ describe("RuleEngine — array builtins integration", () => {
     const rule: RuleDefinition = {
       variables: { items: ["a", "b", "c"] },
       nodes: {
-        main: [
-          { type: "exec", expression: "arr_pop(items)" },
-        ],
+        main: [{ type: "exec", expression: "arr_pop(items)" }],
       },
     };
     const result = await engine.execute(rule);
@@ -814,9 +909,7 @@ describe("RuleEngine — array builtins integration", () => {
     const rule: RuleDefinition = {
       variables: { nums: [5, 2, 8, 1] },
       nodes: {
-        main: [
-          { type: "exec", expression: "arr_sort(nums)" },
-        ],
+        main: [{ type: "exec", expression: "arr_sort(nums)" }],
       },
     };
     const result = await engine.execute(rule);

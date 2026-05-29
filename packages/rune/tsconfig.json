@@ -14,9 +14,7 @@
     "noEmit": true,
     "types": ["node"],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src/**/*.ts"],

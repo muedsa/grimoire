@@ -62,22 +62,37 @@ export function compileRule(rule: RuleDefinition, logger?: Logger): void {
 
   if (!rule.nodes || Object.keys(rule.nodes).length === 0) {
     logger?.error("[compileRule] 规则节点对象为空");
-    throw new EngineError(ErrorCode.NODE_TYPE_ERROR, "Rule definition must have a non-empty nodes object");
+    throw new EngineError(
+      ErrorCode.NODE_TYPE_ERROR,
+      "Rule definition must have a non-empty nodes object",
+    );
   }
 
   if (!nodes || nodes.length === 0) {
     logger?.error("[compileRule] 入口节点组不存在或为空", { entry });
-    throw new EngineError(ErrorCode.NODE_TYPE_ERROR, `Entry node group '${entry}' not found or empty`);
+    throw new EngineError(
+      ErrorCode.NODE_TYPE_ERROR,
+      `Entry node group '${entry}' not found or empty`,
+    );
   }
 
   // 递归编译所有节点组中的表达式
-  for (const [groupName, groupNodes] of Object.entries(rule.nodes) as [string, RuleNode[]][]) {
+  for (const [groupName, groupNodes] of Object.entries(rule.nodes) as [
+    string,
+    RuleNode[],
+  ][]) {
     if (!Array.isArray(groupNodes)) {
       logger?.error("[compileRule] 节点组必须是数组", { groupName });
-      throw new EngineError(ErrorCode.NODE_TYPE_ERROR, `Node group '${groupName}' must be an array`);
+      throw new EngineError(
+        ErrorCode.NODE_TYPE_ERROR,
+        `Node group '${groupName}' must be an array`,
+      );
     }
 
-    logger?.debug("[compileRule] 编译节点组", { groupName, nodeCount: groupNodes.length });
+    logger?.debug("[compileRule] 编译节点组", {
+      groupName,
+      nodeCount: groupNodes.length,
+    });
 
     for (const node of groupNodes) {
       compileNode(node);
@@ -95,7 +110,10 @@ function compileNode(node: RuleNode): void {
     case "if": {
       const condition = node.condition;
       if (!condition) {
-        throw new EngineError(ErrorCode.EXPRESSION_ERROR, "If node must have a condition");
+        throw new EngineError(
+          ErrorCode.EXPRESSION_ERROR,
+          "If node must have a condition",
+        );
       }
       compileExpression(condition);
       // 递归编译子节点
@@ -109,7 +127,10 @@ function compileNode(node: RuleNode): void {
     case "foreach": {
       const collection = node.collection;
       if (!collection) {
-        throw new EngineError(ErrorCode.EXPRESSION_ERROR, "Foreach node must have a collection expression");
+        throw new EngineError(
+          ErrorCode.EXPRESSION_ERROR,
+          "Foreach node must have a collection expression",
+        );
       }
       compileExpression(collection);
       // 递归编译 body
@@ -120,7 +141,10 @@ function compileNode(node: RuleNode): void {
     case "while": {
       const condition = node.condition;
       if (!condition) {
-        throw new EngineError(ErrorCode.EXPRESSION_ERROR, "While node must have a condition expression");
+        throw new EngineError(
+          ErrorCode.EXPRESSION_ERROR,
+          "While node must have a condition expression",
+        );
       }
       compileExpression(condition);
       // 递归编译 body
@@ -138,7 +162,10 @@ function compileNode(node: RuleNode): void {
     case "set": {
       // 编译期校验：variable 不能为空
       if (!node.variable || node.variable.trim() === "") {
-        throw new EngineError(ErrorCode.NODE_TYPE_ERROR, "Set node must have a non-empty variable");
+        throw new EngineError(
+          ErrorCode.NODE_TYPE_ERROR,
+          "Set node must have a non-empty variable",
+        );
       }
       compileAssignTemplate(node.value);
       break;
@@ -154,7 +181,10 @@ function compileNode(node: RuleNode): void {
     case "exec": {
       // 编译期校验：expression 不能为空
       if (!node.expression || node.expression.trim() === "") {
-        throw new EngineError(ErrorCode.NODE_TYPE_ERROR, "Exec node must have a non-empty expression");
+        throw new EngineError(
+          ErrorCode.NODE_TYPE_ERROR,
+          "Exec node must have a non-empty expression",
+        );
       }
       compileExpression(node.expression);
       break;

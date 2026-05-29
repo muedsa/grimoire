@@ -1,5 +1,5 @@
-import { RuleNode } from '@grimoire/rune';
-import { templateSummary } from './templateSummary';
+import { RuleNode } from "@grimoire/rune";
+import { templateSummary } from "./templateSummary";
 
 /**
  * 生成节点的基础描述（可选携带条件求值结果）
@@ -11,31 +11,31 @@ export function describeNode(
   conditionResult?: boolean,
 ): string {
   switch (node.type) {
-    case 'set':
+    case "set":
       return `设置 ${node.variable} = ${templateSummary(node.value, 30)}`;
 
-    case 'if':
-      return `条件 ${node.condition}${conditionResult !== undefined ? (conditionResult ? ' 为 true' : ' 为 false') : ''}`;
+    case "if":
+      return `条件 ${node.condition}${conditionResult !== undefined ? (conditionResult ? " 为 true" : " 为 false") : ""}`;
 
-    case 'foreach':
+    case "foreach":
       return `遍历 ${node.collection}`;
 
-    case 'while':
+    case "while":
       return `条件 ${node.condition}`;
 
-    case 'break':
-      return '跳出循环';
+    case "break":
+      return "跳出循环";
 
-    case 'continue':
-      return '继续下一次循环';
+    case "continue":
+      return "继续下一次循环";
 
-    case 'return':
-      return `返回 ${node.value !== undefined ? templateSummary(node.value, 30) : '...'}`;
+    case "return":
+      return `返回 ${node.value !== undefined ? templateSummary(node.value, 30) : "..."}`;
 
-    case 'custom':
+    case "custom":
       return `调用 ${node.name}`;
 
-    case 'exec':
+    case "exec":
       return `执行 ${node.expression}`;
 
     default: {
@@ -49,5 +49,5 @@ export function describeNode(
  * 补充 if 节点的分支信息
  */
 export function describeIfResult(conditionResult: boolean): string {
-  return conditionResult ? ' 为 true' : ' 为 false';
+  return conditionResult ? " 为 true" : " 为 false";
 }

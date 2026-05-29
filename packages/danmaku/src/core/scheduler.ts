@@ -148,14 +148,17 @@ export class DanmakuScheduler {
         meta.mergeCount = mergeRes.mergeCount;
         const layout = this.active.get(repId);
         if (layout && layout.mergeCount !== mergeRes.mergeCount) {
-          this.active.set(repId, { ...layout, mergeCount: mergeRes.mergeCount });
+          this.active.set(repId, {
+            ...layout,
+            mergeCount: mergeRes.mergeCount,
+          });
         }
       }
       return;
     }
     // 新代表：测量 + 分配轨道。
-    const fontSize = (item.fontSize ?? this.config.defaultFontSize) *
-      this.config.fontScale;
+    const fontSize =
+      (item.fontSize ?? this.config.defaultFontSize) * this.config.fontScale;
     const weight = item.weight ?? "normal";
     const measured = this.measurer.measureText(item.text, fontSize, weight);
     const allocated = this.allocator.allocate(
@@ -200,9 +203,7 @@ export class DanmakuScheduler {
     const items = Array.from(this.active.values()).sort(
       (a, b) => a.startTimeMs - b.startTimeMs,
     );
-    const signature = items
-      .map((it) => `${it.id}:${it.mergeCount}`)
-      .join("|");
+    const signature = items.map((it) => `${it.id}:${it.mergeCount}`).join("|");
     if (signature !== this.lastSignature) {
       this.versionCounter += 1;
       this.lastSignature = signature;
@@ -215,7 +216,10 @@ export class DanmakuScheduler {
     // 用 active 节点的 startTimeMs 作为 raw 的 time 参考。
     const ref = this.active.get(id);
     if (!ref) return undefined;
-    const candidates = this.store.slice(ref.startTimeMs - 1, ref.startTimeMs + 1);
+    const candidates = this.store.slice(
+      ref.startTimeMs - 1,
+      ref.startTimeMs + 1,
+    );
     return candidates.find((it) => it.id === id);
   }
 

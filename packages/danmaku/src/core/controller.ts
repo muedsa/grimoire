@@ -53,7 +53,11 @@ export class DanmakuController {
   private paused = false;
   private visible = true;
   private destroyed = false;
-  private lastSnapshot: ActiveLayoutSnapshot = { timeMs: 0, items: [], version: 0 };
+  private lastSnapshot: ActiveLayoutSnapshot = {
+    timeMs: 0,
+    items: [],
+    version: 0,
+  };
 
   constructor(options: DanmakuControllerOptions) {
     this.config = resolveDanmakuConfig(options.config);
@@ -121,7 +125,11 @@ export class DanmakuController {
   tick(timeMs: number): ActiveLayoutSnapshot {
     if (this.destroyed) return this.lastSnapshot;
     if (!this.visible) {
-      this.lastSnapshot = { timeMs, items: [], version: this.lastSnapshot.version };
+      this.lastSnapshot = {
+        timeMs,
+        items: [],
+        version: this.lastSnapshot.version,
+      };
       this.bus.emit({ type: "tick", timeMs });
       return this.lastSnapshot;
     }
@@ -148,13 +156,21 @@ export class DanmakuController {
   setItems(items: DanmakuItem[]): void {
     this.store = new DanmakuStore(items);
     this.scheduler.resetData(this.store);
-    this.lastSnapshot = { timeMs: 0, items: [], version: this.lastSnapshot.version };
+    this.lastSnapshot = {
+      timeMs: 0,
+      items: [],
+      version: this.lastSnapshot.version,
+    };
   }
 
   clearItems(): void {
     this.store.clear();
     this.scheduler.resetData(this.store);
-    this.lastSnapshot = { timeMs: 0, items: [], version: this.lastSnapshot.version };
+    this.lastSnapshot = {
+      timeMs: 0,
+      items: [],
+      version: this.lastSnapshot.version,
+    };
   }
 
   // ===== 播放控制 =====
@@ -170,7 +186,11 @@ export class DanmakuController {
     this.visible = visible;
     if (!visible) {
       this.scheduler.resetData(this.store);
-      this.lastSnapshot = { timeMs: 0, items: [], version: this.lastSnapshot.version };
+      this.lastSnapshot = {
+        timeMs: 0,
+        items: [],
+        version: this.lastSnapshot.version,
+      };
       this.bus.emit({ type: "layout", snapshot: this.lastSnapshot });
     }
   }
@@ -255,7 +275,10 @@ export class DanmakuController {
   }
 
   // ===== 事件 =====
-  on<T extends DanmakuEventType>(type: T, handler: DanmakuEventHandler<T>): () => void {
+  on<T extends DanmakuEventType>(
+    type: T,
+    handler: DanmakuEventHandler<T>,
+  ): () => void {
     return this.bus.on(type, handler);
   }
 
@@ -291,7 +314,6 @@ export class DanmakuController {
     this.lastSnapshot = snap;
     this.bus.emit({ type: "layout", snapshot: snap });
   }
-
 
   // 把已 resolve 的配置反序列化成 DanmakuConfig（供 updateConfig 合并）。
   private serializeConfig(): DanmakuConfig {

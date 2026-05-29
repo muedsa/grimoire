@@ -22,7 +22,12 @@ import * as he from "he";
 
 /** 支持的编码格式 */
 type Encoding = "utf8" | "hex" | "base64" | "base64url";
-const VALID_ENCODINGS: readonly string[] = ["utf8", "hex", "base64", "base64url"];
+const VALID_ENCODINGS: readonly string[] = [
+  "utf8",
+  "hex",
+  "base64",
+  "base64url",
+];
 
 /** UTF-8 字符串 → Uint8Array */
 function utf8ToBytes(str: string): Uint8Array {
@@ -61,7 +66,8 @@ function bytesToHex(bytes: Uint8Array): string {
 }
 
 /** Base64 字符集 */
-const BASE64_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+const BASE64_ALPHABET =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 /** Base64 字符串 → Uint8Array（兼容有无 = 填充两种格式） */
 function base64ToBytes(b64: string): Uint8Array {
@@ -87,9 +93,12 @@ function base64ToBytes(b64: string): Uint8Array {
 
   for (let i = 0; i < stripped.length; i += 4) {
     const c0 = i < stripped.length ? BASE64_ALPHABET.indexOf(stripped[i]) : -1;
-    const c1 = i + 1 < stripped.length ? BASE64_ALPHABET.indexOf(stripped[i + 1]) : 0;
-    const c2 = i + 2 < stripped.length ? BASE64_ALPHABET.indexOf(stripped[i + 2]) : 0;
-    const c3 = i + 3 < stripped.length ? BASE64_ALPHABET.indexOf(stripped[i + 3]) : 0;
+    const c1 =
+      i + 1 < stripped.length ? BASE64_ALPHABET.indexOf(stripped[i + 1]) : 0;
+    const c2 =
+      i + 2 < stripped.length ? BASE64_ALPHABET.indexOf(stripped[i + 2]) : 0;
+    const c3 =
+      i + 3 < stripped.length ? BASE64_ALPHABET.indexOf(stripped[i + 3]) : 0;
 
     if (c0 === -1) {
       throw new Error("decode: Base64 字符串包含非法字符");
@@ -131,9 +140,7 @@ function bytesToBase64(bytes: Uint8Array): string {
 
 /** Base64URL 字符串 → Uint8Array（先还原为标准 Base64 再解码） */
 function base64urlToBytes(b64url: string): Uint8Array {
-  const b64 = b64url
-    .replace(/-/g, "+")
-    .replace(/_/g, "/");
+  const b64 = b64url.replace(/-/g, "+").replace(/_/g, "/");
   return base64ToBytes(b64);
 }
 

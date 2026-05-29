@@ -167,8 +167,8 @@
 .snapshotSection pre {
   margin: 0;
   padding: 8px;
-  background: #0F172A;
-  color: #E2E8F0;
+  background: #0f172a;
+  color: #e2e8f0;
   border-radius: var(--radius-sm);
   font-size: 11px;
   white-space: pre-wrap;

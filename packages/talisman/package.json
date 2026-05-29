@@ -30,8 +30,8 @@
     "@noble/ciphers": "^2.2.0",
     "@noble/hashes": "^2.2.0",
     "@xmldom/xmldom": "^0.9.10",
-    "xpath": "^0.0.34",
-    "he": "^1.2.0"
+    "he": "^1.2.0",
+    "xpath": "^0.0.34"
   },
   "peerDependenciesMeta": {
     "@noble/ciphers": {
@@ -43,10 +43,10 @@
     "@xmldom/xmldom": {
       "optional": true
     },
-    "xpath": {
+    "he": {
       "optional": true
     },
-    "he": {
+    "xpath": {
       "optional": true
     }
   },
@@ -57,12 +57,12 @@
     "@types/node": "^25.9.1",
     "@vitest/coverage-v8": "^4.1.7",
     "@xmldom/xmldom": "*",
+    "he": "*",
     "tsup": "^8.5.1",
     "tsx": "^4.22.3",
     "typescript": "^5.0.0",
     "vitest": "^4.1.7",
-    "xpath": "*",
-    "he": "*"
+    "xpath": "*"
   },
   "files": [
     "dist"

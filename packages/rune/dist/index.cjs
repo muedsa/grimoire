@@ -42,7 +42,9 @@ var ExecutionContext = class _ExecutionContext {
   store;
   parent;
   constructor(initial, parent) {
-    this.store = new Map(Object.entries(initial ?? {}));
+    this.store = new Map(
+      Object.entries(initial ?? {})
+    );
     this.parent = parent;
   }
   /**
@@ -261,7 +263,10 @@ function tokenize(input) {
         pos++;
       }
       if (pos >= input.length) {
-        throw new EngineError("EXPRESSION_ERROR" /* EXPRESSION_ERROR */, `Unterminated string at position ${pos}`);
+        throw new EngineError(
+          "EXPRESSION_ERROR" /* EXPRESSION_ERROR */,
+          `Unterminated string at position ${pos}`
+        );
       }
       pos++;
       const tok = { type: "string", value, pos: pos - value.length - 2 };
@@ -306,7 +311,11 @@ function tokenize(input) {
         id += input[pos];
         pos++;
       }
-      const tok = { type: "identifier", value: id, pos: pos - id.length };
+      const tok = {
+        type: "identifier",
+        value: id,
+        pos: pos - id.length
+      };
       tokens.push(tok);
       lastType = tok.type;
       continue;
@@ -409,7 +418,10 @@ function tokenize(input) {
       pos++;
       continue;
     }
-    throw new EngineError("EXPRESSION_ERROR" /* EXPRESSION_ERROR */, `Unexpected character '${ch}' at position ${pos}`);
+    throw new EngineError(
+      "EXPRESSION_ERROR" /* EXPRESSION_ERROR */,
+      `Unexpected character '${ch}' at position ${pos}`
+    );
   }
   tokens.push({ type: "eof", value: "", pos });
   return tokens;
@@ -493,7 +505,11 @@ var ExpressionParser = class {
       if (isUnary) {
         this.consume();
         const argument = this.parseUnary();
-        return { kind: "unary", operator: op, argument };
+        return {
+          kind: "unary",
+          operator: op,
+          argument
+        };
       }
     }
     return this.parsePrimary();
@@ -509,11 +525,19 @@ var ExpressionParser = class {
     }
     if (token.type === "string") {
       this.consume();
-      return { kind: "literal", type: "string", value: token.value };
+      return {
+        kind: "literal",
+        type: "string",
+        value: token.value
+      };
     }
     if (token.type === "number") {
       this.consume();
-      return { kind: "literal", type: "number", value: parseFloat(token.value) };
+      return {
+        kind: "literal",
+        type: "number",
+        value: parseFloat(token.value)
+      };
     }
     if (token.type === "lbracket") {
       this.consume();
@@ -550,7 +574,11 @@ var ExpressionParser = class {
       }
       if (token.value === "false") {
         this.consume();
-        return { kind: "literal", type: "boolean", value: false };
+        return {
+          kind: "literal",
+          type: "boolean",
+          value: false
+        };
       }
       if (token.value === "null") {
         this.consume();
@@ -665,20 +693,14 @@ var ExpressionParser = class {
             kind: "call",
             target: {
               kind: "path",
-              segments: [
-                { kind: "bracket", expr: callNode },
-                ...chainSegments
-              ]
+              segments: [{ kind: "bracket", expr: callNode }, ...chainSegments]
             },
             args: chainArgs
           };
         }
         return {
           kind: "path",
-          segments: [
-            { kind: "bracket", expr: callNode },
-            ...chainSegments
-          ]
+          segments: [{ kind: "bracket", expr: callNode }, ...chainSegments]
         };
       }
       return callNode;
@@ -897,8 +919,7 @@ var arrayBuiltins = {
   },
   /** 移除数组最后一个元素，修改原数组，返回被移除的元素（空数组返回 undefined） */
   arr_pop: (arr) => {
-    if (!Array.isArray(arr))
-      throw new TypeError("arr_pop: \u53C2\u6570\u5FC5\u987B\u662F\u6570\u7EC4");
+    if (!Array.isArray(arr)) throw new TypeError("arr_pop: \u53C2\u6570\u5FC5\u987B\u662F\u6570\u7EC4");
     return arr.pop();
   },
   /** 在数组头部插入一个或多个元素，修改原数组，返回新长度 */
@@ -909,8 +930,7 @@ var arrayBuiltins = {
   },
   /** 移除数组第一个元素，修改原数组，返回被移除的元素（空数组返回 undefined） */
   arr_shift: (arr) => {
-    if (!Array.isArray(arr))
-      throw new TypeError("arr_shift: \u53C2\u6570\u5FC5\u987B\u662F\u6570\u7EC4");
+    if (!Array.isArray(arr)) throw new TypeError("arr_shift: \u53C2\u6570\u5FC5\u987B\u662F\u6570\u7EC4");
     return arr.shift();
   },
   /** 合并数组，返回新数组，原数组不变 */
@@ -927,8 +947,7 @@ var arrayBuiltins = {
   },
   /** 原地反转数组，返回原数组引用 */
   arr_reverse: (arr) => {
-    if (!Array.isArray(arr))
-      throw new TypeError("arr_reverse: \u53C2\u6570\u5FC5\u987B\u662F\u6570\u7EC4");
+    if (!Array.isArray(arr)) throw new TypeError("arr_reverse: \u53C2\u6570\u5FC5\u987B\u662F\u6570\u7EC4");
     return arr.reverse();
   },
   /** 原地排序数组，返回原数组引用 */
@@ -1085,15 +1104,7 @@ function toDate(ts) {
   return isNaN(d.getTime()) ? null : d;
 }
 function isUnit(val) {
-  return typeof val === "string" && [
-    "second",
-    "minute",
-    "hour",
-    "day",
-    "week",
-    "month",
-    "year"
-  ].includes(val);
+  return typeof val === "string" && ["second", "minute", "hour", "day", "week", "month", "year"].includes(val);
 }
 var dateBuiltins = {
   /**
@@ -1343,7 +1354,12 @@ async function evaluate(node, ctx, logger, customFunctions) {
     case "object": {
       const obj = {};
       for (const prop of node.properties) {
-        obj[prop.key] = await evaluate(prop.value, ctx, logger, customFunctions);
+        obj[prop.key] = await evaluate(
+          prop.value,
+          ctx,
+          logger,
+          customFunctions
+        );
       }
       return obj;
     }
@@ -1444,7 +1460,12 @@ async function evaluateBinary(node, ctx, logger, customFunctions) {
     default:
       throw new Error(`Unknown binary operator: ${node.operator}`);
   }
-  logger?.debug("[evaluateBinary] \u8FD0\u7B97", { operator: node.operator, left, right, result });
+  logger?.debug("[evaluateBinary] \u8FD0\u7B97", {
+    operator: node.operator,
+    left,
+    right,
+    result
+  });
   return result;
 }
 async function evaluateUnary(node, ctx, _logger, customFunctions) {
@@ -1509,14 +1530,9 @@ async function evaluateCall(node, ctx, logger, customFunctions) {
       const method = receiver[methodName];
       if (typeof method === "function") {
         const args = await Promise.all(
-          node.args.map(
-            (arg) => evaluate(arg, ctx, logger, customFunctions)
-          )
+          node.args.map((arg) => evaluate(arg, ctx, logger, customFunctions))
         );
-        return await method.apply(
-          receiver,
-          args
-        );
+        return await method.apply(receiver, args);
       }
     }
     throw new Error(
@@ -1529,9 +1545,7 @@ async function evaluateCall(node, ctx, logger, customFunctions) {
   }
   if (fn) {
     const args = await Promise.all(
-      node.args.map(
-        (arg) => evaluate(arg, ctx, logger, customFunctions)
-      )
+      node.args.map((arg) => evaluate(arg, ctx, logger, customFunctions))
     );
     return await fn(...args);
   }
@@ -1549,7 +1563,10 @@ function parseTemplate(input) {
   let match;
   while ((match = regex.exec(input)) !== null) {
     if (match.index > lastIndex) {
-      parts.push({ type: "literal", value: input.slice(lastIndex, match.index) });
+      parts.push({
+        type: "literal",
+        value: input.slice(lastIndex, match.index)
+      });
     }
     parts.push({ type: "expr", value: match[1] });
     lastIndex = regex.lastIndex;
@@ -1569,14 +1586,24 @@ async function evaluateTemplate(input, ctx, logger, customFunctions) {
     return parts[0].value;
   }
   if (parts.length === 1 && parts[0].type === "expr") {
-    return await evaluateExpression(parts[0].value, ctx, logger, customFunctions);
+    return await evaluateExpression(
+      parts[0].value,
+      ctx,
+      logger,
+      customFunctions
+    );
   }
   let result = "";
   for (const part of parts) {
     if (part.type === "literal") {
       result += part.value;
     } else {
-      const value = await evaluateExpression(part.value, ctx, logger, customFunctions);
+      const value = await evaluateExpression(
+        part.value,
+        ctx,
+        logger,
+        customFunctions
+      );
       result += String(value ?? "");
     }
   }
@@ -1594,7 +1621,9 @@ async function evaluateAssign(template, ctx, logger, customFunctions) {
   }
   if (Array.isArray(template)) {
     return await Promise.all(
-      template.map((item) => evaluateAssign(item, ctx, logger, customFunctions))
+      template.map(
+        (item) => evaluateAssign(item, ctx, logger, customFunctions)
+      )
     );
   }
   if (typeof template === "object") {
@@ -1641,18 +1670,30 @@ function compileRule(rule, logger) {
   const nodes = rule.nodes?.[entry];
   if (!rule.nodes || Object.keys(rule.nodes).length === 0) {
     logger?.error("[compileRule] \u89C4\u5219\u8282\u70B9\u5BF9\u8C61\u4E3A\u7A7A");
-    throw new EngineError("NODE_TYPE_ERROR" /* NODE_TYPE_ERROR */, "Rule definition must have a non-empty nodes object");
+    throw new EngineError(
+      "NODE_TYPE_ERROR" /* NODE_TYPE_ERROR */,
+      "Rule definition must have a non-empty nodes object"
+    );
   }
   if (!nodes || nodes.length === 0) {
     logger?.error("[compileRule] \u5165\u53E3\u8282\u70B9\u7EC4\u4E0D\u5B58\u5728\u6216\u4E3A\u7A7A", { entry });
-    throw new EngineError("NODE_TYPE_ERROR" /* NODE_TYPE_ERROR */, `Entry node group '${entry}' not found or empty`);
+    throw new EngineError(
+      "NODE_TYPE_ERROR" /* NODE_TYPE_ERROR */,
+      `Entry node group '${entry}' not found or empty`
+    );
   }
   for (const [groupName, groupNodes] of Object.entries(rule.nodes)) {
     if (!Array.isArray(groupNodes)) {
       logger?.error("[compileRule] \u8282\u70B9\u7EC4\u5FC5\u987B\u662F\u6570\u7EC4", { groupName });
-      throw new EngineError("NODE_TYPE_ERROR" /* NODE_TYPE_ERROR */, `Node group '${groupName}' must be an array`);
+      throw new EngineError(
+        "NODE_TYPE_ERROR" /* NODE_TYPE_ERROR */,
+        `Node group '${groupName}' must be an array`
+      );
     }
-    logger?.debug("[compileRule] \u7F16\u8BD1\u8282\u70B9\u7EC4", { groupName, nodeCount: groupNodes.length });
+    logger?.debug("[compileRule] \u7F16\u8BD1\u8282\u70B9\u7EC4", {
+      groupName,
+      nodeCount: groupNodes.length
+    });
     for (const node of groupNodes) {
       compileNode(node);
     }
@@ -1664,7 +1705,10 @@ function compileNode(node) {
     case "if": {
       const condition = node.condition;
       if (!condition) {
-        throw new EngineError("EXPRESSION_ERROR" /* EXPRESSION_ERROR */, "If node must have a condition");
+        throw new EngineError(
+          "EXPRESSION_ERROR" /* EXPRESSION_ERROR */,
+          "If node must have a condition"
+        );
       }
       compileExpression(condition);
       for (const n of node.then) compileNode(n);
@@ -1676,7 +1720,10 @@ function compileNode(node) {
     case "foreach": {
       const collection = node.collection;
       if (!collection) {
-        throw new EngineError("EXPRESSION_ERROR" /* EXPRESSION_ERROR */, "Foreach node must have a collection expression");
+        throw new EngineError(
+          "EXPRESSION_ERROR" /* EXPRESSION_ERROR */,
+          "Foreach node must have a collection expression"
+        );
       }
       compileExpression(collection);
       for (const n of node.body) compileNode(n);
@@ -1685,7 +1732,10 @@ function compileNode(node) {
     case "while": {
       const condition = node.condition;
       if (!condition) {
-        throw new EngineError("EXPRESSION_ERROR" /* EXPRESSION_ERROR */, "While node must have a condition expression");
+        throw new EngineError(
+          "EXPRESSION_ERROR" /* EXPRESSION_ERROR */,
+          "While node must have a condition expression"
+        );
       }
       compileExpression(condition);
       for (const n of node.body) compileNode(n);
@@ -1699,7 +1749,10 @@ function compileNode(node) {
     }
     case "set": {
       if (!node.variable || node.variable.trim() === "") {
-        throw new EngineError("NODE_TYPE_ERROR" /* NODE_TYPE_ERROR */, "Set node must have a non-empty variable");
+        throw new EngineError(
+          "NODE_TYPE_ERROR" /* NODE_TYPE_ERROR */,
+          "Set node must have a non-empty variable"
+        );
       }
       compileAssignTemplate(node.value);
       break;
@@ -1712,7 +1765,10 @@ function compileNode(node) {
     }
     case "exec": {
       if (!node.expression || node.expression.trim() === "") {
-        throw new EngineError("NODE_TYPE_ERROR" /* NODE_TYPE_ERROR */, "Exec node must have a non-empty expression");
+        throw new EngineError(
+          "NODE_TYPE_ERROR" /* NODE_TYPE_ERROR */,
+          "Exec node must have a non-empty expression"
+        );
       }
       compileExpression(node.expression);
       break;
@@ -2158,7 +2214,12 @@ var RuleEngine = class {
       };
     }
     this.logger.debug("[executeCustom] \u6267\u884C\u5904\u7406\u5668", { name: node.name });
-    const params = node.params ? await evaluateAssign(node.params, ctx, this.logger, this.customFunctions) : void 0;
+    const params = node.params ? await evaluateAssign(
+      node.params,
+      ctx,
+      this.logger,
+      this.customFunctions
+    ) : void 0;
     const result = await handler(params, ctx);
     return {
       signal: "none" /* NONE */,
@@ -2202,7 +2263,12 @@ var RuleEngine = class {
         "Exec node must have a non-empty expression"
       );
     }
-    await evaluateExpression(node.expression, ctx, this.logger, this.customFunctions);
+    await evaluateExpression(
+      node.expression,
+      ctx,
+      this.logger,
+      this.customFunctions
+    );
     return {
       signal: "none" /* NONE */,
       result: { status: "success", data: null }

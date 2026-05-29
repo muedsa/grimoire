@@ -50,8 +50,12 @@ describe("evaluate — math builtins", () => {
 
   it("math functions work with expressions as arguments", async () => {
     const ctx = new ExecutionContext({ scores: [85, 90, 78] });
-    expect(await evaluateExpression("math_max(scores.0, scores.1, scores.2)", ctx)).toBe(90);
-    expect(await evaluateExpression("math_min(scores.0, scores.1, scores.2)", ctx)).toBe(78);
+    expect(
+      await evaluateExpression("math_max(scores.0, scores.1, scores.2)", ctx),
+    ).toBe(90);
+    expect(
+      await evaluateExpression("math_min(scores.0, scores.1, scores.2)", ctx),
+    ).toBe(78);
   });
 
   it("math_min 空参数返回 Infinity，math_max 空参数返回 -Infinity", async () => {

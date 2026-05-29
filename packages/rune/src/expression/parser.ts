@@ -1,14 +1,34 @@
-import { ASTNode, LiteralKind, LiteralNode, PathNode, BinaryOpNode, UnaryOpNode, CallNode, ParenNode, BracketSegment } from "./types";
+import {
+  ASTNode,
+  LiteralKind,
+  LiteralNode,
+  PathNode,
+  BinaryOpNode,
+  UnaryOpNode,
+  CallNode,
+  ParenNode,
+  BracketSegment,
+} from "./types";
 import { EngineError, ErrorCode } from "../types/error";
 
 /**
  * 表达式词法分析器 - 将字符串切分为词法单元
  */
 type TokenType =
-  | "number" | "string" | "identifier" | "operator"
-  | "lparen" | "rparen" | "lbracket" | "rbracket"
-  | "lbrace" | "rbrace"
-  | "comma" | "dot" | "colon" | "eof";
+  | "number"
+  | "string"
+  | "identifier"
+  | "operator"
+  | "lparen"
+  | "rparen"
+  | "lbracket"
+  | "rbracket"
+  | "lbrace"
+  | "rbrace"
+  | "comma"
+  | "dot"
+  | "colon"
+  | "eof";
 
 interface Token {
   type: TokenType;
@@ -41,12 +61,24 @@ function tokenize(input: string): Token[] {
           if (pos < input.length) {
             const escaped = input[pos];
             switch (escaped) {
-              case "n": value += "\n"; break;
-              case "t": value += "\t"; break;
-              case '"': value += '"'; break;
-              case "'": value += "'"; break;
-              case "\\": value += "\\"; break;
-              default: value += escaped; break;
+              case "n":
+                value += "\n";
+                break;
+              case "t":
+                value += "\t";
+                break;
+              case '"':
+                value += '"';
+                break;
+              case "'":
+                value += "'";
+                break;
+              case "\\":
+                value += "\\";
+                break;
+              default:
+                value += escaped;
+                break;
             }
           }
         } else {
@@ -55,7 +87,10 @@ function tokenize(input: string): Token[] {
         pos++;
       }
       if (pos >= input.length) {
-        throw new EngineError(ErrorCode.EXPRESSION_ERROR, `Unterminated string at position ${pos}`);
+        throw new EngineError(
+          ErrorCode.EXPRESSION_ERROR,
+          `Unterminated string at position ${pos}`,
+        );
       }
       pos++; // 跳过结束引号
       const tok: Token = { type: "string", value, pos: pos - value.length - 2 };
@@ -65,8 +100,18 @@ function tokenize(input: string): Token[] {
     }
 
     // 数字（以 . 开头的小数仅在数字/标识符之后才不解析为小数，否则作为 . + 数字分开解析）
-    const cantStartDecimal = lastType === "number" || lastType === "identifier" || lastType === "operator" || lastType === "string";
-    if (/\d/.test(ch) || (ch === "." && pos + 1 < input.length && /\d/.test(input[pos + 1]) && !cantStartDecimal)) {
+    const cantStartDecimal =
+      lastType === "number" ||
+      lastType === "identifier" ||
+      lastType === "operator" ||
+      lastType === "string";
+    if (
+      /\d/.test(ch) ||
+      (ch === "." &&
+        pos + 1 < input.length &&
+        /\d/.test(input[pos + 1]) &&
+        !cantStartDecimal)
+    ) {
       let num = "";
       const start = pos;
       // 从 . 开始的十进制数（leading decimal）
@@ -85,7 +130,13 @@ function tokenize(input: string): Token[] {
         }
         // 只有在 . 之后才不收集小数部分（因为 . 后面的 .digits 应拆分为 dot + number）
         const afterDot = lastType === "dot";
-        if (!afterDot && pos < input.length && input[pos] === "." && pos + 1 < input.length && /\d/.test(input[pos + 1])) {
+        if (
+          !afterDot &&
+          pos < input.length &&
+          input[pos] === "." &&
+          pos + 1 < input.length &&
+          /\d/.test(input[pos + 1])
+        ) {
           num += ".";
           pos++;
           while (pos < input.length && /\d/.test(input[pos])) {
@@ -107,7 +158,11 @@ function tokenize(input: string): Token[] {
         id += input[pos];
         pos++;
       }
-      const tok: Token = { type: "identifier", value: id, pos: pos - id.length };
+      const tok: Token = {
+        type: "identifier",
+        value: id,
+        pos: pos - id.length,
+      };
       tokens.push(tok);
       lastType = tok.type;
       continue;
@@ -219,7 +274,10 @@ function tokenize(input: string): Token[] {
       continue;
     }
 
-    throw new EngineError(ErrorCode.EXPRESSION_ERROR, `Unexpected character '${ch}' at position ${pos}`);
+    throw new EngineError(
+      ErrorCode.EXPRESSION_ERROR,
+      `Unexpected character '${ch}' at position ${pos}`,
+    );
   }
 
   tokens.push({ type: "eof", value: "", pos });
@@ -244,7 +302,10 @@ export class ExpressionParser {
   // 或运算: expr || expr
   private parseOr(): ASTNode {
     let left = this.parseAnd();
-    while (this.current().type === "operator" && this.current().value === "||") {
+    while (
+      this.current().type === "operator" &&
+      this.current().value === "||"
+    ) {
       const op = this.consume().value as BinaryOpNode["operator"];
       const right = this.parseAnd();
       left = { kind: "binary", operator: op, left, right } as BinaryOpNode;
@@ -255,7 +316,10 @@ export class ExpressionParser {
   // 与运算: expr && expr
   private parseAnd(): ASTNode {
     let left = this.parseEquality();
-    while (this.current().type === "operator" && this.current().value === "&&") {
+    while (
+      this.current().type === "operator" &&
+      this.current().value === "&&"
+    ) {
       const op = this.consume().value as BinaryOpNode["operator"];
       const right = this.parseEquality();
       left = { kind: "binary", operator: op, left, right } as BinaryOpNode;
@@ -266,7 +330,10 @@ export class ExpressionParser {
   // 相等运算: expr == expr | expr != expr
   private parseEquality(): ASTNode {
     let left = this.parseComparison();
-    while (this.current().type === "operator" && (this.current().value === "==" || this.current().value === "!=")) {
+    while (
+      this.current().type === "operator" &&
+      (this.current().value === "==" || this.current().value === "!=")
+    ) {
       const op = this.consume().value as BinaryOpNode["operator"];
       const right = this.parseComparison();
       left = { kind: "binary", operator: op, left, right } as BinaryOpNode;
@@ -277,7 +344,10 @@ export class ExpressionParser {
   // 比较运算: expr < expr | expr > expr | expr <= expr | expr >= expr
   private parseComparison(): ASTNode {
     let left = this.parseAdditive();
-    while (this.current().type === "operator" && /[<>]/.test(this.current().value)) {
+    while (
+      this.current().type === "operator" &&
+      /[<>]/.test(this.current().value)
+    ) {
       const op = this.consume().value as BinaryOpNode["operator"];
       const right = this.parseAdditive();
       left = { kind: "binary", operator: op, left, right } as BinaryOpNode;
@@ -288,7 +358,10 @@ export class ExpressionParser {
   // 加减运算: expr + expr | expr - expr
   private parseAdditive(): ASTNode {
     let left = this.parseMultiplicative();
-    while (this.current().type === "operator" && (this.current().value === "+" || this.current().value === "-")) {
+    while (
+      this.current().type === "operator" &&
+      (this.current().value === "+" || this.current().value === "-")
+    ) {
       const op = this.consume().value as BinaryOpNode["operator"];
       const right = this.parseMultiplicative();
       left = { kind: "binary", operator: op, left, right } as BinaryOpNode;
@@ -299,7 +372,12 @@ export class ExpressionParser {
   // 乘除取模运算: expr * expr | expr / expr | expr % expr
   private parseMultiplicative(): ASTNode {
     let left = this.parseUnary();
-    while (this.current().type === "operator" && (this.current().value === "*" || this.current().value === "/" || this.current().value === "%")) {
+    while (
+      this.current().type === "operator" &&
+      (this.current().value === "*" ||
+        this.current().value === "/" ||
+        this.current().value === "%")
+    ) {
       const op = this.consume().value as BinaryOpNode["operator"];
       const right = this.parseUnary();
       left = { kind: "binary", operator: op, left, right } as BinaryOpNode;
@@ -323,7 +401,11 @@ export class ExpressionParser {
       if (isUnary) {
         this.consume();
         const argument = this.parseUnary();
-        return { kind: "unary", operator: op as "!" | "-", argument } as UnaryOpNode;
+        return {
+          kind: "unary",
+          operator: op as "!" | "-",
+          argument,
+        } as UnaryOpNode;
       }
     }
     return this.parsePrimary();
@@ -344,13 +426,21 @@ export class ExpressionParser {
     // 字符串字面量
     if (token.type === "string") {
       this.consume();
-      return { kind: "literal", type: "string", value: token.value } as LiteralNode;
+      return {
+        kind: "literal",
+        type: "string",
+        value: token.value,
+      } as LiteralNode;
     }
 
     // 数字字面量
     if (token.type === "number") {
       this.consume();
-      return { kind: "literal", type: "number", value: parseFloat(token.value) } as LiteralNode;
+      return {
+        kind: "literal",
+        type: "number",
+        value: parseFloat(token.value),
+      } as LiteralNode;
     }
 
     // 数组字面量: [1, 2, 3]
@@ -393,7 +483,11 @@ export class ExpressionParser {
       }
       if (token.value === "false") {
         this.consume();
-        return { kind: "literal", type: "boolean", value: false } as LiteralNode;
+        return {
+          kind: "literal",
+          type: "boolean",
+          value: false,
+        } as LiteralNode;
       }
       if (token.value === "null") {
         this.consume();
@@ -406,7 +500,7 @@ export class ExpressionParser {
 
     throw new EngineError(
       ErrorCode.EXPRESSION_ERROR,
-      `Unexpected token ${token.type} '${token.value}' at position ${token.pos}`
+      `Unexpected token ${token.type} '${token.value}' at position ${token.pos}`,
     );
   }
 
@@ -421,7 +515,7 @@ export class ExpressionParser {
     } else {
       throw new EngineError(
         ErrorCode.EXPRESSION_ERROR,
-        `Expected property key but got ${token.type} at position ${token.pos}`
+        `Expected property key but got ${token.type} at position ${token.pos}`,
       );
     }
     this.expect("colon");
@@ -443,12 +537,15 @@ export class ExpressionParser {
       // 点分隔路径
       if (this.current().type === "dot") {
         this.consume();
-        if (this.current().type === "identifier" || this.current().type === "number") {
+        if (
+          this.current().type === "identifier" ||
+          this.current().type === "number"
+        ) {
           segments.push(this.consume().value);
         } else {
           throw new EngineError(
             ErrorCode.EXPRESSION_ERROR,
-            `Expected identifier or number after '.' at position ${this.current().pos}`
+            `Expected identifier or number after '.' at position ${this.current().pos}`,
           );
         }
         continue;
@@ -489,10 +586,7 @@ export class ExpressionParser {
       } as CallNode;
 
       // 函数调用后可链式访问属性: fn().prop 或 fn()[idx]
-      if (
-        this.current().type === "dot" ||
-        this.current().type === "lbracket"
-      ) {
+      if (this.current().type === "dot" || this.current().type === "lbracket") {
         const chainSegments: (string | BracketSegment)[] = [];
         while (true) {
           if (this.current().type === "dot") {
@@ -535,10 +629,7 @@ export class ExpressionParser {
             kind: "call",
             target: {
               kind: "path",
-              segments: [
-                { kind: "bracket", expr: callNode },
-                ...chainSegments,
-              ],
+              segments: [{ kind: "bracket", expr: callNode }, ...chainSegments],
             },
             args: chainArgs,
           } as CallNode;
@@ -546,10 +637,7 @@ export class ExpressionParser {
         // 函数调用后链式访问属性: fn().prop
         return {
           kind: "path",
-          segments: [
-            { kind: "bracket", expr: callNode },
-            ...chainSegments,
-          ],
+          segments: [{ kind: "bracket", expr: callNode }, ...chainSegments],
         } as PathNode;
       }
 
@@ -578,7 +666,7 @@ export class ExpressionParser {
     if (token.type !== type) {
       throw new EngineError(
         ErrorCode.EXPRESSION_ERROR,
-        `Expected ${type} but got ${token.type} '${token.value}' at position ${token.pos}`
+        `Expected ${type} but got ${token.type} '${token.value}' at position ${token.pos}`,
       );
     }
     return this.consume();

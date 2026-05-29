@@ -74,12 +74,7 @@ describe("TrackAllocator", () => {
       config,
     });
     const top = allocator.allocate(mk("t", 0, { mode: "top" }), 0, 200, 24);
-    const bot = allocator.allocate(
-      mk("b", 0, { mode: "bottom" }),
-      0,
-      200,
-      24,
-    );
+    const bot = allocator.allocate(mk("b", 0, { mode: "bottom" }), 0, 200, 24);
     expect(top).not.toBeNull();
     expect(bot).not.toBeNull();
     expect(top!.trackY).toBeLessThan(bot!.trackY);

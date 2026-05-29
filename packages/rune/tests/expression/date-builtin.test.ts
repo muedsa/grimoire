@@ -33,21 +33,26 @@ describe("date_format", () => {
     const d = new Date(FIXED_TS);
     const pad2 = (n: number) => String(n).padStart(2, "0");
     const expected = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
-    expect(await evaluateExpression(`date_format(${FIXED_TS}, '${fmt}')`, ctx)).toBe(expected);
+    expect(
+      await evaluateExpression(`date_format(${FIXED_TS}, '${fmt}')`, ctx),
+    ).toBe(expected);
   });
 
   it("毫秒格式 SSS", async () => {
     const ctx = new ExecutionContext({});
-    const result = await evaluateExpression(
+    const result = (await evaluateExpression(
       `date_format(${FIXED_TS}, 'ss.SSS')`,
       ctx,
-    ) as string;
+    )) as string;
     // 秒和毫秒不受时区影响
     expect(result).toMatch(/^\d{2}\.123$/);
   });
 
   it("非法时间戳返回 null", async () => {
-    const ctx = new ExecutionContext({ nan: Number.NaN, inf: Number.POSITIVE_INFINITY });
+    const ctx = new ExecutionContext({
+      nan: Number.NaN,
+      inf: Number.POSITIVE_INFINITY,
+    });
     expect(
       await evaluateExpression("date_format(null, 'YYYY')", ctx),
     ).toBeNull();
@@ -69,10 +74,10 @@ describe("date_format", () => {
 describe("date_parse", () => {
   it("解析格式化字符串返回时间戳", async () => {
     const ctx = new ExecutionContext({});
-    const result = await evaluateExpression(
+    const result = (await evaluateExpression(
       "date_parse('2026-05-15', 'YYYY-MM-DD')",
       ctx,
-    ) as number;
+    )) as number;
     const d = new Date(result);
     expect(d.getFullYear()).toBe(2026);
     expect(d.getMonth()).toBe(4); // 0-based
@@ -81,10 +86,10 @@ describe("date_parse", () => {
 
   it("解析带时分秒的字符串", async () => {
     const ctx = new ExecutionContext({});
-    const result = await evaluateExpression(
+    const result = (await evaluateExpression(
       "date_parse('2026-05-15 08:30:45', 'YYYY-MM-DD HH:mm:ss')",
       ctx,
-    ) as number;
+    )) as number;
     const d = new Date(result);
     expect(d.getHours()).toBe(8);
     expect(d.getMinutes()).toBe(30);
@@ -93,12 +98,8 @@ describe("date_parse", () => {
 
   it("非字符串参数返回 null", async () => {
     const ctx = new ExecutionContext({});
-    expect(
-      await evaluateExpression("date_parse(123, 'YYYY')", ctx),
-    ).toBeNull();
-    expect(
-      await evaluateExpression("date_parse('2026', 123)", ctx),
-    ).toBeNull();
+    expect(await evaluateExpression("date_parse(123, 'YYYY')", ctx)).toBeNull();
+    expect(await evaluateExpression("date_parse('2026', 123)", ctx)).toBeNull();
   });
 
   it("格式不匹配返回 null", async () => {
@@ -117,28 +118,28 @@ describe("date_add", () => {
 
   it("加 1 天", async () => {
     const ctx = new ExecutionContext({ ts });
-    const result = await evaluateExpression(
+    const result = (await evaluateExpression(
       "date_add(ts, 1, 'day')",
       ctx,
-    ) as number;
+    )) as number;
     expect(result - ts).toBe(86_400_000);
   });
 
   it("减 2 小时", async () => {
     const ctx = new ExecutionContext({ ts });
-    const result = await evaluateExpression(
+    const result = (await evaluateExpression(
       "date_add(ts, -2, 'hour')",
       ctx,
-    ) as number;
+    )) as number;
     expect(result - ts).toBe(-7_200_000);
   });
 
   it("加 1 个月", async () => {
     const ctx = new ExecutionContext({ ts });
-    const result = await evaluateExpression(
+    const result = (await evaluateExpression(
       "date_add(ts, 1, 'month')",
       ctx,
-    ) as number;
+    )) as number;
     const d = new Date(result);
     expect(d.getMonth()).toBe(1); // February
     expect(d.getDate()).toBe(15);
@@ -146,17 +147,21 @@ describe("date_add", () => {
 
   it("减 1 年", async () => {
     const ctx = new ExecutionContext({ ts });
-    const result = await evaluateExpression(
+    const result = (await evaluateExpression(
       "date_add(ts, -1, 'year')",
       ctx,
-    ) as number;
+    )) as number;
     expect(new Date(result).getFullYear()).toBe(2025);
   });
 
   it("非法参数返回 null", async () => {
     const ctx = new ExecutionContext({ ts });
-    expect(await evaluateExpression("date_add(null, 1, 'day')", ctx)).toBeNull();
-    expect(await evaluateExpression("date_add(ts, 1, 'invalid')", ctx)).toBeNull();
+    expect(
+      await evaluateExpression("date_add(null, 1, 'day')", ctx),
+    ).toBeNull();
+    expect(
+      await evaluateExpression("date_add(ts, 1, 'invalid')", ctx),
+    ).toBeNull();
   });
 });
 
@@ -196,9 +201,7 @@ describe("date_diff", () => {
     expect(
       await evaluateExpression(`date_diff(0, null, 'day')`, ctx),
     ).toBeNull();
-    expect(
-      await evaluateExpression(`date_diff(0, 0, 'bad')`, ctx),
-    ).toBeNull();
+    expect(await evaluateExpression(`date_diff(0, 0, 'bad')`, ctx)).toBeNull();
   });
 });
 
@@ -230,7 +233,9 @@ describe("date_get", () => {
 
   it("提取毫秒", async () => {
     const ctx = new ExecutionContext({ ts });
-    expect(await evaluateExpression("date_get(ts, 'millisecond')", ctx)).toBe(123);
+    expect(await evaluateExpression("date_get(ts, 'millisecond')", ctx)).toBe(
+      123,
+    );
   });
 
   it("非法时间戳返回 null", async () => {

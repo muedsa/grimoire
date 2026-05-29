@@ -23,7 +23,9 @@ export class SkiaTextMeasurer implements TextMeasurer {
   constructor(baseFont: SkFont) {
     this.baseFont = baseFont;
     // 从 SkFont 对象上读取其字号；RN-Skia 的 SkFont 提供 getSize() 方法返回创建时的字号。
-    this.baseFontSize = (baseFont as unknown as { getSize(): number }).getSize();
+    this.baseFontSize = (
+      baseFont as unknown as { getSize(): number }
+    ).getSize();
     this.typeface = baseFont.getTypeface()!;
   }
 

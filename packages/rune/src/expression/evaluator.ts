@@ -1,4 +1,13 @@
-import { ASTNode, LiteralNode, PathNode, BinaryOpNode, UnaryOpNode, CallNode, ParenNode, BracketSegment } from "./types";
+import {
+  ASTNode,
+  LiteralNode,
+  PathNode,
+  BinaryOpNode,
+  UnaryOpNode,
+  CallNode,
+  ParenNode,
+  BracketSegment,
+} from "./types";
 import { parseExpression } from "./parser";
 import { ExecutionContext } from "../context/context";
 import { AllowedValue } from "../types/node";
@@ -41,7 +50,12 @@ export async function evaluate(
     case "object": {
       const obj: Record<string, AllowedValue> = {};
       for (const prop of node.properties) {
-        obj[prop.key] = await evaluate(prop.value, ctx, logger, customFunctions);
+        obj[prop.key] = await evaluate(
+          prop.value,
+          ctx,
+          logger,
+          customFunctions,
+        );
       }
       return obj;
     }
@@ -126,24 +140,55 @@ async function evaluateBinary(
   let result: AllowedValue;
 
   switch (node.operator) {
-    case "&&": result = left && right; break;
-    case "||": result = left || right; break;
-    case "==": result = left == right; break;  // 宽松相等，适合JSON场景
-    case "!=": result = left != right; break;
-    case ">":  result = (left as number) > (right as number); break;
-    case "<":  result = (left as number) < (right as number); break;
-    case ">=": result = (left as number) >= (right as number); break;
-    case "<=": result = (left as number) <= (right as number); break;
-    case "+":  result = (left as number) + (right as number); break;
-    case "-":  result = (left as number) - (right as number); break;
-    case "*":  result = (left as number) * (right as number); break;
-    case "/":  result = (left as number) / (right as number); break;
-    case "%":  result = (left as number) % (right as number); break;
+    case "&&":
+      result = left && right;
+      break;
+    case "||":
+      result = left || right;
+      break;
+    case "==":
+      result = left == right;
+      break; // 宽松相等，适合JSON场景
+    case "!=":
+      result = left != right;
+      break;
+    case ">":
+      result = (left as number) > (right as number);
+      break;
+    case "<":
+      result = (left as number) < (right as number);
+      break;
+    case ">=":
+      result = (left as number) >= (right as number);
+      break;
+    case "<=":
+      result = (left as number) <= (right as number);
+      break;
+    case "+":
+      result = (left as number) + (right as number);
+      break;
+    case "-":
+      result = (left as number) - (right as number);
+      break;
+    case "*":
+      result = (left as number) * (right as number);
+      break;
+    case "/":
+      result = (left as number) / (right as number);
+      break;
+    case "%":
+      result = (left as number) % (right as number);
+      break;
     default:
       throw new Error(`Unknown binary operator: ${node.operator}`);
   }
 
-  logger?.debug("[evaluateBinary] 运算", { operator: node.operator, left, right, result });
+  logger?.debug("[evaluateBinary] 运算", {
+    operator: node.operator,
+    left,
+    right,
+    result,
+  });
 
   return result;
 }
@@ -231,14 +276,13 @@ async function evaluateCall(
       const method = (receiver as Record<string, unknown>)[methodName];
       if (typeof method === "function") {
         const args = await Promise.all(
-          node.args.map((arg) =>
-            evaluate(arg, ctx, logger, customFunctions),
-          ),
+          node.args.map((arg) => evaluate(arg, ctx, logger, customFunctions)),
         );
-        return await (method as (...a: AllowedValue[]) => AllowedValue | Promise<AllowedValue>).apply(
-          receiver,
-          args,
-        ) as AllowedValue;
+        return (await (
+          method as (
+            ...a: AllowedValue[]
+          ) => AllowedValue | Promise<AllowedValue>
+        ).apply(receiver, args)) as AllowedValue;
       }
     }
     throw new Error(
@@ -255,11 +299,9 @@ async function evaluateCall(
   }
   if (fn) {
     const args = await Promise.all(
-      node.args.map((arg) =>
-        evaluate(arg, ctx, logger, customFunctions),
-      ),
+      node.args.map((arg) => evaluate(arg, ctx, logger, customFunctions)),
     );
-    return await fn(...args) as AllowedValue;
+    return (await fn(...args)) as AllowedValue;
   }
 
   throw new Error(`Unknown function: ${methodName}`);

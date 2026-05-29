@@ -113,11 +113,7 @@
           "$ref": "#/definitions/AssignTemplate"
         }
       },
-      "required": [
-        "type",
-        "variable",
-        "value"
-      ],
+      "required": ["type", "variable", "value"],
       "additionalProperties": false
     },
     "ExecNode": {
@@ -136,10 +132,7 @@
           "description": "纯表达式字符串，如 log(data.result)"
         }
       },
-      "required": [
-        "type",
-        "expression"
-      ],
+      "required": ["type", "expression"],
       "additionalProperties": false
     },
     "IfNode": {
@@ -172,11 +165,7 @@
           }
         }
       },
-      "required": [
-        "type",
-        "condition",
-        "then"
-      ],
+      "required": ["type", "condition", "then"],
       "additionalProperties": false
     },
     "ForeachNode": {
@@ -210,12 +199,7 @@
           }
         }
       },
-      "required": [
-        "type",
-        "collection",
-        "item",
-        "body"
-      ],
+      "required": ["type", "collection", "item", "body"],
       "additionalProperties": false
     },
     "WhileNode": {
@@ -241,11 +225,7 @@
           }
         }
       },
-      "required": [
-        "type",
-        "condition",
-        "body"
-      ],
+      "required": ["type", "condition", "body"],
       "additionalProperties": false
     },
     "BreakNode": {
@@ -260,9 +240,7 @@
           "description": "节点标识"
         }
       },
-      "required": [
-        "type"
-      ],
+      "required": ["type"],
       "additionalProperties": false
     },
     "ContinueNode": {
@@ -277,9 +255,7 @@
           "description": "节点标识"
         }
       },
-      "required": [
-        "type"
-      ],
+      "required": ["type"],
       "additionalProperties": false
     },
     "ReturnNode": {
@@ -298,9 +274,7 @@
           "description": "可选的返回值表达式"
         }
       },
-      "required": [
-        "type"
-      ],
+      "required": ["type"],
       "additionalProperties": false
     },
     "CustomNode": {
@@ -322,10 +296,7 @@
           "$ref": "#/definitions/AssignTemplate"
         }
       },
-      "required": [
-        "type",
-        "name"
-      ],
+      "required": ["type", "name"],
       "additionalProperties": false
     }
   },
@@ -358,8 +329,6 @@
       }
     }
   },
-  "required": [
-    "nodes"
-  ],
+  "required": ["nodes"],
   "additionalProperties": false
 }

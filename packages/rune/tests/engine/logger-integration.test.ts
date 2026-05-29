@@ -21,9 +21,7 @@ describe("RuleEngine — Logger 集成", () => {
     const rule: RuleDefinition = {
       variables: { x: 1, y: 2 },
       nodes: {
-        main: [
-          { type: "set", variable: "result.sum", value: "${x} + ${y}" },
-        ],
+        main: [{ type: "set", variable: "result.sum", value: "${x} + ${y}" }],
       },
     };
 
@@ -31,12 +29,16 @@ describe("RuleEngine — Logger 集成", () => {
     expect(result.status).toBe("success");
 
     // 验证 info 级别：execute 开始和结束
-    const infoMessages = calls.filter((c) => c.level === "info").map((c) => c.message);
+    const infoMessages = calls
+      .filter((c) => c.level === "info")
+      .map((c) => c.message);
     expect(infoMessages).toContain("[execute] 开始执行");
     expect(infoMessages.some((m) => m.includes("执行完成"))).toBe(true);
 
     // 验证 debug 级别：节点执行
-    const debugMessages = calls.filter((c) => c.level === "debug").map((c) => c.message);
+    const debugMessages = calls
+      .filter((c) => c.level === "debug")
+      .map((c) => c.message);
     expect(debugMessages.some((m) => m.includes("executeNodes"))).toBe(true);
     expect(debugMessages.some((m) => m.includes("executeSet"))).toBe(true);
   });

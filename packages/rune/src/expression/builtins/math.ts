@@ -6,11 +6,17 @@ import { CustomFunction } from "../evaluator";
  */
 export const mathBuiltins: Record<string, CustomFunction> = {
   math_min: (...args: AllowedValue[]) => {
-    const nums = args.flat().map(Number).filter((n) => !isNaN(n));
+    const nums = args
+      .flat()
+      .map(Number)
+      .filter((n) => !isNaN(n));
     return Math.min(...nums);
   },
   math_max: (...args: AllowedValue[]) => {
-    const nums = args.flat().map(Number).filter((n) => !isNaN(n));
+    const nums = args
+      .flat()
+      .map(Number)
+      .filter((n) => !isNaN(n));
     return Math.max(...nums);
   },
   math_abs: (val: AllowedValue) =>
@@ -31,11 +37,17 @@ export const mathBuiltins: Record<string, CustomFunction> = {
     return Math.sqrt(n);
   },
   math_sum: (...args: AllowedValue[]) => {
-    const nums = args.flat().map(Number).filter((n) => !isNaN(n));
+    const nums = args
+      .flat()
+      .map(Number)
+      .filter((n) => !isNaN(n));
     return nums.reduce((a, b) => a + b, 0);
   },
   math_avg: (...args: AllowedValue[]) => {
-    const nums = args.flat().map(Number).filter((n) => !isNaN(n));
+    const nums = args
+      .flat()
+      .map(Number)
+      .filter((n) => !isNaN(n));
     return nums.length === 0
       ? 0
       : nums.reduce((a, b) => a + b, 0) / nums.length;

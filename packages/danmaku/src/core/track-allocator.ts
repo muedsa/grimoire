@@ -100,7 +100,14 @@ export class TrackAllocator {
     const lineHeight = this.lineHeight(height);
 
     if (mode === "top" || mode === "bottom") {
-      return this.allocateFixed(item, mode, currentTimeMs, width, height, lineHeight);
+      return this.allocateFixed(
+        item,
+        mode,
+        currentTimeMs,
+        width,
+        height,
+        lineHeight,
+      );
     }
     return this.allocateScroll(item, currentTimeMs, width, height, lineHeight);
   }
@@ -167,8 +174,7 @@ export class TrackAllocator {
             ? this.topTrackY(i, lineHeight)
             : this.bottomTrackY(i, lineHeight);
         const centerX =
-          this.config.safeAreaInsets.left +
-          (this.activeWidth() - width) / 2;
+          this.config.safeAreaInsets.left + (this.activeWidth() - width) / 2;
         const allocated: AllocatedDanmaku = {
           id: item.id,
           mode,
