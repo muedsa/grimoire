@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/muedsa/grimoire/refs/heads/main/packages/conduit/schema/media-provider.schema.json",
+  "title": "Grimoire Media Provider",
+  "description": "Grimoire media provider configuration schema",
+  "type": "object",
+  "definitions": {
+    "FeatureRule": {
+      "$ref": "https://raw.githubusercontent.com/muedsa/grimoire/refs/heads/main/packages/rune/schema/rule-definition.schema.json"
+    }
+  },
+  "properties": {
+    "namespace": {
+      "type": "string",
+      "description": "The namespace of the media provider"
+    },
+    "name": {
+      "type": "string",
+      "description": "The name of the media provider"
+    },
+    "author": {
+      "type": "string",
+      "description": "The author of the media provider"
+    },
+    "url": {
+      "type": "string",
+      "description": "The URL of the media provider"
+    },
+    "version": {
+      "type": "string",
+      "description": "The version of the media provider",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+    },
+    "versionCode": {
+      "type": "integer",
+      "description": "The version code of the media provider",
+      "minimum": 0
+    },
+    "features": {
+      "type": "array",
+      "description": "The features supported by the media provider, use @grimoire/rune",
+      "items": {
+        "$ref": "#/definitions/FeatureRule"
+      },
+      "contains": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "const": "media-explore"
+          }
+        }
+      },
+      "minItems": 1
+    }
+  },
+  "required": ["namespace", "name", "version", "versionCode", "features"]
+}
