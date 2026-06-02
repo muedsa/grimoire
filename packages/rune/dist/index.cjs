@@ -1539,9 +1539,12 @@ async function evaluateCall(node, ctx, logger, customFunctions) {
       `Method '${methodName}' not found on ${receiver === null ? "null" : typeof receiver}`
     );
   }
-  let fn = builtins[methodName];
-  if (!fn && customFunctions) {
+  let fn;
+  if (customFunctions) {
     fn = customFunctions[methodName];
+  }
+  if (!fn) {
+    fn = builtins[methodName];
   }
   if (fn) {
     const args = await Promise.all(

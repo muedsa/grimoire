@@ -292,10 +292,14 @@ async function evaluateCall(
     );
   }
 
-  // 单段函数名 → 内置函数 / 自定义函数查找
-  let fn: CustomFunction | undefined = builtins[methodName];
-  if (!fn && customFunctions) {
+  // 单段函数名 → 自定义函数查找 / 内置函数
+  // 优先自定义函数，可以覆盖内置函数
+  let fn: CustomFunction | undefined;
+  if (customFunctions) {
     fn = customFunctions[methodName];
+  }
+  if (!fn) {
+    fn = builtins[methodName];
   }
   if (fn) {
     const args = await Promise.all(
