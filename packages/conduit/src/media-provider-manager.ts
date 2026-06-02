@@ -13,6 +13,7 @@ import type {
   MediaProviderFeature,
 } from "./types/provider";
 import { createSchemaValidator } from "./schemas";
+import { CustomFunction } from "@grimoire/rune";
 
 export class MediaProviderManager {
   private providers: Map<string, MediaProvider> = new Map();
@@ -52,7 +53,10 @@ export class MediaProviderManager {
   }
 
   /** 注册媒体提供者，并为其创建规则引擎实例 */
-  registerProvider(provider: MediaProvider) {
+  registerProvider(
+    provider: MediaProvider,
+    customFunctions?: Record<string, CustomFunction>,
+  ) {
     this.providers.set(provider.namespace, provider);
     if (!this.engines.has(provider.namespace)) {
       this.engines.set(
@@ -62,6 +66,7 @@ export class MediaProviderManager {
             ...encodingFunctions,
             ...cryptoFunctions,
             ...domFunctions,
+            ...customFunctions,
           },
         }),
       );

@@ -294,7 +294,7 @@ var MediaProviderManager = class {
     return provider;
   }
   /** 注册媒体提供者，并为其创建规则引擎实例 */
-  registerProvider(provider) {
+  registerProvider(provider, customFunctions) {
     this.providers.set(provider.namespace, provider);
     if (!this.engines.has(provider.namespace)) {
       this.engines.set(
@@ -303,7 +303,8 @@ var MediaProviderManager = class {
           functions: {
             ...encodingFunctions,
             ...cryptoFunctions,
-            ...domFunctions
+            ...domFunctions,
+            ...customFunctions
           }
         })
       );

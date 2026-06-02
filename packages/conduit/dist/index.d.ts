@@ -1,4 +1,4 @@
-import { RuleDefinition } from '@grimoire/rune';
+import { RuleDefinition, CustomFunction } from '@grimoire/rune';
 
 type MediaItem = {
     id: string;
@@ -62,7 +62,7 @@ declare class MediaProviderManager {
     /** 从 JSON 字符串加载并校验 media provider */
     loadProviderFromJson(dataStr: string): MediaProvider;
     /** 注册媒体提供者，并为其创建规则引擎实例 */
-    registerProvider(provider: MediaProvider): void;
+    registerProvider(provider: MediaProvider, customFunctions?: Record<string, CustomFunction>): void;
     /** 注销媒体提供者 */
     unregisterProvider(namespace: string): void;
     /** 根据 namespace 获取媒体提供者 */
