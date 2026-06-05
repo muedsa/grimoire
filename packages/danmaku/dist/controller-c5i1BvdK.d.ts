@@ -185,4 +185,4 @@ declare class DanmakuController {
     private serializeConfig;
 }
 
-export { type ActiveLayoutItem as A, type DanmakuConfig as D, type ResolvedDanmakuConfig as R, type TextMeasurer as T, type DanmakuWeight as a, type ActiveLayoutSnapshot as b, type DanmakuAdaptiveConfig as c, DanmakuController as d, type DanmakuControllerOptions as e, type DanmakuEvent as f, type DanmakuEventHandler as g, type DanmakuEventOf as h, type DanmakuEventType as i, type DanmakuItem as j, type DanmakuMergeConfig as k, type DanmakuMode as l, type DanmakuSafeAreaInsets as m, type DanmakuViewport as n, type TimelineSource as o };
+export { type ActiveLayoutItem as A, type DanmakuAdaptiveConfig as D, type ResolvedDanmakuConfig as R, type TextMeasurer as T, type ActiveLayoutSnapshot as a, type DanmakuConfig as b, DanmakuController as c, type DanmakuControllerOptions as d, type DanmakuEvent as e, type DanmakuEventHandler as f, type DanmakuEventOf as g, type DanmakuEventType as h, type DanmakuItem as i, type DanmakuMergeConfig as j, type DanmakuMode as k, type DanmakuSafeAreaInsets as l, type DanmakuViewport as m, type DanmakuWeight as n, type TimelineSource as o };

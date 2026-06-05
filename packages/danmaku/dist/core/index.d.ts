@@ -1,5 +1,5 @@
-import { R as ResolvedDanmakuConfig, D as DanmakuConfig, T as TextMeasurer, a as DanmakuWeight } from '../controller-DHE-XzKf.js';
-export { A as ActiveLayoutItem, b as ActiveLayoutSnapshot, c as DanmakuAdaptiveConfig, d as DanmakuController, e as DanmakuControllerOptions, f as DanmakuEvent, g as DanmakuEventHandler, h as DanmakuEventOf, i as DanmakuEventType, j as DanmakuItem, k as DanmakuMergeConfig, l as DanmakuMode, m as DanmakuSafeAreaInsets, n as DanmakuViewport, o as TimelineSource } from '../controller-DHE-XzKf.js';
+import { R as ResolvedDanmakuConfig, b as DanmakuConfig, T as TextMeasurer, n as DanmakuWeight } from '../controller-c5i1BvdK.js';
+export { A as ActiveLayoutItem, a as ActiveLayoutSnapshot, D as DanmakuAdaptiveConfig, c as DanmakuController, d as DanmakuControllerOptions, e as DanmakuEvent, f as DanmakuEventHandler, g as DanmakuEventOf, h as DanmakuEventType, i as DanmakuItem, j as DanmakuMergeConfig, k as DanmakuMode, l as DanmakuSafeAreaInsets, m as DanmakuViewport, o as TimelineSource } from '../controller-c5i1BvdK.js';
 
 declare const DEFAULT_DANMAKU_CONFIG: ResolvedDanmakuConfig;
 declare function resolveDanmakuConfig(config: DanmakuConfig | undefined): ResolvedDanmakuConfig;
