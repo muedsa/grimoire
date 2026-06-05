@@ -20,9 +20,9 @@ package-lock.json
 pnpm-lock.yaml
 
 # ---- Expo / React Native ----
-apps/grimoire/.expo/
-apps/grimoire/android/app/build/
-apps/grimoire/ios/Pods/
+apps/*/.expo/
+apps/*/android
+apps/*/ios
 
 # ---- IDE & 工具 ----
 .vscode/

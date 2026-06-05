@@ -7,7 +7,7 @@
     "prettier": "prettier . --write"
   },
   "workspaces": [
-    "apps/danmaku-example",
+    "apps/*",
     "packages/*"
   ],
   "packageManager": "yarn@4.15.0",
