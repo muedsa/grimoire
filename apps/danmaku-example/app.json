@@ -6,8 +6,6 @@
     "version": "0.0.1",
     "orientation": "landscape",
     "userInterfaceStyle": "dark",
-    "newArchEnabled": true,
-    "platforms": ["android", "ios", "web"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.muedsa.grimoire.danmaku.example"
@@ -16,7 +14,8 @@
       "package": "com.muedsa.grimoire.danmaku.example"
     },
     "web": {
-      "bundler": "metro"
+      "bundler": "metro",
+      "output": "server"
     },
     "experiments": {
       "typedRoutes": true,
